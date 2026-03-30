@@ -1,0 +1,17 @@
+  <!-- Navigation -->
+  <nav class="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="/{{ lang.prefix }}" class="nav-logo" aria-label="{{ site.siteName }} - Home">
+        <img src="/images/logo.png" alt="{{ site.siteName }} - Powered by Klook" class="logo-img" width="220" height="19">
+      </a>
+      <div class="nav-links" id="navLinks">
+{%- for p in site.pages %}
+        <a href="/{{ lang.prefix }}{{ p.slug }}"{% if p.navKey == activePage %} class="active" aria-current="page"{% endif %}>{{ t.nav[p.navKey] }}</a>
+{%- endfor %}
+        <a href="#" class="nav-cta btn-pulse" data-booking>{{ t.nav.bookTickets }}</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>

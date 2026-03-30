@@ -1,0 +1,156 @@
+{% extends "base.njk" %}
+
+{% set ogImage = "og-faq.jpg" %}
+{% set activePage = "faq" %}
+
+{% block seo %}
+  <!-- Primary SEO Meta -->
+  <title>{{ t.faq.title }}</title>
+  <meta name="description" content="{{ t.faq.metaDescription }}">
+  <meta name="keywords" content="{{ t.faq.metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:title" content="{{ t.faq.ogTitle }}">
+  <meta property="og:description" content="{{ t.faq.ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.faq.twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.faq.twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "{{ t.faq.breadcrumbHome }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ t.faq.breadcrumbCurrent }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Schema.org - FAQPage (Comprehensive) -->
+  <script type="application/ld+json">
+  {{ schemaFaq | dump | safe }}
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <!-- Page Header -->
+  <section class="hero hero-sm" role="banner">
+    <div class="container hero-content">
+      <h1>
+        {{ t.faq.heroTitle }}
+        <span>{{ t.faq.heroSubtitle }}</span>
+      </h1>
+      <p class="hero-sub">
+        {{ t.faq.heroText | safe }}
+      </p>
+    </div>
+{% include "partials/wave-divider.njk" %}
+  </section>
+{% endblock %}
+
+{% block content %}
+
+    <!-- Quick Jump Navigation -->
+    <section class="section-sm" aria-label="FAQ Categories">
+      <div class="container">
+        <div class="info-card" style="max-width: 700px; margin: 0 auto; text-align: center;">
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">{{ t.faq.jumpTitle }}</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+{%- for catId, catLabel in t.faq.jumpLabels %}
+            <a href="#{{ catId }}" class="btn btn-outline" style="font-size: 0.875rem;">{{ catLabel }}</a>
+{%- endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% for cat in t.faq.categories %}
+
+    <!-- ========== {{ cat.heading | upper }} ========== -->
+    <section class="section{% if loop.index0 % 2 == 1 %} section-gray{% endif %}" id="{{ cat.id }}" aria-label="{{ cat.heading }} FAQ">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ cat.sectionLabel }}</span>
+          <h2>{{ cat.heading }}</h2>
+          <p>{{ cat.description }}</p>
+        </div>
+
+        <div class="faq-list fade-in" style="max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+{% for q in cat.questions %}
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>{{ q.question }}</span>
+              {% include "partials/faq-icon.njk" %}
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-inner">
+                {{ q.answer | safe }}
+              </div>
+            </div>
+          </div>
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+
+{% endfor %}
+{% if t.faq.shqTitle %}
+
+    <!-- Still Have Questions -->
+    <section class="section section-gray" aria-label="Contact">
+      <div class="container">
+        <div class="info-card fade-in" style="max-width: 600px; margin: 0 auto; text-align: center;">
+          <h2 style="font-size: 1.5rem; margin-bottom: 1rem;">{{ t.faq.shqTitle }}</h2>
+          <p>{{ t.faq.shqText }}</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.5rem;">
+{%- for btnLabel in t.faq.shqButtons %}
+{%- if loop.index0 == 0 %}
+            <a href="tel:{{ site.phoneTel }}" class="btn btn-outline">{{ btnLabel }}</a>
+{%- elif loop.index0 == 1 %}
+            <a href="/{{ lang.prefix }}tips.html" class="btn btn-outline">{{ btnLabel }}</a>
+{%- elif loop.index0 == 2 %}
+            <a href="/{{ lang.prefix }}blog/" class="btn btn-outline">{{ btnLabel }}</a>
+{%- endif %}
+{%- endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+{% endif %}
+{% if t.faq.ctaTitle %}
+
+    <!-- CTA Banner -->
+    <section class="section" aria-label="Book Tickets">
+      <div class="container">
+        <div class="cta-banner fade-in">
+          <h2>{{ t.faq.ctaTitle }}</h2>
+          <p>{{ t.faq.ctaText }}</p>
+          <a href="#" class="btn btn-white btn-lg" data-booking>{{ t.faq.ctaButton }}</a>
+          <p class="text-sm" style="margin-top: 1rem; opacity: 0.8;">{{ t.faq.ctaSubtext }}</p>
+        </div>
+      </div>
+    </section>
+{% endif %}
+
+{% endblock %}

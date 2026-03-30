@@ -1,0 +1,272 @@
+{% extends "base.njk" %}
+
+{% set ogImage = "og-attractions.jpg" %}
+{% set activePage = "attractions" %}
+
+{% block seo %}
+  <!-- Primary SEO Meta -->
+  <title>{{ t.attractions.title }}</title>
+  <meta name="description" content="{{ t.attractions.metaDescription }}">
+  <meta name="keywords" content="{{ t.attractions.metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:title" content="{{ t.attractions.ogTitle }}">
+  <meta property="og:description" content="{{ t.attractions.ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.attractions.twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.attractions.twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - TouristAttraction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    "name": "{{ t.attractions.schema.name }}",
+    "alternateName": {{ t.attractions.schema.alternateName | dump | safe }},
+    "description": "{{ t.attractions.schema.description }}",
+    "url": "{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}",
+    "telephone": "{{ site.phoneTel }}",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "{{ site.address.street }}",
+      "addressLocality": "{{ site.address.locality }}",
+      "addressRegion": "{{ site.address.region }}",
+      "postalCode": "{{ site.address.postalCode }}",
+      "addressCountry": "{{ site.address.country }}"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": {{ site.geo.latitude }},
+      "longitude": {{ site.geo.longitude }}
+    },
+    "openingHoursSpecification": [
+{% for hours in site.openingHours %}
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": {{ hours.dayOfWeek | dump | safe }},
+        "opens": "{{ hours.opens }}",
+        "closes": "{{ hours.closes }}"
+      }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+    ],
+    "isAccessibleForFree": false,
+    "publicAccess": true,
+    "touristType": {{ t.attractions.schema.touristType | dump | safe }},
+    "image": "{{ site.baseUrl }}/images/og-attractions.jpg",
+    "containsPlace": {{ t.attractions.schema.containsPlace | dump | safe }}
+  }
+  </script>
+
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "{{ t.nav.home }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ t.attractions.breadcrumbCurrent }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Schema.org - FAQPage -->
+  <script type="application/ld+json">
+  {{ schemaAttractionsFaq | dump | safe }}
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <!-- Page Header -->
+  <section class="page-header" role="banner">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/{{ lang.prefix }}">{{ t.nav.home }}</a></li>
+          <li aria-current="page">{{ t.attractions.breadcrumbCurrent }}</li>
+        </ol>
+      </nav>
+      <h1>{{ t.attractions.pageHeader.h1 }}</h1>
+      <p>{{ t.attractions.pageHeader.description }}</p>
+    </div>
+    <div class="wave-divider">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="white"/>
+      </svg>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+
+    <!-- TL;DR Section -->
+    <section class="section-sm" aria-label="Quick Summary">
+      <div class="container">
+        <div class="tldr-box">
+          <ul>
+{% for item in t.attractions.tldr %}
+            <li><strong>{{ item.bold }}</strong> {{ item.text | safe }}</li>
+{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone Quick Navigation -->
+    <section class="section-sm" aria-label="{{ t.attractions.zoneNav.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.attractions.zoneNav.sectionLabel }}</span>
+          <h2>{{ t.attractions.zoneNav.heading }}</h2>
+          <p>{{ t.attractions.zoneNav.description }}</p>
+        </div>
+        <div class="zones-grid fade-in" style="margin-top: 1.5rem;">
+{% for zone in attractionsData.zones %}
+{% set zt = t.attractions.zoneNav.zones[loop.index0] %}
+          <a href="#{{ zone.id }}" class="zone-card" style="text-decoration: none; color: inherit;">
+            <div class="zone-card-image">
+              <div class="zone-gradient {{ zone.cssClass }}">
+                <span class="zone-tag">{{ zt.tag }}</span>
+              </div>
+            </div>
+            <div class="zone-card-body">
+              <h3>{{ zt.name }}</h3>
+              <p>{{ zt.subtitle }}</p>
+            </div>
+          </a>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- Zone Detail Sections -->
+{% for zone in attractionsData.zones %}
+{% set zt = t.attractions.zones[loop.index0] %}
+
+    <!-- {{ zone.id }} -->
+    <section class="section{% if zone.gray %} section-gray{% endif %}" id="{{ zone.id }}" aria-label="{{ zt.h2 }}">
+      <div class="container">
+        <article class="zone-card zone-card-detail fade-in">
+          <div class="zone-card-image" style="min-height: 220px;">
+            <div class="zone-gradient {{ zone.cssClass }}">
+              <span class="zone-tag">{{ zt.tag }}</span>
+            </div>
+          </div>
+          <div class="zone-card-body">
+            <h2>{{ zt.h2 }}</h2>
+            <p class="zone-subtitle">{{ zt.subtitle }}</p>
+
+            <p>{{ zt.intro | safe }}</p>
+
+            <h3>{{ zt.keyAttractionsLabel }}</h3>
+            <ul>
+{% for attr in zt.attractions %}
+              <li><strong>{{ attr.name }}</strong> &mdash; {{ attr.desc | safe }}</li>
+{% endfor %}
+            </ul>
+
+            <div class="zone-highlights">
+{% for h in zt.highlights %}
+              <span class="zone-highlight">{{ h }}</span>
+{% endfor %}
+            </div>
+
+            <div class="info-card" style="margin-top: 1.5rem;{% if zone.tipStyle == 'danger' %} background: #fef2f2; border-left: 4px solid #ef4444;{% elif zone.tipStyle == 'warning' %} background: #fefce8; border-left: 4px solid #eab308;{% else %} background: var(--primary-50); border-left: 4px solid var(--primary);{% endif %}">
+              {{ zt.tipContent | safe }}
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+{% endfor %}
+
+    <!-- Additional Attractions & Services -->
+    <section class="section" id="extras" aria-label="{{ t.attractions.extras.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.attractions.extras.sectionLabel }}</span>
+          <h2>{{ t.attractions.extras.heading }}</h2>
+          <p>{{ t.attractions.extras.description }}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+{% for item in t.attractions.extras.items %}
+          <div class="info-card fade-in" id="{{ attractionsData.extraIds[loop.index0] }}">
+            <div class="info-icon" aria-hidden="true">{{ attractionsData.extraEmojis[loop.index0] }}</div>
+            <h3>{{ item.h3 }}</h3>
+            {{ item.content | safe }}
+            <div class="zone-highlights" style="margin-top: 1rem;">
+{% for h in item.highlights %}
+              <span class="zone-highlight">{{ h }}</span>
+{% endfor %}
+            </div>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section section-gray" id="faq" aria-label="{{ t.attractions.faq.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.attractions.faq.sectionLabel }}</span>
+          <h2>{{ t.attractions.faq.heading }}</h2>
+          <p>{{ t.attractions.faq.description }}</p>
+        </div>
+
+        <div class="faq-list fade-in">
+{% for item in t.attractions.faq.items %}
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>{{ item.question }}</span>
+              {% include "partials/faq-icon.njk" %}
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-inner">
+                {{ item.answer | safe }}
+              </div>
+            </div>
+          </div>
+{% endfor %}
+
+        </div>
+
+        <div class="text-center" style="margin-top: 2rem;">
+          <a href="/{{ lang.prefix }}faq.html" class="btn btn-primary">{{ t.attractions.faq.viewAll }}</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="section" aria-label="Book Now">
+      <div class="container">
+        <div class="cta-banner fade-in">
+          <h2>{{ t.attractions.cta.heading }}</h2>
+          <p>{{ t.attractions.cta.text }}</p>
+          <a href="#" class="btn btn-white btn-lg" data-booking>{{ t.attractions.cta.button }}</a>
+          <p style="margin-top: 1.5rem;">
+            <a href="/{{ lang.prefix }}tickets.html" style="color: rgba(255,255,255,0.9); text-decoration: underline;">{{ t.attractions.cta.link }}</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

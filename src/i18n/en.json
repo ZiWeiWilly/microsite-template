@@ -1,0 +1,578 @@
+{
+  "skipLink": "Skip to main content",
+  "nav": {
+    "home": "Home",
+    "attractions": "Attractions",
+    "tickets": "Tickets",
+    "gettingThere": "Getting There",
+    "tips": "Tips",
+    "faq": "FAQ",
+    "blog": "Blog",
+    "bookTickets": "Book Tickets"
+  },
+  "announcement": {
+    "text": "CHANGE ME — promotional announcement text",
+    "linkText": "Book Now &rarr;"
+  },
+  "stickyBar": {
+    "ariaLabel": "Booking bar",
+    "subText": "per person · online price",
+    "bookNow": "Book Now"
+  },
+  "footer": {
+    "brandDescription": "CHANGE ME — short site description for footer",
+    "quickLinksHeading": "Quick Links",
+    "quickLinks": ["Attractions", "Tickets", "Getting There", "Tips", "FAQ"],
+    "guidesHeading": "Popular Guides",
+    "guideLabels": [],
+    "parkInfoHeading": "Park Info",
+    "hoursItems": ["CHANGE ME — opening hours"],
+    "mapsLinkText": "View on Google Maps",
+    "affiliate": "CHANGE ME — This site contains affiliate links to Klook. We may earn a commission at no extra cost to you when you book through our links.",
+    "disclaimer": "CHANGE ME — This site is an independent visitor guide and is not affiliated with or endorsed by the attraction.",
+    "copyright": "© 2026 CHANGE ME. All rights reserved."
+  },
+  "home": {
+    "title": "CHANGE ME | Tickets, Attractions & Complete Guide 2026",
+    "metaDescription": "CHANGE ME — 155 chars meta description for homepage",
+    "metaKeywords": "CHANGE ME, tickets, attractions, guide",
+    "ogTitle": "CHANGE ME | Complete Visitor Guide 2026",
+    "ogDescription": "CHANGE ME — OG description 100-150 chars",
+    "twitterTitle": "CHANGE ME | Complete Visitor Guide 2026",
+    "twitterDescription": "CHANGE ME — Twitter description 100-140 chars",
+    "schemaDescription": "CHANGE ME — Schema.org description of the attraction",
+    "heroPreTitle": "CHANGE ME",
+    "heroTitle": "CHANGE ME",
+    "heroSubtitle": "CHANGE ME",
+    "heroCta": "Book Discounted Tickets &rarr;",
+    "stats": [
+      { "number": "0", "label": "ATTRACTIONS" },
+      { "number": "0", "label": "STAT LABEL" },
+      { "number": "0/5", "label": "RATING" },
+      { "number": "~0%", "label": "OFF ONLINE" }
+    ],
+    "tldr": [
+      { "bold": "What:", "text": "CHANGE ME" },
+      { "bold": "Where:", "text": "CHANGE ME" },
+      { "bold": "Hours:", "text": "CHANGE ME" },
+      { "bold": "Tickets:", "text": "CHANGE ME" },
+      { "bold": "Best for:", "text": "CHANGE ME" }
+    ],
+    "gbp": {
+      "category": "CHANGE ME · Attraction Type · Location",
+      "ratingAriaLabel": "4 out of 5 stars",
+      "ratingText": "<strong>4.0</strong> (100+ reviews)",
+      "details": [
+        "CHANGE ME — address detail",
+        "CHANGE ME — hours detail",
+        "CHANGE ME — phone detail",
+        "CHANGE ME — ticket price detail",
+        "CHANGE ME — parking detail"
+      ],
+      "ctaText": "Get Discounted Tickets &rarr;"
+    },
+    "whyVisit": {
+      "heading": "Why Visit?",
+      "introText": "CHANGE ME — intro paragraph",
+      "cards": [
+        { "heading": "CHANGE ME", "text": "CHANGE ME" },
+        { "heading": "CHANGE ME", "text": "CHANGE ME" },
+        { "heading": "CHANGE ME", "text": "CHANGE ME" },
+        { "heading": "CHANGE ME", "text": "CHANGE ME" }
+      ]
+    },
+    "zones": {
+      "sectionLabel": "EXPLORE",
+      "heading": "CHANGE ME — Zones/Areas Heading",
+      "description": "CHANGE ME — zones description",
+      "viewAll": "View All Attractions &rarr;",
+      "items": []
+    },
+    "tickets": {
+      "sectionLabel": "TICKETS & PRICING",
+      "heading": "CHANGE ME — Tickets Heading",
+      "description": "CHANGE ME — tickets description",
+      "cards": [
+        {
+          "heading": "Gate Price",
+          "periodText": "per person · at the gate",
+          "features": ["CHANGE ME"],
+          "ctaText": "At the Gate"
+        },
+        {
+          "heading": "Online Price",
+          "periodText": "per person · book online",
+          "features": ["CHANGE ME"],
+          "ctaText": "Book Online &rarr;"
+        },
+        {
+          "heading": "All-Inclusive",
+          "periodText": "per person · best value",
+          "features": ["CHANGE ME"],
+          "ctaText": "Book All-Inclusive &rarr;"
+        }
+      ],
+      "footerNote": "CHANGE ME — pricing footer note"
+    },
+    "gettingThere": {
+      "sectionLabel": "GETTING THERE",
+      "heading": "CHANGE ME — Getting There Heading",
+      "description": "CHANGE ME — getting there description",
+      "cards": [
+        { "emoji": "🚗", "heading": "CHANGE ME", "text": "CHANGE ME" },
+        { "emoji": "🚌", "heading": "CHANGE ME", "text": "CHANGE ME" },
+        { "emoji": "🚕", "heading": "CHANGE ME", "text": "CHANGE ME" }
+      ],
+      "viewAll": "Full Transport Guide &rarr;"
+    },
+    "reviews": {
+      "sectionLabel": "VISITOR REVIEWS",
+      "heading": "What Visitors Say",
+      "description": "CHANGE ME — reviews description",
+      "testimonials": [
+        { "stars": "5 stars", "text": "CHANGE ME", "initials": "XX", "name": "CHANGE ME", "source": "Google Reviews" },
+        { "stars": "5 stars", "text": "CHANGE ME", "initials": "XX", "name": "CHANGE ME", "source": "Klook" },
+        { "stars": "4 stars", "text": "CHANGE ME", "initials": "XX", "name": "CHANGE ME", "source": "TripAdvisor" }
+      ]
+    },
+    "faq": {
+      "sectionLabel": "FAQ",
+      "heading": "Frequently Asked Questions",
+      "description": "CHANGE ME — FAQ description",
+      "viewAll": "View All 40+ FAQs &rarr;",
+      "items": [
+        { "question": "CHANGE ME?", "answer": "<p>CHANGE ME</p>" },
+        { "question": "CHANGE ME?", "answer": "<p>CHANGE ME</p>" },
+        { "question": "CHANGE ME?", "answer": "<p>CHANGE ME</p>" }
+      ]
+    },
+    "cta": {
+      "ctaTitle": "Ready to Visit?",
+      "ctaText": "CHANGE ME — CTA description",
+      "ctaButton": "Book Tickets Now &rarr;",
+      "ctaSubtext": "CHANGE ME — CTA subtext"
+    }
+  },
+  "attractions": {
+    "title": "CHANGE ME | All Attractions & Rides Guide",
+    "metaDescription": "CHANGE ME — attractions meta description",
+    "metaKeywords": "CHANGE ME",
+    "ogTitle": "CHANGE ME | Attractions Guide",
+    "ogDescription": "CHANGE ME",
+    "twitterTitle": "CHANGE ME | Attractions Guide",
+    "twitterDescription": "CHANGE ME",
+    "breadcrumbCurrent": "Attractions",
+    "schema": {
+      "name": "CHANGE ME",
+      "alternateName": [],
+      "description": "CHANGE ME",
+      "touristType": ["Families", "Couples", "Solo travelers"],
+      "containsPlace": []
+    }
+  },
+  "tickets": {
+    "title": "CHANGE ME | Ticket Prices & How to Book",
+    "metaDescription": "CHANGE ME — tickets meta description",
+    "metaKeywords": "CHANGE ME",
+    "ogTitle": "CHANGE ME | Tickets & Prices",
+    "ogDescription": "CHANGE ME",
+    "twitterTitle": "CHANGE ME | Tickets & Prices",
+    "twitterDescription": "CHANGE ME",
+    "schema": {
+      "breadcrumbCurrent": "Tickets"
+    },
+    "hero": {
+      "badge": "CHANGE ME — hero badge text",
+      "h1": "CHANGE ME — Tickets Page H1",
+      "h1Sub": "CHANGE ME — H1 subtitle span",
+      "sub": "CHANGE ME — hero subtitle paragraph",
+      "cta1": "Book Now &rarr;",
+      "cta2": "See All Options",
+      "stats": [
+        { "label": "Online price" },
+        { "label": "Gate price" },
+        { "label": "You save" }
+      ]
+    },
+    "priceGuide": {
+      "heading": "CHANGE ME — Full Price Guide Heading",
+      "description": "CHANGE ME — price guide description",
+      "button": "Read Our Price Guide &rarr;",
+      "blogSlug": "CHANGE-ME-ticket-prices.html"
+    },
+    "cta2": {
+      "heading": "Ready to Book?",
+      "text": "CHANGE ME — final CTA text",
+      "button": "Book Tickets Now &rarr;"
+    }
+  },
+  "gettingThere": {
+    "title": "CHANGE ME | How to Get There",
+    "metaDescription": "CHANGE ME — getting there meta description",
+    "metaKeywords": "CHANGE ME",
+    "ogTitle": "CHANGE ME | Getting There",
+    "ogDescription": "CHANGE ME",
+    "twitterTitle": "CHANGE ME | Getting There",
+    "twitterDescription": "CHANGE ME",
+    "breadcrumbCurrent": "Getting There",
+    "hero": {
+      "badge": "CHANGE ME — hero badge",
+      "h1": "CHANGE ME — Getting There H1",
+      "h1Sub": "CHANGE ME — H1 subtitle span",
+      "sub": "CHANGE ME — hero subtitle paragraph",
+      "cta1": "From Main City &darr;",
+      "cta2": "From Local Area &darr;",
+      "stats": [
+        { "number": "CHANGE ME", "label": "CHANGE ME" },
+        { "number": "CHANGE ME", "label": "CHANGE ME" },
+        { "number": "CHANGE ME", "label": "CHANGE ME" }
+      ]
+    },
+    "tldr": [
+      { "bold": "Easiest:", "text": "CHANGE ME" },
+      { "bold": "Cheapest:", "text": "CHANGE ME" },
+      { "bold": "From city:", "text": "CHANGE ME" }
+    ],
+    "location": {
+      "sectionLabel": "LOCATION",
+      "heading": "CHANGE ME — Location Heading",
+      "description": "CHANGE ME",
+      "gbp": {
+        "category": "CHANGE ME — category",
+        "details": [
+          "CHANGE ME — address",
+          "CHANGE ME — hours",
+          "CHANGE ME — phone",
+          "CHANGE ME — parking",
+          "CHANGE ME — shuttle info"
+        ],
+        "mapBtn": "Open in Google Maps"
+      },
+      "mapCaption": "CHANGE ME — map caption"
+    },
+    "fromBangkok": {
+      "sectionLabel": "FROM MAIN CITY",
+      "heading": "CHANGE ME — From Main City Heading",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "By Car", "content": "<p>CHANGE ME</p>" },
+        { "h3": "By Bus", "content": "<p>CHANGE ME</p>" },
+        { "h3": "By Van", "content": "<p>CHANGE ME</p>" },
+        { "h3": "By Taxi / Rideshare", "content": "<p>CHANGE ME</p>" }
+      ]
+    },
+    "fromAirports": {
+      "sectionLabel": "FROM AIRPORTS",
+      "heading": "CHANGE ME — From Airports Heading",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME — Airport 1", "content": "<p>CHANGE ME</p>" },
+        { "h3": "CHANGE ME — Airport 2", "content": "<p>CHANGE ME</p>" }
+      ]
+    },
+    "fromPattaya": {
+      "sectionLabel": "FROM LOCAL AREA",
+      "heading": "CHANGE ME — From Local Area Heading",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "price": "CHANGE ME", "description": "CHANGE ME" },
+        { "h3": "CHANGE ME", "price": "CHANGE ME", "description": "CHANGE ME" },
+        { "h3": "CHANGE ME", "price": "CHANGE ME", "description": "CHANGE ME" }
+      ]
+    },
+    "transportTips": {
+      "sectionLabel": "PRO TIPS",
+      "heading": "CHANGE ME — Transport Tips Heading",
+      "description": "CHANGE ME",
+      "recommendedHeading": "Our Recommended Option",
+      "recommendedList": "<ul><li>CHANGE ME</li><li>CHANGE ME</li></ul>",
+      "bookingBtn": "Book Now &rarr;",
+      "priceHighlight": {
+        "price": "CHANGE ME",
+        "label": "CHANGE ME — price label",
+        "checkmarks": ["✓ CHANGE ME", "✓ CHANGE ME", "✓ CHANGE ME"]
+      }
+    },
+    "parking": {
+      "sectionLabel": "PARKING",
+      "heading": "CHANGE ME — Parking Heading",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" }
+      ]
+    },
+    "comparison": {
+      "sectionLabel": "COMPARE",
+      "heading": "CHANGE ME — Transport Comparison Heading",
+      "description": "CHANGE ME",
+      "headers": ["Transport", "Journey Time", "Cost", "Convenience", "Best For"],
+      "rows": [
+        { "transport": "CHANGE ME", "time": "CHANGE ME", "cost": "CHANGE ME", "convenience": "★★★★★", "bestFor": "CHANGE ME" },
+        { "transport": "CHANGE ME", "time": "CHANGE ME", "cost": "CHANGE ME", "convenience": "★★★☆☆", "bestFor": "CHANGE ME" }
+      ]
+    },
+    "tips": {
+      "sectionLabel": "TIPS",
+      "heading": "CHANGE ME — Getting There Tips Heading",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" },
+        { "h3": "CHANGE ME", "text": "CHANGE ME" }
+      ],
+      "ctaText": "CHANGE ME — tips CTA text",
+      "cta": "See All Visitor Tips &rarr;"
+    },
+    "cta": {
+      "heading": "Ready to Plan Your Trip?",
+      "text": "CHANGE ME — CTA text",
+      "btn1": "Book Tickets Now &rarr;",
+      "btn2": "Read Full Transport Guide",
+      "btn2Slug": "CHANGE-ME-how-to-get-there.html",
+      "subtext": "CHANGE ME — CTA subtext"
+    },
+    "schema": {
+      "howTo": {
+        "name": "CHANGE ME — HowTo schema name",
+        "description": "CHANGE ME",
+        "steps": [
+          { "name": "CHANGE ME", "text": "CHANGE ME" },
+          { "name": "CHANGE ME", "text": "CHANGE ME" },
+          { "name": "CHANGE ME", "text": "CHANGE ME" }
+        ]
+      },
+      "faqItems": [
+        { "question": "CHANGE ME?", "answer": "<p>CHANGE ME</p>" },
+        { "question": "CHANGE ME?", "answer": "<p>CHANGE ME</p>" }
+      ]
+    }
+  },
+  "tips": {
+    "title": "CHANGE ME | Insider Tips & Tricks",
+    "metaDescription": "CHANGE ME — tips meta description",
+    "metaKeywords": "CHANGE ME",
+    "ogTitle": "CHANGE ME | Insider Tips",
+    "ogDescription": "CHANGE ME",
+    "twitterTitle": "CHANGE ME | Insider Tips",
+    "twitterDescription": "CHANGE ME",
+    "breadcrumbCurrent": "Visitor Tips",
+    "h1": "CHANGE ME — Tips Page H1",
+    "h1Span": "CHANGE ME — H1 subtitle span",
+    "heroSub": "CHANGE ME — hero subtitle paragraph",
+    "tldr": [
+      { "strong": "Tip:", "text": "CHANGE ME" },
+      { "strong": "Must-bring:", "text": "CHANGE ME" },
+      { "strong": "Best time:", "text": "CHANGE ME" }
+    ],
+    "toc": {
+      "heading": "Jump to a Section",
+      "items": [
+        "Before You Go",
+        "What to Bring",
+        "What NOT to Bring",
+        "Dress Code",
+        "Best Time to Visit",
+        "Money-Saving Tips",
+        "Food Guide",
+        "Best Order to Explore",
+        "For Families with Kids",
+        "Rainy Day Tips",
+        "Photo Tips",
+        "Premium Options",
+        "Safety Tips",
+        "After Your Visit"
+      ]
+    },
+    "tip1": {
+      "sectionLabel": "PREPARATION",
+      "h2": "CHANGE ME — Before You Go",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip2": {
+      "sectionLabel": "PACKING",
+      "h2": "CHANGE ME — What to Bring",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip3": {
+      "sectionLabel": "RULES",
+      "h2": "CHANGE ME — What NOT to Bring",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip4": {
+      "sectionLabel": "DRESS CODE",
+      "h2": "CHANGE ME — Dress Code",
+      "description": "CHANGE ME",
+      "content": "<p>CHANGE ME — dress code content HTML</p>"
+    },
+    "tip5": {
+      "sectionLabel": "PLANNING",
+      "h2": "CHANGE ME — Best Time to Visit",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip6": {
+      "sectionLabel": "SAVINGS",
+      "h2": "CHANGE ME — Money-Saving Tips",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ],
+      "ticketsLink": "See All Ticket Options &rarr;"
+    },
+    "tip7": {
+      "sectionLabel": "DINING",
+      "h2": "CHANGE ME — Food & Dining Guide",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ],
+      "reminder": "<strong>Note:</strong> CHANGE ME — food reminder"
+    },
+    "tip8": {
+      "sectionLabel": "STRATEGY",
+      "h2": "CHANGE ME — Best Order to Explore",
+      "description": "CHANGE ME",
+      "content": "<ol><li>CHANGE ME</li><li>CHANGE ME</li><li>CHANGE ME</li></ol>"
+    },
+    "tip9": {
+      "sectionLabel": "FAMILIES",
+      "h2": "CHANGE ME — For Families with Kids",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ],
+      "blogLink": "Read Our Family Guide &rarr;",
+      "blogSlug": "CHANGE-ME-with-kids.html"
+    },
+    "tip10": {
+      "sectionLabel": "WEATHER",
+      "h2": "CHANGE ME — Rainy Day Tips",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip11": {
+      "sectionLabel": "PHOTOGRAPHY",
+      "h2": "CHANGE ME — Photo Tips",
+      "description": "CHANGE ME",
+      "content": "<div class=\"info-card\"><h3>CHANGE ME</h3><p>CHANGE ME</p></div>",
+      "proTip": "<strong>Pro tip:</strong> CHANGE ME"
+    },
+    "tip12": {
+      "sectionLabel": "UPGRADES",
+      "h2": "CHANGE ME — Premium Options",
+      "description": "CHANGE ME",
+      "content": "<div class=\"info-card\"><h3>CHANGE ME</h3><p>CHANGE ME</p></div>",
+      "verdict": "<strong>Verdict:</strong> CHANGE ME"
+    },
+    "tip13": {
+      "sectionLabel": "SAFETY",
+      "h2": "CHANGE ME — Safety Tips",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip14": {
+      "sectionLabel": "AFTERWARDS",
+      "h2": "CHANGE ME — After Your Visit",
+      "description": "CHANGE ME",
+      "cards": [
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" },
+        { "h3": "CHANGE ME", "p": "CHANGE ME" }
+      ]
+    },
+    "tip15": {
+      "sectionLabel": "QUICK TIPS",
+      "h2": "CHANGE ME — Quick Reference Tips",
+      "description": "CHANGE ME",
+      "content": "<ul><li>CHANGE ME</li><li>CHANGE ME</li><li>CHANGE ME</li></ul>"
+    },
+    "internalLinks": {
+      "sectionLabel": "EXPLORE MORE",
+      "heading": "Explore More",
+      "cards": [
+        { "h3": "Attractions & Rides", "p": "CHANGE ME" },
+        { "h3": "Tickets & Prices", "p": "CHANGE ME" },
+        { "h3": "Getting There", "p": "CHANGE ME" },
+        { "h3": "FAQ", "p": "CHANGE ME" }
+      ]
+    },
+    "cta": {
+      "heading": "Ready to Visit?",
+      "text": "CHANGE ME — CTA text",
+      "button": "Book Tickets Now &rarr;",
+      "subtext": "CHANGE ME — CTA subtext"
+    }
+  },
+  "faq": {
+    "title": "CHANGE ME | FAQ",
+    "metaDescription": "CHANGE ME — FAQ meta description",
+    "metaKeywords": "CHANGE ME",
+    "ogTitle": "CHANGE ME | FAQ",
+    "ogDescription": "CHANGE ME",
+    "twitterTitle": "CHANGE ME | FAQ",
+    "twitterDescription": "CHANGE ME",
+    "breadcrumbHome": "Home",
+    "breadcrumbCurrent": "FAQ",
+    "heroTitle": "Frequently Asked Questions",
+    "heroSubtitle": "CHANGE ME",
+    "heroText": "CHANGE ME — FAQ hero text",
+    "jumpTitle": "Jump to a Category",
+    "jumpLabels": {},
+    "categories": []
+  },
+  "blog": {
+    "index": {
+      "title": "CHANGE ME | Blog & Travel Guides",
+      "metaDescription": "CHANGE ME — blog index meta description",
+      "metaKeywords": "CHANGE ME",
+      "ogTitle": "CHANGE ME | Blog",
+      "ogDescription": "CHANGE ME",
+      "twitterTitle": "CHANGE ME | Blog",
+      "twitterDescription": "CHANGE ME",
+      "heroTitle": "Blog & Travel Guides",
+      "heroSubtitle": "CHANGE ME",
+      "breadcrumbHome": "Home",
+      "breadcrumbCurrent": "Blog",
+      "cards": []
+    },
+    "posts": {}
+  }
+}

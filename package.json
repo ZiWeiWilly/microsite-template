@@ -1,0 +1,24 @@
+{
+  "name": "klook-landing-page",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Klook affiliate landing page — built from template",
+  "scripts": {
+    "setup": "node scripts/setup.js",
+    "build": "node src/build.js",
+    "build:faq": "node src/build.js --page faq",
+    "scrape": "node scripts/scrape-klook.js",
+    "rates": "node scripts/fetch-rates.js",
+    "update": "node scripts/update-site.js",
+    "all": "npm run scrape && npm run rates && npm run update",
+    "generate-blog": "node scripts/generate-blog.js",
+    "generate-blog:dry": "node scripts/generate-blog.js --dry-run"
+  },
+  "dependencies": {
+    "nunjucks": "^3.2.4",
+    "openai": "^4.96.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.3.1"
+  }
+}

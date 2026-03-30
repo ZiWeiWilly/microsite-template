@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="{{ lang.code }}">
+<head>
+{% include "partials/head-common.njk" %}
+
+  {% block seo %}{% endblock %}
+
+{% include "partials/hreflang.njk" %}
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ site.baseUrl }}/{{ lang.prefix }}{{ '' if page.slug == 'index.html' else page.slug }}">
+  {% block og %}{% endblock %}
+  <meta property="og:image" content="{{ site.baseUrl }}/images/{{ ogImage | default('og-home.jpg') }}">
+  <meta property="og:site_name" content="{{ site.siteName }}">
+  <meta property="og:locale" content="{{ lang.ogLocale }}">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  {% block twitter %}{% endblock %}
+  <meta name="twitter:image" content="{{ site.baseUrl }}/images/{{ ogImage | default('og-home.jpg') }}">
+
+  <!-- Geo & Language -->
+  <meta name="geo.region" content="{{ site.geo.region }}">
+  <meta name="geo.placename" content="{{ site.address.locality }}">
+  <meta name="geo.position" content="{{ site.geo.position }}">
+  <meta name="ICBM" content="{{ site.geo.ICBM }}">
+  <meta name="language" content="{{ lang.metaLanguage }}">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/images/logo-icon.svg">
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css?v=2">
+
+  {% block schema %}{% endblock %}
+</head>
+<body>
+  <a href="#main-content" class="skip-link">{{ t.skipLink }}</a>
+
+{% include "partials/topbar.njk" %}
+
+{% include "partials/announcement.njk" %}
+
+{% include "partials/navbar.njk" %}
+
+  {% block hero %}{% endblock %}
+
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+{% include "partials/footer.njk" %}
+
+{% include "partials/sticky-bar.njk" %}
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

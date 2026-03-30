@@ -1,0 +1,62 @@
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo footer-logo" style="margin-bottom: 0.5rem;">
+            <img src="/images/logo-light.png" alt="{{ site.siteName }}" class="logo-img" width="180" height="30">
+          </div>
+          <p>{{ t.footer.brandDescription }}</p>
+        </div>
+
+        <div>
+          <h4>{{ t.footer.quickLinksHeading }}</h4>
+          <ul class="footer-links">
+{%- for linkLabel in t.footer.quickLinks %}
+{%- set p = site.pages[loop.index0 + 1] %}
+            <li><a href="/{{ lang.prefix }}{{ p.slug if p else '' }}">{{ linkLabel }}</a></li>
+{%- endfor %}
+          </ul>
+        </div>
+
+        <div class="mobile-hide">
+          <h4>{{ t.footer.guidesHeading }}</h4>
+          <ul class="footer-links">
+{%- for label in t.footer.guideLabels %}
+            <li><a href="/{{ lang.prefix }}blog/{{ footerGuidesSlugs[loop.index0] }}">{{ label }}</a></li>
+{%- endfor %}
+          </ul>
+        </div>
+
+        <div>
+          <h4>{{ t.footer.parkInfoHeading }}</h4>
+          <ul class="footer-links">
+            <li><a href="tel:{{ site.phoneTel }}">{{ site.phone }}</a></li>
+            <li><a href="{{ site.mapsUrl }}" rel="noopener" target="_blank">{{ t.footer.mapsLinkText }}</a></li>
+{%- for item in t.footer.hoursItems %}
+            <li>{{ item }}</li>
+{%- endfor %}
+          </ul>
+        </div>
+      </div>
+{% if t.footer.affiliate or t.footer.disclaimer %}
+      <!-- Affiliate Disclosure & Legal Disclaimer -->
+      <div class="footer-disclaimer">
+{%- if t.footer.affiliate %}
+        <p><strong>Affiliate Disclosure:</strong> {{ t.footer.affiliate }}</p>
+{%- endif %}
+{%- if t.footer.disclaimer %}
+        <p><strong>Disclaimer:</strong> {{ t.footer.disclaimer }}</p>
+{%- endif %}
+      </div>
+{% endif %}
+      <div class="footer-bottom">
+        <p>{{ t.footer.copyright }}</p>
+        <div class="footer-social">
+          <a href="{{ site.social.facebook }}" rel="noopener" target="_blank" aria-label="Facebook">FB</a>
+          <a href="{{ site.social.instagram }}" rel="noopener" target="_blank" aria-label="Instagram">IG</a>
+          <a href="{{ site.social.tiktok }}" rel="noopener" target="_blank" aria-label="TikTok">TT</a>
+        </div>
+      </div>
+    </div>
+  </footer>

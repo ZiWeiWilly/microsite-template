@@ -1,0 +1,6 @@
+  <!-- Hreflang tags for multi-language SEO -->
+{%- set pageSlug = "" if page.slug == "index.html" else page.slug %}
+{%- for altLang in site.languages %}
+  <link rel="alternate" hreflang="{{ altLang.hreflang }}" href="{{ site.baseUrl }}/{{ altLang.prefix }}{{ pageSlug }}">
+{%- endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ site.baseUrl }}/{{ pageSlug }}">

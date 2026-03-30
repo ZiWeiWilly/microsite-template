@@ -1,0 +1,118 @@
+{% extends "base.njk" %}
+
+{% set ogImage = "og-blog.jpg" %}
+{% set activePage = "blog" %}
+
+{% block seo %}
+  <title>{{ t.blog.index.title }}</title>
+  <meta name="description" content="{{ t.blog.index.metaDescription }}">
+  <meta name="keywords" content="{{ t.blog.index.metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}blog/">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:title" content="{{ t.blog.index.ogTitle }}">
+  <meta property="og:description" content="{{ t.blog.index.ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.blog.index.twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.blog.index.twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "{{ t.nav.home }}", "item": "{{ site.baseUrl }}/{{ lang.prefix }}" },
+      { "@type": "ListItem", "position": 2, "name": "{{ t.blog.index.breadcrumbName }}", "item": "{{ site.baseUrl }}/{{ lang.prefix }}blog/" }
+    ]
+  }
+  </script>
+
+  <!-- Schema.org - CollectionPage -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "{{ t.blog.index.h1 }}",
+    "description": "{{ t.blog.index.metaDescription }}",
+    "url": "{{ site.baseUrl }}/{{ lang.prefix }}blog/",
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "{{ site.siteName }}",
+      "url": "{{ site.baseUrl }}"
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": [
+{% for card in blogIndexData.cards %}
+        {"@type": "ListItem", "position": {{ loop.index }}, "url": "{{ site.baseUrl }}/{{ lang.prefix }}blog/{{ card.slug }}.html", "name": "{{ t.blog.index.cards[loop.index0].title }}"}{% if not loop.last %},{% endif %}
+
+{% endfor %}
+      ]
+    }
+  }
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <!-- Blog breadcrumb -->
+  <div class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <a href="/{{ lang.prefix }}">{{ t.nav.home }}</a> &rsaquo;
+      <span>{{ t.blog.index.breadcrumbName }}</span>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+      <header class="article-header" style="text-align: center; margin-bottom: 3rem;">
+        <h1>{{ t.blog.index.h1 }}</h1>
+        <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 640px; margin: 0 auto;">{{ t.blog.index.h1Sub }}</p>
+      </header>
+
+      <!-- Blog Overview -->
+      <section class="info-card" style="max-width: 800px; margin: 0 auto 3rem; padding: 2rem;">
+        {{ t.blog.index.overview | safe }}
+      </section>
+
+      <!-- Blog Cards Grid -->
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+{% for card in t.blog.index.cards %}
+  {% set staticCard = null %}
+  {% for sc in blogIndexData.cards %}
+    {% if sc.slug == card.slug %}
+      {% set staticCard = sc %}
+    {% endif %}
+  {% endfor %}
+        <article class="blog-card info-card" style="display: flex; flex-direction: column;">
+          <div style="margin-bottom: 0.5rem;">
+            <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary); font-weight: 600;">{{ card.category }}</span>
+          </div>
+          <h2 style="font-size: 1.25rem; margin-bottom: 0.75rem; line-height: 1.3;">
+            <a href="/{{ lang.prefix }}blog/{{ card.slug }}.html" style="color: inherit; text-decoration: none;">{{ card.title }}</a>
+          </h2>
+          <p style="flex: 1;">{{ card.description }}</p>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+            <time datetime="{{ staticCard.date }}">{{ staticCard.date }}</time>
+            <span>{{ staticCard.readTime }}</span>
+          </div>
+        </article>
+{% endfor %}
+      </div>
+
+      <!-- CTA -->
+      <div class="info-card" style="text-align: center; background: var(--surface); border: 2px solid var(--primary); margin-bottom: 3rem;">
+        <h2>{{ t.blog.index.cta.h2 }}</h2>
+        <p>{{ t.blog.index.cta.text }}</p>
+        <a href="/{{ lang.prefix }}tickets.html" class="btn btn-primary" data-booking>{{ t.blog.index.cta.button }}</a>
+      </div>
+
+    </div>
+{% endblock %}

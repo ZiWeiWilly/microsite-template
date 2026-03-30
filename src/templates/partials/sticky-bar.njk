@@ -1,0 +1,14 @@
+  <!-- Sticky Booking Bar -->
+  <div class="sticky-bar" role="complementary" aria-label="{{ t.stickyBar.ariaLabel }}">
+    <div class="container sticky-bar-inner">
+      <div class="sticky-bar-info">
+        <div>
+          <div class="sticky-bar-price" data-price-thb="{{ stickyPrice }}" data-price-original-thb="{{ stickyOriginalPrice }}">
+            THB {{ stickyPriceFormatted }} <small>THB {{ stickyOriginalPriceFormatted }}</small>
+          </div>
+          <div class="text-sm text-muted">{{ t.stickyBar.subText }}</div>
+        </div>
+      </div>
+      <a href="#" class="btn btn-primary" data-booking>{{ t.stickyBar.bookNow }}</a>
+    </div>
+  </div>

@@ -1,0 +1,519 @@
+{% extends "base.njk" %}
+
+{% set ogImage = "og-home.jpg" %}
+{% set activePage = "home" %}
+
+{% block seo %}
+  <!-- Primary SEO Meta -->
+  <title>{{ t.home.title }}</title>
+  <meta name="description" content="{{ t.home.metaDescription }}">
+  <meta name="keywords" content="{{ t.home.metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:title" content="{{ t.home.ogTitle }}">
+  <meta property="og:description" content="{{ t.home.ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.home.twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.home.twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "{{ site.schemaType }}",
+    "name": "{{ site.attractionName }}",
+    "alternateName": {{ site.alternateNames | dump | safe }},
+    "description": "{{ t.home.schemaDescription }}",
+    "url": "{{ site.officialUrl }}",
+    "telephone": "{{ site.phoneTel }}",
+    "email": "{{ site.contactEmail }}",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "{{ site.address.street }}",
+      "addressLocality": "{{ site.address.locality }}",
+      "addressRegion": "{{ site.address.region }}",
+      "postalCode": "{{ site.address.postalCode }}",
+      "addressCountry": "{{ site.address.country }}"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": {{ site.geo.latitude }},
+      "longitude": {{ site.geo.longitude }}
+    },
+    "openingHoursSpecification": [
+{% for hours in site.openingHours %}
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": {{ hours.dayOfWeek | dump | safe }},
+        "opens": "{{ hours.opens }}",
+        "closes": "{{ hours.closes }}"
+      }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+    ],
+    "priceRange": "THB {{ stickyPriceFormatted }} - THB {{ stickyOriginalPriceFormatted }}",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "{{ site.rating.value }}",
+      "reviewCount": "{{ site.rating.count }}",
+      "bestRating": "{{ site.rating.best }}"
+    },
+    "image": "{{ site.baseUrl }}/images/og-home.jpg",
+    "sameAs": [
+      "{{ site.social.facebook }}",
+      "{{ site.social.instagram }}",
+      "{{ site.social.tiktok }}"
+    ],
+    "hasMap": "{{ site.mapsUrl }}",
+    "amenityFeature": [
+{% for amenity in site.amenities %}
+      {"@type": "LocationFeatureSpecification", "name": "{{ amenity }}", "value": true}{% if not loop.last %},{% endif %}
+
+{% endfor %}
+    ]
+  }
+  </script>
+
+  <!-- Schema.org - TouristAttraction -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    "name": "{{ site.attractionName }}",
+    "description": "{{ t.home.schemaDescription }}",
+    "url": "{{ site.baseUrl }}/{{ lang.prefix }}",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "{{ site.address.street }}",
+      "addressLocality": "{{ site.address.locality }}",
+      "addressRegion": "{{ site.address.region }}",
+      "postalCode": "{{ site.address.postalCode }}",
+      "addressCountry": "{{ site.address.country }}"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": {{ site.geo.latitude }},
+      "longitude": {{ site.geo.longitude }}
+    },
+    "openingHours": "{{ site.openingHoursText }}",
+    "priceRange": "THB {{ stickyPriceFormatted }}-{{ stickyOriginalPriceFormatted }}",
+    "telephone": "{{ site.phoneTel }}",
+    "image": "{{ site.baseUrl }}/images/og-home.jpg",
+    "sameAs": []
+  }
+  </script>
+
+  <!-- Schema.org - FAQPage -->
+  <script type="application/ld+json">
+  {{ schemaHomeFaq | dump | safe }}
+  </script>
+
+  <!-- Schema.org - WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{ site.siteName }}",
+    "url": "{{ site.baseUrl }}",
+    "description": "{{ t.home.schemaDescription }}",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{{ site.baseUrl }}/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}"
+      }
+    ]
+  }
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <!-- Hero Section -->
+  <section class="hero" role="banner">
+    <div class="container hero-content">
+      <h1>
+        <span class="hero-pretitle">{{ t.home.heroPreTitle }}</span>
+        {{ t.home.heroTitle }}
+        <span class="hero-subtitle">{{ t.home.heroSubtitle }}</span>
+      </h1>
+      <div class="hero-cta-group">
+        <a href="#" class="btn btn-primary btn-lg btn-pulse" data-booking>
+          {{ t.home.heroCta }}
+        </a>
+      </div>
+    </div>
+{% include "partials/wave-divider.njk" %}
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="stats-bar" aria-label="Park Highlights">
+    <div class="container">
+      <div class="hero-stats">
+{% for stat in t.home.stats %}
+        <div class="hero-stat">
+          <span class="hero-stat-number">{{ stat.number }}</span>
+          <span class="hero-stat-label">{{ stat.label }}</span>
+        </div>
+{% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+
+    <!-- TL;DR Section -->
+    <section class="section-sm" aria-label="Quick Summary">
+      <div class="container">
+        <div class="tldr-box">
+          <ul>
+{% for item in t.home.tldr %}
+            <li><strong>{{ item.bold }}</strong> {{ item.text | safe }}</li>
+{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- GBP Info Card + Quick Facts -->
+    <section class="section" id="info" aria-label="Park Information">
+      <div class="container">
+        <div class="two-col-grid">
+
+          <!-- GBP Card -->
+          <div class="gbp-card fade-in">
+            <div class="gbp-header">
+              <div class="gbp-avatar" aria-hidden="true">{{ site.initials }}</div>
+              <div>
+                <div class="gbp-name">{{ site.attractionName }}</div>
+                <div class="gbp-category">{{ t.home.gbp.category }}</div>
+                <div class="gbp-rating">
+                  <span class="stars" aria-label="{{ t.home.gbp.ratingAriaLabel }}">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+                  <span class="gbp-rating-text">{{ t.home.gbp.ratingText | safe }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="gbp-details">
+{% for detail in t.home.gbp.details %}
+              <div class="gbp-detail">
+                <span class="gbp-detail-icon" aria-hidden="true">{{ homeData.gbpIcons[loop.index0] }}</span>
+                <div>
+                  {{ detail | safe }}
+                </div>
+              </div>
+{% endfor %}
+            </div>
+            <div style="margin-top: 1.5rem;">
+              <a href="#" class="btn btn-primary btn-block" data-booking>{{ t.home.gbp.ctaText }}</a>
+            </div>
+          </div>
+
+          <!-- Quick Facts -->
+          <div class="fade-in">
+            <h2>{{ t.home.whyVisit.heading }}</h2>
+            <p class="mobile-hide" style="margin-top: 1rem;">{{ t.home.whyVisit.introText | safe }}</p>
+
+            <div class="info-grid mt-3">
+{% for card in t.home.whyVisit.cards %}
+              <div class="info-card">
+                <div class="info-icon" aria-hidden="true">{{ homeData.whyVisitIcons[loop.index0] }}</div>
+                <h3>{{ card.heading }}</h3>
+                <p>{{ card.text }}</p>
+              </div>
+{% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Themed Zones -->
+    <section class="section section-gray" id="zones" aria-label="Themed Zones">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.zones.sectionLabel }}</span>
+          <h2>{{ t.home.zones.heading }}</h2>
+          <p>{{ t.home.zones.description }}</p>
+        </div>
+
+        <div class="zones-grid">
+{% for zone in t.home.zones.items %}
+
+          <!-- {{ zone.name }} -->
+          <article class="zone-card fade-in">
+            <div class="zone-card-image">
+              <div class="zone-gradient {{ zone.cssClass }}">
+                <span class="zone-tag">{{ zone.tag }}</span>
+              </div>
+            </div>
+            <div class="zone-card-body">
+              <h3>{{ zone.name }}</h3>
+              <p>{{ zone.description | safe }}</p>
+              <div class="zone-highlights">
+{% for h in zone.highlights %}
+                <span class="zone-highlight">{{ h.emoji }} {{ h.label }}</span>
+{% endfor %}
+              </div>
+            </div>
+          </article>
+{% endfor %}
+
+        </div>
+
+        <div class="text-center" style="margin-top: 2rem;">
+          <a href="/{{ lang.prefix }}attractions.html" class="btn btn-primary">{{ t.home.zones.viewAll }}</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tickets Preview -->
+    <section class="section" id="tickets" aria-label="Ticket Prices">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.tickets.sectionLabel }}</span>
+          <h2>{{ t.home.tickets.heading }}</h2>
+          <p>{{ t.home.tickets.description }}</p>
+        </div>
+
+        <div class="pricing-cards fade-in">
+{% for card in t.home.tickets.cards %}
+
+          <div class="pricing-card{{ ' featured' if loop.index0 == 1 }}">
+            <h3>{{ card.heading }}</h3>
+            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-price-thb="{{ homeData.ticketPrices[loop.index0] }}">
+              <span class="pricing-currency">THB</span>{{ homeData.ticketPricesFormatted[loop.index0] }}
+            </div>
+            <div class="pricing-period" data-price-note="{{ homeData.ticketPriceNotes[loop.index0] }}">{{ card.periodText }}</div>
+            <div class="pricing-features">
+{% for feature in card.features %}
+              <li>{{ feature }}</li>
+{% endfor %}
+            </div>
+{% if loop.index0 == 0 %}
+            <span class="btn btn-sm" style="background: var(--gray-200); color: var(--dark-500); cursor: default;">{{ card.ctaText }}</span>
+{% else %}
+            <a href="#" class="btn btn-primary btn-block{{ ' btn-pulse' if loop.index0 == 1 }}" data-booking>{{ card.ctaText }}</a>
+{% endif %}
+          </div>
+{% endfor %}
+
+        </div>
+
+        <p class="text-center text-sm text-muted" style="margin-top: 1.5rem;">
+          {{ t.home.tickets.footerNote | safe }}
+        </p>
+      </div>
+    </section>
+
+    <!-- How to Get There - Preview -->
+    <section class="section section-gray" aria-label="Getting There">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.gettingThere.sectionLabel }}</span>
+          <h2>{{ t.home.gettingThere.heading }}</h2>
+          <p>{{ t.home.gettingThere.description }}</p>
+        </div>
+
+        <div class="info-grid fade-in">
+{% for card in t.home.gettingThere.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
+            <h3>{{ card.heading }}</h3>
+            <p>{{ card.text | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+
+        <div class="text-center" style="margin-top: 2rem;">
+          <a href="/{{ lang.prefix }}getting-there.html" class="btn btn-primary">{{ t.home.gettingThere.viewAll }}</a>
+        </div>
+      </div>
+    </section>
+
+{% if t.home.comparison %}
+    <!-- Comparison Table -->
+    <section class="section mobile-hide" aria-label="Water Park Comparison">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.comparison.sectionLabel }}</span>
+          <h2>{{ t.home.comparison.heading }}</h2>
+          <p>{{ t.home.comparison.description }}</p>
+        </div>
+
+        <div class="table-wrapper fade-in" style="max-width: 900px; margin: 0 auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>{{ t.home.comparison.headers[0] }}</th>
+                <th style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white;">{{ t.home.comparison.headers[1] }}</th>
+                <th>{{ t.home.comparison.headers[2] }}</th>
+              </tr>
+            </thead>
+            <tbody>
+{% for row in t.home.comparison.rows %}
+              <tr>
+                <td><strong>{{ row.feature }}</strong></td>
+                <td>{{ row.col1 }}</td>
+                <td>{{ row.col2 }}</td>
+              </tr>
+{% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <p class="text-center" style="margin-top: 1.5rem;">
+          <a href="/{{ lang.prefix }}blog/{{ t.home.comparison.blogSlug }}" class="text-primary font-bold">{{ t.home.comparison.compareLink }}</a>
+        </p>
+      </div>
+    </section>
+{% endif %}
+
+    <!-- Visitor Reviews / Testimonials -->
+    <section class="section section-gray" aria-label="Visitor Reviews">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.reviews.sectionLabel }}</span>
+          <h2>{{ t.home.reviews.heading }}</h2>
+          <p>{{ t.home.reviews.description }}</p>
+        </div>
+
+        <div class="testimonials-grid fade-in">
+{% for review in t.home.reviews.testimonials %}
+          <div class="testimonial-card">
+            <div class="testimonial-stars" aria-label="{{ review.stars }}">&#9733;&#9733;&#9733;&#9733;{% if '4' in review.stars and '5' not in review.stars %}&#9734;{% else %}&#9733;{% endif %}</div>
+            <p class="testimonial-text">{{ review.text | safe }}</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">{{ review.initials }}</div>
+              <div>
+                <div class="testimonial-name">{{ review.name }}</div>
+                <div class="testimonial-source">{{ review.source }}</div>
+              </div>
+            </div>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+{% if t.home.blog %}
+    <!-- Blog Preview -->
+    <section class="section mobile-hide" aria-label="Travel Guides">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.blog.sectionLabel }}</span>
+          <h2>{{ t.home.blog.heading }}</h2>
+          <p>{{ t.home.blog.description }}</p>
+        </div>
+
+        <div class="blog-grid fade-in">
+{% for card in t.home.blog.cards %}
+          <article class="blog-card">
+            <div class="blog-card-image" style="{{ homeData.blogGradients[loop.index0] }}"></div>
+            <div class="blog-card-body">
+              <div class="blog-card-meta">
+                <span class="blog-tag">{{ card.tag }}</span>
+                <span>{{ card.readTime }}</span>
+              </div>
+              <h3><a href="/{{ lang.prefix }}{{ homeData.blogSlugs[loop.index0] }}">{{ card.title }}</a></h3>
+              <p>{{ card.description | safe }}</p>
+            </div>
+          </article>
+{% endfor %}
+        </div>
+
+        <div class="text-center" style="margin-top: 1.5rem;">
+          <a href="/{{ lang.prefix }}blog/" class="btn btn-primary">{{ t.home.blog.viewAll }}</a>
+        </div>
+      </div>
+    </section>
+{% endif %}
+
+    <!-- FAQ Section -->
+    <section class="section section-gray" id="faq" aria-label="Frequently Asked Questions">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.faq.sectionLabel }}</span>
+          <h2>{{ t.home.faq.heading }}</h2>
+          <p>{{ t.home.faq.description }}</p>
+        </div>
+
+        <div class="faq-list fade-in">
+{% for item in t.home.faq.items %}
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              <span>{{ item.question }}</span>
+              {% include "partials/faq-icon.njk" %}
+            </button>
+            <div class="faq-answer" role="region">
+              <div class="faq-answer-inner">
+                {{ item.answer | safe }}
+              </div>
+            </div>
+          </div>
+{% endfor %}
+
+        </div>
+
+        <div class="text-center" style="margin-top: 2rem;">
+          <a href="/{{ lang.prefix }}faq.html" class="btn btn-primary">{{ t.home.faq.viewAll }}</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="section" aria-label="Book Now">
+      <div class="container">
+        <div class="cta-banner fade-in">
+          <h2>{{ t.home.cta.ctaTitle }}</h2>
+          <p>{{ t.home.cta.ctaText }}</p>
+          <a href="#" class="btn btn-white btn-lg" data-booking>{{ t.home.cta.ctaButton }}</a>
+          <p class="text-sm" style="margin-top: 1rem; opacity: 0.8;">{{ t.home.cta.ctaSubtext | safe }}</p>
+        </div>
+      </div>
+    </section>
+
+{% if t.home.nearby %}
+    <!-- Nearby Attractions (for local SEO) -->
+    <section class="section section-gray mobile-hide" aria-label="Nearby Attractions">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.home.nearby.sectionLabel }}</span>
+          <h2>{{ t.home.nearby.heading }}</h2>
+          <p>{{ t.home.nearby.description }}</p>
+        </div>
+
+        <div class="info-grid fade-in">
+{% for card in t.home.nearby.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
+            <h3>{{ card.heading }}</h3>
+            <p>{{ card.text }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,431 @@
+{% extends "base.njk" %}
+
+{% set ogImage = "og-getting-there.jpg" %}
+{% set activePage = "gettingThere" %}
+
+{% block seo %}
+  <!-- Primary SEO Meta -->
+  <title>{{ t.gettingThere.title }}</title>
+  <meta name="description" content="{{ t.gettingThere.metaDescription }}">
+  <meta name="keywords" content="{{ t.gettingThere.metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ t.gettingThere.ogTitle }}">
+  <meta property="og:description" content="{{ t.gettingThere.ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.gettingThere.twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.gettingThere.twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "{{ t.nav.home }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ t.gettingThere.breadcrumbCurrent }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Schema.org - FAQPage -->
+  <script type="application/ld+json">
+  {{ schemaGettingThereFaq | dump | safe }}
+  </script>
+
+  <!-- Schema.org - HowTo -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "{{ t.gettingThere.schema.howTo.name }}",
+    "description": "{{ t.gettingThere.schema.howTo.description }}",
+    "totalTime": "PT2H",
+    "estimatedCost": {
+      "@type": "MonetaryAmount",
+      "currency": "THB",
+      "value": "108-1500"
+    },
+    "step": [
+{% for step in t.gettingThere.schema.howTo.steps %}
+      {
+        "@type": "HowToStep",
+        "position": {{ loop.index }},
+        "name": "{{ step.name }}",
+        "text": "{{ step.text }}"
+      }{% if not loop.last %},{% endif %}
+
+{% endfor %}
+    ]
+  }
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <!-- Hero Section -->
+  <section class="hero" role="banner">
+    <div class="container hero-content">
+      <div class="hero-badge">
+        <span aria-hidden="true">📍</span>
+        {{ t.gettingThere.hero.badge }}
+      </div>
+      <h1>
+        {{ t.gettingThere.hero.h1 }}
+        <span>{{ t.gettingThere.hero.h1Sub }}</span>
+      </h1>
+      <p class="hero-sub">
+        {{ t.gettingThere.hero.sub }}
+      </p>
+      <div class="hero-cta-group">
+        <a href="#route-1" class="btn btn-primary btn-lg">
+          {{ t.gettingThere.hero.cta1 }}
+        </a>
+        <a href="#route-2" class="btn btn-outline btn-lg">
+          {{ t.gettingThere.hero.cta2 }}
+        </a>
+      </div>
+      <div class="hero-stats">
+{% for stat in t.gettingThere.hero.stats %}
+        <div class="hero-stat">
+          <span class="hero-stat-number">{{ stat.number }}</span>
+          <span class="hero-stat-label">{{ stat.label }}</span>
+        </div>
+{% endfor %}
+      </div>
+    </div>
+    <div class="wave-divider">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="white"/>
+      </svg>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+
+    <!-- TL;DR Section -->
+    <section class="section-sm" aria-label="Quick Summary">
+      <div class="container">
+        <div class="tldr-box">
+          <ul>
+{% for item in t.gettingThere.tldr %}
+            <li>{% if item.bold %}<strong>{{ item.bold }}</strong> {% endif %}{{ item.text | safe }}</li>
+{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Park Location / Address -->
+    <section class="section" id="location" aria-label="{{ t.gettingThere.location.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.location.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.location.heading }}</h2>
+          <p>{{ t.gettingThere.location.description }}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+
+          <!-- GBP Card -->
+          <div class="gbp-card fade-in">
+            <div class="gbp-header">
+              <div class="gbp-avatar" aria-hidden="true">{{ site.initials }}</div>
+              <div>
+                <div class="gbp-name">{{ site.attractionName }}</div>
+                <div class="gbp-category">{{ t.gettingThere.location.gbp.category }}</div>
+              </div>
+            </div>
+            <div class="gbp-details">
+              <div class="gbp-detail">
+                <span class="gbp-detail-icon" aria-hidden="true">📍</span>
+                <div>{{ t.gettingThere.location.gbp.details[0] | safe }}</div>
+              </div>
+              <div class="gbp-detail">
+                <span class="gbp-detail-icon" aria-hidden="true">🕐</span>
+                <div>{{ t.gettingThere.location.gbp.details[1] | safe }}</div>
+              </div>
+              <div class="gbp-detail">
+                <span class="gbp-detail-icon" aria-hidden="true">📞</span>
+                <div>{{ t.gettingThere.location.gbp.details[2] | safe }}</div>
+              </div>
+              <div class="gbp-detail">
+                <span class="gbp-detail-icon" aria-hidden="true">🅿️</span>
+                <div>{{ t.gettingThere.location.gbp.details[3] | safe }}</div>
+              </div>
+              <div class="gbp-detail">
+                <span class="gbp-detail-icon" aria-hidden="true">🚐</span>
+                <div>{{ t.gettingThere.location.gbp.details[4] | safe }}</div>
+              </div>
+            </div>
+            <div style="margin-top: 1.5rem;">
+              <a href="{{ site.mapsUrl }}" class="btn btn-primary btn-block" rel="noopener" target="_blank">{{ t.gettingThere.location.gbp.mapBtn }}</a>
+            </div>
+          </div>
+
+          <!-- Google Maps Embed -->
+          <div class="fade-in">
+            <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.08);">
+              <iframe
+                src="{{ site.mapsEmbed }}"
+                width="100%"
+                height="400"
+                style="border:0; display: block;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="{{ t.gettingThere.location.heading }}">
+              </iframe>
+            </div>
+            <p style="margin-top: 0.75rem; font-size: 0.875rem; color: var(--dark-300);">
+              {{ t.gettingThere.location.mapCaption }}
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- From Bangkok -->
+    <section class="section section-gray" id="route-1" aria-label="{{ t.gettingThere.fromBangkok.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.fromBangkok.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.fromBangkok.heading }}</h2>
+          <p>{{ t.gettingThere.fromBangkok.description }}</p>
+        </div>
+
+        <div class="info-grid fade-in" style="grid-template-columns: 1fr 1fr;">
+
+{% set bangkokEmojis = ["🚗", "🚌", "🚐", "🚕"] %}
+{% set bangkokIds = ["by-car", "by-bus", "by-van", "by-taxi"] %}
+{% for card in t.gettingThere.fromBangkok.cards %}
+          <div class="info-card" id="{{ bangkokIds[loop.index0] }}">
+            <div class="info-icon" aria-hidden="true">{{ bangkokEmojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            {{ card.content | safe }}
+          </div>
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+
+    <!-- From Airports -->
+    <section class="section" id="from-airports" aria-label="{{ t.gettingThere.fromAirports.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.fromAirports.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.fromAirports.heading }}</h2>
+          <p>{{ t.gettingThere.fromAirports.description }}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+
+{% set airportEmojis = ["✈️", "🛩️"] %}
+{% set airportIds = ["from-airport-1", "from-airport-2"] %}
+{% for card in t.gettingThere.fromAirports.cards %}
+          <div class="info-card fade-in" id="{{ airportIds[loop.index0] }}">
+            <div class="info-icon" aria-hidden="true">{{ airportEmojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            {{ card.content | safe }}
+          </div>
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+
+    <!-- From Pattaya -->
+    <section class="section section-gray" id="route-2" aria-label="{{ t.gettingThere.fromPattaya.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.fromPattaya.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.fromPattaya.heading }}</h2>
+          <p>{{ t.gettingThere.fromPattaya.description }}</p>
+        </div>
+
+        <div class="info-grid fade-in" style="grid-template-columns: 1fr 1fr 1fr;">
+
+{% set pattayaEmojis = ["🚕", "🚌", "🚕"] %}
+{% for card in t.gettingThere.fromPattaya.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ pattayaEmojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.price | safe }}</p>
+            <p>{{ card.description }}</p>
+          </div>
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Transport Tips -->
+    <section class="section" id="transport-tips" aria-label="{{ t.gettingThere.transportTips.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.transportTips.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.transportTips.heading }}</h2>
+          <p>{{ t.gettingThere.transportTips.description }}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+
+          <div class="fade-in">
+            <div class="info-card" style="text-align: left;">
+              <h3 style="margin-bottom: 1rem;">{{ t.gettingThere.transportTips.recommendedHeading }}</h3>
+              {{ t.gettingThere.transportTips.recommendedList | safe }}
+              <div style="margin-top: 1.5rem;">
+                <a href="#" class="btn btn-primary" data-booking>{{ t.gettingThere.transportTips.bookingBtn }}</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="fade-in">
+            <div style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 2rem; border-radius: 12px; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;" aria-hidden="true">🚕</div>
+              <div style="font-size: 2rem; font-weight: 800;">{{ t.gettingThere.transportTips.priceHighlight.price }}</div>
+              <div style="font-size: 0.875rem; opacity: 0.9; margin-bottom: 1rem;">{{ t.gettingThere.transportTips.priceHighlight.label }}</div>
+              <ul style="text-align: left; font-size: 0.8125rem; opacity: 0.95; list-style: none; padding: 0; line-height: 2;">
+{% for item in t.gettingThere.transportTips.priceHighlight.checkmarks %}
+                <li>{{ item }}</li>
+{% endfor %}
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Parking Info -->
+    <section class="section section-gray" id="parking" aria-label="{{ t.gettingThere.parking.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.parking.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.parking.heading }}</h2>
+          <p>{{ t.gettingThere.parking.description }}</p>
+        </div>
+
+        <div class="info-grid fade-in" style="grid-template-columns: 1fr 1fr 1fr;">
+
+{% set parkingEmojis = ["🅿️", "📐", "💡"] %}
+{% for card in t.gettingThere.parking.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ parkingEmojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.text | safe }}</p>
+          </div>
+{% endfor %}
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Transport Comparison Table -->
+    <section class="section" id="compare" aria-label="{{ t.gettingThere.comparison.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.comparison.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.comparison.heading }}</h2>
+          <p>{{ t.gettingThere.comparison.description }}</p>
+        </div>
+
+        <div class="fade-in" style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9375rem; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.06);">
+            <thead>
+              <tr style="background: var(--dark-500); color: white;">
+                <th style="padding: 1rem; text-align: left;">{{ t.gettingThere.comparison.headers[0] }}</th>
+                <th style="padding: 1rem; text-align: center;">{{ t.gettingThere.comparison.headers[1] }}</th>
+                <th style="padding: 1rem; text-align: center;">{{ t.gettingThere.comparison.headers[2] }}</th>
+                <th style="padding: 1rem; text-align: center;">{{ t.gettingThere.comparison.headers[3] }}</th>
+                <th style="padding: 1rem; text-align: center;">{{ t.gettingThere.comparison.headers[4] }}</th>
+              </tr>
+            </thead>
+            <tbody>
+{% for row in t.gettingThere.comparison.rows %}
+              <tr style="border-bottom: 1px solid var(--gray-200);{% if loop.index0 % 2 == 1 %} background: var(--gray-50);{% endif %}">
+                <td style="padding: 1rem; font-weight: 600;">{{ row.transport }}</td>
+                <td style="padding: 1rem; text-align: center;">{{ row.time }}</td>
+                <td style="padding: 1rem; text-align: center;">{{ row.cost }}</td>
+                <td style="padding: 1rem; text-align: center;">{{ row.convenience }}</td>
+                <td style="padding: 1rem; text-align: center;">{{ row.bestFor }}</td>
+              </tr>
+{% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips -->
+    <section class="section section-gray" id="tips" aria-label="{{ t.gettingThere.tips.heading }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.gettingThere.tips.sectionLabel }}</span>
+          <h2>{{ t.gettingThere.tips.heading }}</h2>
+          <p>{{ t.gettingThere.tips.description }}</p>
+        </div>
+
+        <div class="info-grid fade-in" style="grid-template-columns: 1fr 1fr;">
+
+{% set tipsEmojis = ["📱", "🕐", "🌿", "⏰", "🗓️", "🎫"] %}
+{% for card in t.gettingThere.tips.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsEmojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.text | safe }}</p>
+          </div>
+{% endfor %}
+
+        </div>
+
+        <div class="text-center" style="margin-top: 2rem;">
+          <p style="margin-bottom: 1rem;">{{ t.gettingThere.tips.ctaText }}</p>
+          <a href="/{{ lang.prefix }}tips.html" class="btn btn-primary">{{ t.gettingThere.tips.cta }}</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section" id="book" aria-label="{{ t.gettingThere.cta.heading }}">
+      <div class="container">
+        <div class="fade-in" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border-radius: 16px; padding: 3rem; text-align: center; color: white;">
+          <h2 style="color: white; margin-bottom: 0.5rem;">{{ t.gettingThere.cta.heading }}</h2>
+          <p style="font-size: 1.125rem; opacity: 0.95; max-width: 600px; margin: 0 auto 1.5rem;">
+            {{ t.gettingThere.cta.text }}
+          </p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="#" class="btn btn-lg" style="background: white; color: var(--primary-dark); font-weight: 700;" data-booking>
+              {{ t.gettingThere.cta.btn1 }}
+            </a>
+            <a href="/{{ lang.prefix }}blog/{{ t.gettingThere.cta.btn2Slug }}" class="btn btn-lg" style="border: 2px solid white; color: white; background: transparent;">
+              {{ t.gettingThere.cta.btn2 }}
+            </a>
+          </div>
+          <p style="margin-top: 1.5rem; font-size: 0.875rem; opacity: 0.8;">
+            {{ t.gettingThere.cta.subtext | safe }}
+          </p>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

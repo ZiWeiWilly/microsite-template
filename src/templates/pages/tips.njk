@@ -1,0 +1,475 @@
+{% extends "base.njk" %}
+
+{% set ogImage = "og-tips.jpg" %}
+{% set activePage = "tips" %}
+
+{% block seo %}
+  <title>{{ t.tips.title }}</title>
+  <meta name="description" content="{{ t.tips.metaDescription }}">
+  <meta name="keywords" content="{{ t.tips.metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ t.tips.ogTitle }}">
+  <meta property="og:description" content="{{ t.tips.ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.tips.twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.tips.twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "{{ t.nav.home }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "{{ t.tips.breadcrumbCurrent }}",
+        "item": "{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Schema.org - Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ t.tips.h1 }}",
+    "description": "{{ t.tips.metaDescription }}",
+    "url": "{{ site.baseUrl }}/{{ lang.prefix }}{{ page.slug }}",
+    "datePublished": "2025-01-15",
+    "dateModified": "2026-03-01",
+    "publisher": {
+      "@type": "Organization",
+      "name": "{{ site.siteName }}",
+      "url": "{{ site.baseUrl }}"
+    }
+  }
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <section class="hero hero-sm" role="banner">
+    <div class="container hero-content">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="/{{ lang.prefix }}">{{ t.nav.home }}</a> <span aria-hidden="true">/</span>
+        <span aria-current="page">{{ t.tips.breadcrumbCurrent }}</span>
+      </nav>
+      <h1>
+        {{ t.tips.h1 }}
+        <span>{{ t.tips.h1Span }}</span>
+      </h1>
+      <p class="hero-sub">
+        {{ t.tips.heroSub | safe }}
+      </p>
+    </div>
+    <div class="wave-divider">
+      <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+        <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="white"/>
+      </svg>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+
+    <!-- TL;DR Section -->
+    <section class="section-sm" aria-label="Quick Summary">
+      <div class="container">
+        <div class="tldr-box">
+          <ul>
+{% for item in t.tips.tldr %}
+            <li><strong>{{ item.strong }}</strong> {{ item.text | safe }}</li>
+{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="section-sm" aria-label="Table of Contents">
+      <div class="container">
+        <div class="info-card" style="max-width: 700px; margin: 0 auto;">
+          <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">{{ t.tips.toc.heading }}</h2>
+          <ol style="columns: 2; column-gap: 2rem; padding-left: 1.25rem; line-height: 2;">
+            <li><a href="#before-you-go">{{ t.tips.toc.items[0] }}</a></li>
+            <li><a href="#what-to-bring">{{ t.tips.toc.items[1] }}</a></li>
+            <li><a href="#what-not-to-bring">{{ t.tips.toc.items[2] }}</a></li>
+            <li><a href="#dress-code">{{ t.tips.toc.items[3] }}</a></li>
+            <li><a href="#best-time">{{ t.tips.toc.items[4] }}</a></li>
+            <li><a href="#money-saving">{{ t.tips.toc.items[5] }}</a></li>
+            <li><a href="#food-guide">{{ t.tips.toc.items[6] }}</a></li>
+            <li><a href="#ride-order">{{ t.tips.toc.items[7] }}</a></li>
+            <li><a href="#families-kids">{{ t.tips.toc.items[8] }}</a></li>
+            <li><a href="#rainy-day">{{ t.tips.toc.items[9] }}</a></li>
+            <li><a href="#photo-tips">{{ t.tips.toc.items[10] }}</a></li>
+            <li><a href="#cabana">{{ t.tips.toc.items[11] }}</a></li>
+            <li><a href="#safety">{{ t.tips.toc.items[12] }}</a></li>
+            <li><a href="#after-the-park">{{ t.tips.toc.items[13] }}</a></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 1: Before You Go -->
+    <section class="section" id="before-you-go" aria-label="{{ t.tips.tip1.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip1.sectionLabel }}</span>
+          <h2>{{ t.tips.tip1.h2 }}</h2>
+          <p>{{ t.tips.tip1.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip1.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip1Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 2: What to Bring -->
+    <section class="section section-gray" id="what-to-bring" aria-label="{{ t.tips.tip2.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip2.sectionLabel }}</span>
+          <h2>{{ t.tips.tip2.h2 }}</h2>
+          <p>{{ t.tips.tip2.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+{% for card in t.tips.tip2.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip2Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 3: What NOT to Bring -->
+    <section class="section" id="what-not-to-bring" aria-label="{{ t.tips.tip3.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip3.sectionLabel }}</span>
+          <h2>{{ t.tips.tip3.h2 }}</h2>
+          <p>{{ t.tips.tip3.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+{% for card in t.tips.tip3.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip3Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 4: Dress Code -->
+    <section class="section section-gray" id="dress-code" aria-label="{{ t.tips.tip4.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip4.sectionLabel }}</span>
+          <h2>{{ t.tips.tip4.h2 }}</h2>
+          <p>{{ t.tips.tip4.description }}</p>
+        </div>
+        <div class="fade-in" style="max-width: 800px; margin: 0 auto;">
+          {{ t.tips.tip4.content | safe }}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 5: Best Time to Visit -->
+    <section class="section" id="best-time" aria-label="{{ t.tips.tip5.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip5.sectionLabel }}</span>
+          <h2>{{ t.tips.tip5.h2 }}</h2>
+          <p>{{ t.tips.tip5.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip5.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip5Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 6: Money-Saving Tips -->
+    <section class="section section-gray" id="money-saving" aria-label="{{ t.tips.tip6.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip6.sectionLabel }}</span>
+          <h2>{{ t.tips.tip6.h2 }}</h2>
+          <p>{{ t.tips.tip6.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip6.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip6Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+          <a href="/{{ lang.prefix }}tickets.html" class="btn btn-primary fade-in">{{ t.tips.tip6.ticketsLink }}</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 7: Food Guide -->
+    <section class="section" id="food-guide" aria-label="{{ t.tips.tip7.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip7.sectionLabel }}</span>
+          <h2>{{ t.tips.tip7.h2 }}</h2>
+          <p>{{ t.tips.tip7.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip7.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip7Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+        <div class="info-card fade-in" style="max-width: 700px; margin: 2rem auto 0; background: #fff3cd; border-color: #ffc107;">
+          <p style="margin: 0;">{{ t.tips.tip7.reminder | safe }}</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 8: Best Order to Visit Zones -->
+    <section class="section section-gray" id="ride-order" aria-label="{{ t.tips.tip8.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip8.sectionLabel }}</span>
+          <h2>{{ t.tips.tip8.h2 }}</h2>
+          <p>{{ t.tips.tip8.description }}</p>
+        </div>
+        <div class="fade-in" style="max-width: 800px; margin: 0 auto;">
+          {{ t.tips.tip8.content | safe }}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 9: For Families with Kids -->
+    <section class="section" id="families-kids" aria-label="{{ t.tips.tip9.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip9.sectionLabel }}</span>
+          <h2>{{ t.tips.tip9.h2 }}</h2>
+          <p>{{ t.tips.tip9.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip9.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip9Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+          <a href="/{{ lang.prefix }}blog/{{ t.tips.tip9.blogSlug }}" class="btn btn-outline fade-in">{{ t.tips.tip9.blogLink }}</a>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 10: Rainy Day Tips -->
+    <section class="section section-gray" id="rainy-day" aria-label="{{ t.tips.tip10.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip10.sectionLabel }}</span>
+          <h2>{{ t.tips.tip10.h2 }}</h2>
+          <p>{{ t.tips.tip10.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip10.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip10Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 11: Photo Tips -->
+    <section class="section" id="photo-tips" aria-label="{{ t.tips.tip11.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip11.sectionLabel }}</span>
+          <h2>{{ t.tips.tip11.h2 }}</h2>
+          <p>{{ t.tips.tip11.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: 1fr 1fr;">
+          {{ t.tips.tip11.content | safe }}
+        </div>
+        <div class="info-card fade-in" style="max-width: 700px; margin: 1.5rem auto 0;">
+          <p style="margin: 0;">{{ t.tips.tip11.proTip | safe }}</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 12: Cabana - Worth It? -->
+    <section class="section section-gray" id="cabana" aria-label="{{ t.tips.tip12.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip12.sectionLabel }}</span>
+          <h2>{{ t.tips.tip12.h2 }}</h2>
+          <p>{{ t.tips.tip12.description }}</p>
+        </div>
+        <div class="fade-in" style="max-width: 800px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          {{ t.tips.tip12.content | safe }}
+        </div>
+        <div class="info-card fade-in" style="max-width: 800px; margin: 1.5rem auto 0;">
+          <p style="margin: 0;">{{ t.tips.tip12.verdict | safe }}</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 13: Safety Tips -->
+    <section class="section" id="safety" aria-label="{{ t.tips.tip13.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip13.sectionLabel }}</span>
+          <h2>{{ t.tips.tip13.h2 }}</h2>
+          <p>{{ t.tips.tip13.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip13.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip13Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 14: After the Park -->
+    <section class="section section-gray" id="after-the-park" aria-label="{{ t.tips.tip14.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip14.sectionLabel }}</span>
+          <h2>{{ t.tips.tip14.h2 }}</h2>
+          <p>{{ t.tips.tip14.description }}</p>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+{% for card in t.tips.tip14.cards %}
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">{{ tipsData.tip14Emojis[loop.index0] }}</div>
+            <h3>{{ card.h3 }}</h3>
+            <p>{{ card.p | safe }}</p>
+          </div>
+{% endfor %}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Tip 15: Quick Tips -->
+    <section class="section" id="quick-tips" aria-label="{{ t.tips.tip15.h2 }}">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.tip15.sectionLabel }}</span>
+          <h2>{{ t.tips.tip15.h2 }}</h2>
+          <p>{{ t.tips.tip15.description }}</p>
+        </div>
+        <div class="fade-in" style="max-width: 800px; margin: 0 auto;">
+          {{ t.tips.tip15.content | safe }}
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Internal Links -->
+    <section class="section section-gray" aria-label="Related Pages">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">{{ t.tips.internalLinks.sectionLabel }}</span>
+          <h2>{{ t.tips.internalLinks.heading }}</h2>
+        </div>
+        <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">🎢</div>
+            <h3><a href="/{{ lang.prefix }}attractions.html">{{ t.tips.internalLinks.cards[0].h3 }}</a></h3>
+            <p>{{ t.tips.internalLinks.cards[0].p }}</p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">🎫</div>
+            <h3><a href="/{{ lang.prefix }}tickets.html">{{ t.tips.internalLinks.cards[1].h3 }}</a></h3>
+            <p>{{ t.tips.internalLinks.cards[1].p }}</p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">🚗</div>
+            <h3><a href="/{{ lang.prefix }}getting-there.html">{{ t.tips.internalLinks.cards[2].h3 }}</a></h3>
+            <p>{{ t.tips.internalLinks.cards[2].p }}</p>
+          </div>
+          <div class="info-card">
+            <div class="info-icon" aria-hidden="true">❓</div>
+            <h3><a href="/{{ lang.prefix }}faq.html">{{ t.tips.internalLinks.cards[3].h3 }}</a></h3>
+            <p>{{ t.tips.internalLinks.cards[3].p }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- CTA Banner -->
+    <section class="section" aria-label="Book Tickets">
+      <div class="container">
+        <div class="cta-banner fade-in">
+          <h2>{{ t.tips.cta.heading }}</h2>
+          <p>{{ t.tips.cta.text }}</p>
+          <a href="#" class="btn btn-white btn-lg" data-booking>{{ t.tips.cta.button }}</a>
+          <p class="text-sm" style="margin-top: 1rem; opacity: 0.8;">{{ t.tips.cta.subtext | safe }}</p>
+        </div>
+      </div>
+    </section>
+
+{% endblock %}

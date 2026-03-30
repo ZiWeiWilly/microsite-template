@@ -1,0 +1,92 @@
+{% extends "base.njk" %}
+
+{% set ogImage = blogPostData.ogImage %}
+{% set activePage = "blog" %}
+
+{% block seo %}
+  <title>{{ t.blog.posts[postSlug].title }}</title>
+  <meta name="description" content="{{ t.blog.posts[postSlug].metaDescription }}">
+  <meta name="keywords" content="{{ t.blog.posts[postSlug].metaKeywords }}">
+  <link rel="canonical" href="{{ site.baseUrl }}/{{ lang.prefix }}blog/{{ postSlug }}.html">
+{% endblock %}
+
+{% block og %}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ t.blog.posts[postSlug].ogTitle }}">
+  <meta property="og:description" content="{{ t.blog.posts[postSlug].ogDescription }}">
+{% endblock %}
+
+{% block twitter %}
+  <meta name="twitter:title" content="{{ t.blog.posts[postSlug].twitterTitle }}">
+  <meta name="twitter:description" content="{{ t.blog.posts[postSlug].twitterDescription }}">
+{% endblock %}
+
+{% block schema %}
+  <!-- Schema.org - Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ t.blog.posts[postSlug].title }}",
+    "description": "{{ t.blog.posts[postSlug].metaDescription }}",
+    "image": "{{ site.baseUrl }}/images/{{ blogPostData.ogImage }}",
+    "author": {
+      "@type": "Person",
+      "name": "{{ blogPostData.authorName }}",
+      "url": "{{ blogPostData.authorUrl }}"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "{{ site.siteName }}",
+      "url": "{{ site.baseUrl }}",
+      "logo": { "@type": "ImageObject", "url": "{{ site.baseUrl }}/images/logo.png" }
+    },
+    "datePublished": "{{ blogPostData.datePublished }}",
+    "dateModified": "{{ blogPostData.dateModified }}",
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "{{ site.baseUrl }}/{{ lang.prefix }}blog/{{ postSlug }}.html" }
+  }
+  </script>
+
+  <!-- Schema.org - BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "{{ t.nav.home }}", "item": "{{ site.baseUrl }}/{{ lang.prefix }}" },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "{{ site.baseUrl }}/{{ lang.prefix }}blog/" },
+      { "@type": "ListItem", "position": 3, "name": "{{ t.blog.posts[postSlug].breadcrumbName }}", "item": "{{ site.baseUrl }}/{{ lang.prefix }}blog/{{ postSlug }}.html" }
+    ]
+  }
+  </script>
+{% endblock %}
+
+{% block hero %}
+  <!-- Breadcrumb -->
+  <div class="breadcrumb" aria-label="Breadcrumb">
+    <div class="container">
+      <a href="/{{ lang.prefix }}">{{ t.nav.home }}</a> &rsaquo;
+      <a href="/{{ lang.prefix }}blog/">Blog</a> &rsaquo;
+      <span>{{ t.blog.posts[postSlug].breadcrumbName }}</span>
+    </div>
+  </div>
+
+  {% if blogPostData.heroImage %}
+  <!-- Article Hero Image -->
+  <div class="article-hero-wrap">
+    <img
+      class="article-hero-img"
+      src="{{ site.baseUrl }}/images/{{ blogPostData.ogImage }}"
+      alt="{{ t.blog.posts[postSlug].title }}"
+      width="1200"
+      height="630"
+      loading="eager"
+      fetchpriority="high"
+    >
+  </div>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ articleBody | safe }}
+{% endblock %}

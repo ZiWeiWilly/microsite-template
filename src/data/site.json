@@ -1,0 +1,101 @@
+{
+  "baseUrl": "https://CHANGE-ME.example.com",
+  "siteName": "CHANGE ME Guide",
+  "attractionName": "CHANGE ME Attraction Name",
+  "initials": "XX",
+  "alternateNames": [],
+  "schemaType": "TouristAttraction",
+  "officialUrl": "https://CHANGE-ME.example.com",
+  "contactEmail": "",
+  "gtagId": "",
+  "address": {
+    "street": "",
+    "locality": "",
+    "region": "",
+    "postalCode": "",
+    "country": ""
+  },
+  "openingHours": [
+    {
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    }
+  ],
+  "openingHoursText": "Mo-Su 09:00-18:00",
+  "rating": {
+    "value": "4.0",
+    "count": "100",
+    "best": "5"
+  },
+  "amenities": [],
+  "klook": {
+    "activityUrl": "https://www.klook.com/activity/CHANGE-ME",
+    "affiliateUrl": "https://affiliate.klook.com/redirect?aid=CHANGE-ME"
+  },
+  "blog": {
+    "authorName": "Editorial Team",
+    "authorUrl": "",
+    "imageSearchQuery": "CHANGE ME attraction name",
+    "doNotTranslate": []
+  },
+  "mapsEmbed": "",
+  "languages": [
+    { "code": "en", "hreflang": "en", "label": "English", "ogLocale": "en_US", "metaLanguage": "English", "prefix": "" },
+    { "code": "zh-CN", "hreflang": "zh-Hans", "label": "简体中文", "ogLocale": "zh_CN", "metaLanguage": "Chinese Simplified", "prefix": "zh-CN/" },
+    { "code": "zh-TW", "hreflang": "zh-Hant", "label": "繁體中文", "ogLocale": "zh_TW", "metaLanguage": "Chinese Traditional", "prefix": "zh-TW/" },
+    { "code": "ja", "hreflang": "ja", "label": "日本語", "ogLocale": "ja_JP", "metaLanguage": "Japanese", "prefix": "ja/" },
+    { "code": "ko", "hreflang": "ko", "label": "한국어", "ogLocale": "ko_KR", "metaLanguage": "Korean", "prefix": "ko/" },
+    { "code": "ru", "hreflang": "ru", "label": "Русский", "ogLocale": "ru_RU", "metaLanguage": "Russian", "prefix": "ru/" },
+    { "code": "hi", "hreflang": "hi", "label": "हिन्दी", "ogLocale": "hi_IN", "metaLanguage": "Hindi", "prefix": "hi/" },
+    { "code": "ms", "hreflang": "ms", "label": "Bahasa Melayu", "ogLocale": "ms_MY", "metaLanguage": "Malay", "prefix": "ms/" },
+    { "code": "vi", "hreflang": "vi", "label": "Tiếng Việt", "ogLocale": "vi_VN", "metaLanguage": "Vietnamese", "prefix": "vi/" },
+    { "code": "de", "hreflang": "de", "label": "Deutsch", "ogLocale": "de_DE", "metaLanguage": "German", "prefix": "de/" },
+    { "code": "fr", "hreflang": "fr", "label": "Français", "ogLocale": "fr_FR", "metaLanguage": "French", "prefix": "fr/" },
+    { "code": "lo", "hreflang": "lo", "label": "ລາວ", "ogLocale": "lo_LA", "metaLanguage": "Lao", "prefix": "lo/" }
+  ],
+  "currencies": [
+    { "code": "THB", "symbol": "฿", "label": "Thai Baht" },
+    { "code": "USD", "symbol": "$", "label": "US Dollar" },
+    { "code": "EUR", "symbol": "€", "label": "Euro" },
+    { "code": "GBP", "symbol": "£", "label": "British Pound" },
+    { "code": "JPY", "symbol": "¥", "label": "Japanese Yen" },
+    { "code": "CNY", "symbol": "¥", "label": "Chinese Yuan" },
+    { "code": "KRW", "symbol": "₩", "label": "Korean Won" },
+    { "code": "TWD", "symbol": "$", "label": "Taiwan Dollar" },
+    { "code": "HKD", "symbol": "$", "label": "Hong Kong Dollar" },
+    { "code": "SGD", "symbol": "$", "label": "Singapore Dollar" },
+    { "code": "MYR", "symbol": "RM", "label": "Malaysian Ringgit" },
+    { "code": "PHP", "symbol": "₱", "label": "Philippine Peso" },
+    { "code": "IDR", "symbol": "Rp", "label": "Indonesian Rupiah" },
+    { "code": "VND", "symbol": "₫", "label": "Vietnamese Dong" },
+    { "code": "INR", "symbol": "₹", "label": "Indian Rupee" },
+    { "code": "RUB", "symbol": "₽", "label": "Russian Ruble" },
+    { "code": "AUD", "symbol": "$", "label": "Australian Dollar" }
+  ],
+  "pages": [
+    { "slug": "", "navKey": "home" },
+    { "slug": "attractions.html", "navKey": "attractions" },
+    { "slug": "tickets.html", "navKey": "tickets" },
+    { "slug": "getting-there.html", "navKey": "gettingThere" },
+    { "slug": "tips.html", "navKey": "tips" },
+    { "slug": "faq.html", "navKey": "faq" },
+    { "slug": "blog/", "navKey": "blog" }
+  ],
+  "social": {
+    "facebook": "",
+    "instagram": "",
+    "tiktok": ""
+  },
+  "phone": "",
+  "phoneTel": "",
+  "geo": {
+    "placename": "",
+    "region": "",
+    "position": "",
+    "ICBM": "",
+    "latitude": "0",
+    "longitude": "0"
+  },
+  "mapsUrl": ""
+}
