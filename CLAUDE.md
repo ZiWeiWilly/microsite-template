@@ -115,15 +115,25 @@ Content guidelines for all subagents:
 Once `en.json` is complete, run these three tracks concurrently:
 
 **Track A — Translations (Haiku subagents):**
-Translate `en.json` into 11 languages using `Agent(model: "haiku")`, 3 languages per batch:
+**Always split every language into 5 section-level Haiku subagents** to prevent any language from getting stuck:
+
+| Agent | Sections |
+|-------|----------|
+| A | `skipLink`, `nav`, `announcement`, `stickyBar`, `footer`, `home` |
+| B | `faq` |
+| C | `attractions`, `tickets` |
+| D | `gettingThere` |
+| E | `tips` |
+
+Each agent reads `en.json` + `site.json`, translates only its assigned keys, writes a temp fragment to `src/i18n/.tmp/{lang}_{section}.json`. Main conversation merges all 5 fragments into `src/i18n/{lang}.json`.
+
+Batch order (5 agents × 3 languages = 15 agents per batch):
 - Batch 1: `zh-CN`, `zh-TW`, `ja`
 - Batch 2: `ko`, `ru`, `hi`
-- Batch 3: `ms`, `vi`, `de`, `fr`
-- Batch 4: `lo` — split into 4 section-level subagents (see below)
+- Batch 3: `ms`, `vi`, `de`
+- Batch 4: `fr`, `lo`
 
-Each subagent reads `en.json` + `site.json`, translates all values, keeps JSON keys / HTML / hrefs / numbers unchanged, and writes to `src/i18n/{lang}.json`.
-
-**Low-resource languages (lo, and others if too slow):** Lao uses many more tokens per word, so split into 5 parallel Haiku agents by section (`home`+small keys, `faq`, `attractions`+`tickets`, `gettingThere`, `tips`), then merge into one file. Apply the same split if `hi` or other languages also run too long.
+**Resume after interruption:** Check which `{lang}.json` files exist and are valid. Check `.tmp/` for leftover fragments to merge. Only re-run missing languages.
 
 **Track B — Data files + Scraper (main conversation):**
 - `src/data/attractions.json` — zone definitions
