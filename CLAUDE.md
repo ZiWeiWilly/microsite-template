@@ -117,10 +117,12 @@ Once `en.json` is complete, run these three tracks concurrently:
 Translate `en.json` into 11 languages using `Agent(model: "haiku")`, 3 languages per batch:
 - Batch 1: `zh-CN`, `zh-TW`, `ja`
 - Batch 2: `ko`, `ru`, `hi`
-- Batch 3: `ms`, `vi`, `de`
-- Batch 4: `fr`, `lo`
+- Batch 3: `ms`, `vi`, `de`, `fr`
+- Batch 4: `lo` — split into 4 section-level subagents (see below)
 
 Each subagent reads `en.json` + `site.json`, translates all values, keeps JSON keys / HTML / hrefs / numbers unchanged, and writes to `src/i18n/{lang}.json`.
+
+**Low-resource languages (lo, and others if too slow):** Lao uses many more tokens per word, so split into 4 parallel Haiku agents by section (`home`+small keys, `faq`, `attractions`+`tickets`, `gettingThere`+`tips`), then merge into one file. Apply the same split if `hi` or other languages also run too long.
 
 **Track B — Data files + Scraper (main conversation):**
 - `src/data/attractions.json` — zone definitions
