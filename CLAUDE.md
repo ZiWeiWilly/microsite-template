@@ -82,11 +82,26 @@ Update `PACKAGE_MATCHERS` to match the Klook package names for this attraction. 
 3. Write regex patterns to match those names
 4. Map each to an internal ID that matches your `data/prices.json` packages
 
-### Step 6: Generate English i18n Content (`src/i18n/en.json`)
+### Step 6: Generate English i18n Content (`src/i18n/en.json`) — Parallelized with Sonnet
 
-This is the largest task. Fill in ALL `CHANGE ME` values with real, researched content. The skeleton file shows the exact key structure — do not add or remove keys.
+This is the largest task. Use **Sonnet subagents** to write sections in parallel.
 
-Content guidelines:
+**Step 6a:** Main conversation writes small sections directly: `skipLink`, `nav`, `announcement`, `stickyBar`, `footer`
+
+**Step 6b:** Launch 4 Sonnet subagents in parallel, each writing assigned sections:
+
+| Subagent | Sections |
+|----------|----------|
+| Sonnet A | `home` — hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
+| Sonnet B | `faq` — 30-40 FAQs in 7 categories |
+| Sonnet C | `attractions` + `tickets` — full page content |
+| Sonnet D | `gettingThere` + `tips` — full page content |
+
+Each subagent also generates SEO metadata (`title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`) for its pages.
+
+**Step 6c:** Merge all subagent results into a single `src/i18n/en.json`.
+
+Content guidelines for all subagents:
 - **SEO titles**: 55-65 characters, include attraction name and primary keyword
 - **Meta descriptions**: 148-158 characters, include call-to-action
 - **FAQ answers**: Use HTML (`<p>`, `<strong>`, `<a>` with internal links like `/tickets.html`)
@@ -94,69 +109,29 @@ Content guidelines:
 - **Prices**: Use current Klook prices with THB as base currency
 - Research the attraction thoroughly — include real details, not generic filler
 
-For the `home` section, you need:
-- Hero text, stats, TL;DR summary
-- GBP (Google Business Profile) card with real details
-- "Why Visit" cards (4 unique selling points)
-- Zones/areas with names, descriptions, highlights (for `home.zones.items`)
-- 3 ticket pricing cards
-- 3 "Getting There" transport options
-- 3 visitor testimonials (realistic but generated)
-- 3-5 homepage FAQ items
-- CTA section text
+### Step 7–10: Run in Parallel After English Content
 
-For the `faq` section, generate 30-40 real FAQs organized into categories like:
-- Tickets & Pricing
-- Hours & Schedule
-- Getting There
-- What to Bring
-- Attractions & Rides
-- Food & Dining
-- Facilities
+Once `en.json` is complete, run these three tracks concurrently:
 
-For all other page sections (`attractions`, `tickets`, `gettingThere`, `tips`), generate full page content following the key structure.
-
-### Step 7: Translate i18n Files Using Haiku Subagents
-
-**Do NOT translate manually in the main conversation.** Instead, use the Agent tool with `model: "haiku"` to translate `en.json` into the other 11 languages in parallel batches.
-
-Launch **3–4 Haiku subagents at a time** (to avoid rate limits), each translating one language. Each subagent should:
-
-1. Read `src/i18n/en.json` (the completed English file)
-2. Read `src/data/site.json` to get `blog.doNotTranslate` list
-3. Translate ALL values in the JSON, following these rules:
-   - Keep all JSON keys exactly unchanged
-   - Keep HTML tags, attributes, href paths, CSS classes unchanged
-   - Do NOT translate proper nouns listed in `site.json` `blog.doNotTranslate`
-   - Keep currency values and numbers unchanged
-   - Native-speaker fluency, travel-writer tone
-   - If a `blog.posts` section exists, translate it too
-4. Write the translated JSON to `src/i18n/{lang}.json`
-
-**Batch order** (3–4 languages per batch, wait for completion before next batch):
+**Track A — Translations (Haiku subagents):**
+Translate `en.json` into 11 languages using `Agent(model: "haiku")`, 3 languages per batch:
 - Batch 1: `zh-CN`, `zh-TW`, `ja`
 - Batch 2: `ko`, `ru`, `hi`
 - Batch 3: `ms`, `vi`, `de`
 - Batch 4: `fr`, `lo`
 
-Example Agent call:
-```
-Agent(
-  model: "haiku",
-  description: "Translate en.json to zh-TW",
-  prompt: "Read src/i18n/en.json and src/data/site.json. Translate all values in en.json to Traditional Chinese (zh-TW). Keep JSON keys, HTML tags, href paths, CSS classes, currency values, and numbers unchanged. Do not translate proper nouns: [list from site.json]. Write the result to src/i18n/zh-TW.json."
-)
-```
+Each subagent reads `en.json` + `site.json`, translates all values, keeps JSON keys / HTML / hrefs / numbers unchanged, and writes to `src/i18n/{lang}.json`.
 
-**Important**: Complete Step 6 (English content) fully and verify it builds correctly (`npm run build`) BEFORE starting translations.
+**Track B — Data files + Scraper (main conversation):**
+- `src/data/attractions.json` — zone definitions
+- `src/data/tips.json` — emoji arrays
+- `src/data/home.json` — icons, prices, blog slugs
+- `scripts/scrape-klook.js` — update `PACKAGE_MATCHERS`
 
-### Step 8: Update Page Data Files
+**Track C — Blog topics (Haiku subagent):**
+Launch a single `Agent(model: "haiku")` to generate `scripts/topics.json` with 10-20 blog topics.
 
-- `src/data/attractions.json` — Define zones/areas with IDs and CSS classes
-- `src/data/tips.json` — Set emoji arrays for tip sections
-- `src/data/home.json` — Update icons, ticket prices, blog slugs
-
-### Step 9: Create Images
+### Step 11: Create Images
 
 At minimum, create or source these images:
 - `images/logo.png` — navbar logo (~220×19px)
@@ -167,7 +142,7 @@ At minimum, create or source these images:
 
 Zone/area images can be added later or generated with AI.
 
-### Step 10: Theme the CSS
+### Step 12: Theme the CSS
 
 Edit `css/style.css` CSS custom properties to match the attraction's brand:
 ```css
@@ -180,21 +155,7 @@ Edit `css/style.css` CSS custom properties to match the attraction's brand:
 }
 ```
 
-### Step 11: Set Up Blog Topics
-
-Create `scripts/topics.json` with 10-20 blog topics:
-```json
-[
-  {
-    "slug": "attraction-name-review",
-    "keyword": "attraction name review",
-    "category": "Travel Guide",
-    "titleHint": "Attraction Name Review 2026: Is It Worth Visiting?"
-  }
-]
-```
-
-### Step 12: Build, Test & Deploy
+### Step 13: Build, Test & Deploy
 
 ```bash
 npm install
