@@ -88,14 +88,15 @@ This is the largest task. Use **Sonnet subagents** to write sections in parallel
 
 **Step 6a:** Main conversation writes small sections directly: `skipLink`, `nav`, `announcement`, `stickyBar`, `footer`
 
-**Step 6b:** Launch 4 Sonnet subagents in parallel, each writing assigned sections:
+**Step 6b:** Launch 5 Sonnet subagents in parallel, each writing assigned sections:
 
 | Subagent | Sections |
 |----------|----------|
 | Sonnet A | `home` — hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
 | Sonnet B | `faq` — 30-40 FAQs in 7 categories |
 | Sonnet C | `attractions` + `tickets` — full page content |
-| Sonnet D | `gettingThere` + `tips` — full page content |
+| Sonnet D | `gettingThere` — transport options, directions, parking |
+| Sonnet E | `tips` — visitor tips by category |
 
 Each subagent also generates SEO metadata (`title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`) for its pages.
 
@@ -122,7 +123,7 @@ Translate `en.json` into 11 languages using `Agent(model: "haiku")`, 3 languages
 
 Each subagent reads `en.json` + `site.json`, translates all values, keeps JSON keys / HTML / hrefs / numbers unchanged, and writes to `src/i18n/{lang}.json`.
 
-**Low-resource languages (lo, and others if too slow):** Lao uses many more tokens per word, so split into 4 parallel Haiku agents by section (`home`+small keys, `faq`, `attractions`+`tickets`, `gettingThere`+`tips`), then merge into one file. Apply the same split if `hi` or other languages also run too long.
+**Low-resource languages (lo, and others if too slow):** Lao uses many more tokens per word, so split into 5 parallel Haiku agents by section (`home`+small keys, `faq`, `attractions`+`tickets`, `gettingThere`, `tips`), then merge into one file. Apply the same split if `hi` or other languages also run too long.
 
 **Track B — Data files + Scraper (main conversation):**
 - `src/data/attractions.json` — zone definitions
