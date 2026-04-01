@@ -17,6 +17,16 @@ This is a **template project** for generating multilingual static websites that 
 
 When someone asks you to create a landing page for a specific attraction, follow these steps in order.
 
+### Step 0: Pre-flight Setup
+
+Before starting, collect these from the user (use `AskUserQuestion` to gather all at once):
+1. **Attraction name** — full official name
+2. **Klook activity URL** — if known (e.g. `https://www.klook.com/activity/12345-...`)
+3. **Domain name** — for the site (e.g. `myattraction.guide`)
+4. **Klook affiliate URL** — their affiliate redirect URL. This is injected into every booking button via `site.json` → `klook.affiliateUrl` → `data-booking-url` on `<body>` → read by `main.js`
+5. **Brand colours** — primary, secondary, accent. Or "auto" to pick from the attraction's branding
+6. **Languages** — all 12, or a specific subset?
+
 ### Step 1: Research the Attraction
 
 Before writing any code, gather this information (use web search if needed):
@@ -144,16 +154,21 @@ Batch order (5 agents × 3 languages = 15 agents per batch):
 **Track C — Blog topics (Haiku subagent):**
 Launch a single `Agent(model: "haiku")` to generate `scripts/topics.json` with 10-20 blog topics.
 
-### Step 11: Create Images
+**Track D — Image sourcing (Sonnet subagent):**
+Launch a Sonnet subagent to search Bing Images, download, and save images for the site:
+- `hero-desktop.jpg` — wide landscape hero shot
+- `og-home.jpg`, `og-attractions.jpg`, `og-tickets.jpg`, `og-tips.jpg`, `og-getting-there.jpg`, `og-faq.jpg` — OG images (1200×630)
+- `zone-{id}.jpg` — one per zone/area
+- Update `css/style.css` zone CSS classes to match the attraction's actual zones
 
-At minimum, create or source these images:
+Note: Logo files (`logo.png`, `logo-light.png`, `logo-icon.svg`) must be created manually by the user.
+
+### Step 11: Remaining Images
+
+Logo files cannot be auto-sourced. Remind the user to create:
 - `images/logo.png` — navbar logo (~220×19px)
 - `images/logo-light.png` — footer logo (light version)
 - `images/logo-icon.svg` — favicon
-- `images/og-home.jpg` — default OG/social image (1200×630)
-- `images/hero-desktop.jpg` — homepage hero background
-
-Zone/area images can be added later or generated with AI.
 
 ### Step 12: Theme the CSS
 

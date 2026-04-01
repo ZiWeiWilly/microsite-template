@@ -40,7 +40,7 @@
 
   {% block schema %}{% endblock %}
 </head>
-<body>
+<body data-booking-url="{{ site.klook.affiliateUrl }}">
   <a href="#main-content" class="skip-link">{{ t.skipLink }}</a>
 
 {% include "partials/topbar.njk" %}

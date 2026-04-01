@@ -223,7 +223,7 @@
   setInterval(updateParkStatus, 60000);
 
   // ===== Booking link tracking =====
-  const BOOKING_URL = 'https://affiliate.klook.com/redirect?aid=115326&aff_adid=1235866&k_site=https%3A%2F%2Fwww.klook.com%2Factivity%2F85772';
+  const BOOKING_URL = document.body.dataset.bookingUrl || '#';
 
   document.querySelectorAll('[data-booking]').forEach(btn => {
     btn.href = BOOKING_URL;
