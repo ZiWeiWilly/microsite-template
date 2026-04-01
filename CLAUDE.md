@@ -116,16 +116,39 @@ For the `faq` section, generate 30-40 real FAQs organized into categories like:
 
 For all other page sections (`attractions`, `tickets`, `gettingThere`, `tips`), generate full page content following the key structure.
 
-### Step 7: Generate Other Language i18n Files
+### Step 7: Translate i18n Files Using Haiku Subagents
 
-For each of the other 11 languages, create `src/i18n/{lang}.json`:
-- Translate ALL content from the English file
-- Keep HTML tags, attributes, href paths, CSS classes unchanged
-- Do NOT translate proper nouns (the attraction name, zone names, etc.)
-- Keep currency values and numbers unchanged
-- Each translation should feel native, not machine-translated
+**Do NOT translate manually in the main conversation.** Instead, use the Agent tool with `model: "haiku"` to translate `en.json` into the other 11 languages in parallel batches.
 
-Languages: `zh-CN`, `zh-TW`, `ja`, `ko`, `ru`, `hi`, `ms`, `vi`, `de`, `fr`, `lo`
+Launch **3–4 Haiku subagents at a time** (to avoid rate limits), each translating one language. Each subagent should:
+
+1. Read `src/i18n/en.json` (the completed English file)
+2. Read `src/data/site.json` to get `blog.doNotTranslate` list
+3. Translate ALL values in the JSON, following these rules:
+   - Keep all JSON keys exactly unchanged
+   - Keep HTML tags, attributes, href paths, CSS classes unchanged
+   - Do NOT translate proper nouns listed in `site.json` `blog.doNotTranslate`
+   - Keep currency values and numbers unchanged
+   - Native-speaker fluency, travel-writer tone
+   - If a `blog.posts` section exists, translate it too
+4. Write the translated JSON to `src/i18n/{lang}.json`
+
+**Batch order** (3–4 languages per batch, wait for completion before next batch):
+- Batch 1: `zh-CN`, `zh-TW`, `ja`
+- Batch 2: `ko`, `ru`, `hi`
+- Batch 3: `ms`, `vi`, `de`
+- Batch 4: `fr`, `lo`
+
+Example Agent call:
+```
+Agent(
+  model: "haiku",
+  description: "Translate en.json to zh-TW",
+  prompt: "Read src/i18n/en.json and src/data/site.json. Translate all values in en.json to Traditional Chinese (zh-TW). Keep JSON keys, HTML tags, href paths, CSS classes, currency values, and numbers unchanged. Do not translate proper nouns: [list from site.json]. Write the result to src/i18n/zh-TW.json."
+)
+```
+
+**Important**: Complete Step 6 (English content) fully and verify it builds correctly (`npm run build`) BEFORE starting translations.
 
 ### Step 8: Update Page Data Files
 
