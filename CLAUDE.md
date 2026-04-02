@@ -103,15 +103,15 @@ This is the largest task. Use **Sonnet subagents** to write sections in parallel
 
 **Step 6a:** Main conversation writes small sections directly: `skipLink`, `nav`, `announcement`, `stickyBar`, `footer`
 
-**Step 6b:** Launch 5 Sonnet subagents in parallel, each writing assigned sections:
+**Step 6b:** Launch 5 Sonnet subagents in parallel. **CRITICAL:** Each subagent MUST read its corresponding Nunjucks template (`src/templates/pages/*.njk`) BEFORE generating content — the template defines the exact JSON key structure. Nunjucks silently outputs empty strings for undefined keys, so mismatched keys produce blank pages without build errors.
 
 | Subagent | Sections |
 |----------|----------|
-| Sonnet A | `home` — hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
-| Sonnet B | `faq` — 30-40 FAQs in 7 categories. **CRITICAL:** Each category's array key MUST be `questions` (NOT `items`) — `buildFaqSchema()` calls `cat.questions`. |
-| Sonnet C | `attractions` + `tickets` — full page content |
-| Sonnet D | `gettingThere` — transport options, directions, parking |
-| Sonnet E | `tips` — visitor tips by category |
+| Sonnet A | `home` — read `index.njk` first. Hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
+| Sonnet B | `faq` — read `faq.njk` first. 30-40 FAQs in 7 categories. **CRITICAL:** Use `questions` (NOT `items`) as the array key — `buildFaqSchema()` calls `cat.questions`. |
+| Sonnet C | `attractions` + `tickets` — read `attractions.njk` AND `tickets.njk` first. Match the exact key structures from templates. |
+| Sonnet D | `gettingThere` — read `getting-there.njk` first. Transport options, directions, parking |
+| Sonnet E | `tips` — read `tips.njk` first. Visitor tips by category |
 
 Each subagent also generates SEO metadata (`title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`) for its pages.
 

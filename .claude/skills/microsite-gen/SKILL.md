@@ -122,15 +122,48 @@ Write these directly (they're small and fast):
 
 ### Step 3b: Launch 5 Sonnet subagents in parallel
 
-Each subagent receives the Phase 1 research summary and the en.json key structure for its assigned sections. Each subagent should read `src/i18n/en.json` first to understand the exact key structure, then return the completed JSON fragment for its sections.
+**CRITICAL:** Each subagent MUST read the corresponding Nunjucks template (`src/templates/pages/*.njk`) BEFORE generating content. The template defines the exact JSON key structure — agents must match it exactly. Nunjucks silently outputs empty strings for undefined keys, so mismatched keys won't cause build errors but will produce blank pages.
+
+Each subagent also reads `src/i18n/en.json` for the existing key structure, then returns the completed JSON fragment.
 
 | Subagent | Sections | Details |
 |----------|----------|---------|
-| **Sonnet A** | `home` | Hero text, stats, TL;DR, GBP card, 4 "Why Visit" cards, 4–6 zones with highlights, 3 ticket cards, 3 transport options, 3 testimonials, 3–5 homepage FAQs, CTA |
-| **Sonnet B** | `faq` | 30–40 FAQs in 7 categories: Tickets & Pricing, Hours & Schedule, Getting There, What to Bring, Attractions & Rides, Food & Dining, Facilities. **CRITICAL:** Each category's FAQ array key MUST be `questions` (NOT `items`). The build script calls `cat.questions` in `buildFaqSchema()` — using `items` will crash with `cat.questions is not iterable`. |
-| **Sonnet C** | `attractions` + `tickets` | Full page content for zones/areas and ticket types with descriptions, inclusions, booking CTAs |
-| **Sonnet D** | `gettingThere` | Transport options, directions, parking info |
-| **Sonnet E** | `tips` | Visitor tips organized by category (best time, what to bring, crowds, etc.) |
+| **Sonnet A** | `home` | Read `src/templates/pages/index.njk` first. Hero text, stats, TL;DR, GBP card, 4 "Why Visit" cards, 4–6 zones with highlights, 3 ticket cards, 3 transport options, 3 testimonials, 3–5 homepage FAQs, CTA |
+| **Sonnet B** | `faq` | Read `src/templates/pages/faq.njk` first. 30–40 FAQs in 7 categories. **CRITICAL:** Each category's FAQ array key MUST be `questions` (NOT `items`). The build script calls `cat.questions` in `buildFaqSchema()` — using `items` will crash. |
+| **Sonnet C** | `attractions` + `tickets` | Read `src/templates/pages/attractions.njk` AND `src/templates/pages/tickets.njk` first. Must match the EXACT key structure from templates. See required key structures below. |
+| **Sonnet D** | `gettingThere` | Read `src/templates/pages/getting-there.njk` first. Transport options, directions, parking info |
+| **Sonnet E** | `tips` | Read `src/templates/pages/tips.njk` first. Visitor tips organized by category |
+
+#### Sonnet C required key structures
+
+**`t.attractions`** — the template reads these exact keys:
+- `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`
+- `breadcrumbCurrent`
+- `schema`: `{ name, alternateName[], description, touristType[], containsPlace[] }`
+- `pageHeader`: `{ h1, description }`
+- `tldr`: `[{ bold, text }]` (text uses `| safe`)
+- `zoneNav`: `{ heading, sectionLabel, description, zones: [{ tag, name, subtitle }] }`
+- `zones`: `[{ h2, tag, subtitle, intro, keyAttractionsLabel, attractions: [{ name, desc }], highlights: [], tipContent }]` (intro/desc/tipContent use `| safe`)
+- `extras`: `{ heading, sectionLabel, description, items: [{ h3, content, highlights: [] }] }` (content uses `| safe`)
+- `faq`: `{ heading, sectionLabel, description, items: [{ question, answer }], viewAll }` (answer uses `| safe`)
+- `cta`: `{ heading, text, button, link }`
+
+**`t.tickets`** — the template reads these exact keys:
+- `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`
+- `schema`: `{ breadcrumbCurrent }`
+- `breadcrumbCurrent`
+- `hero`: `{ badge, h1, h1Sub, sub, cta1, cta2, stats: [{ number?, label }, { number?, label }, { number, label }, { number, label }] }`
+- `tldr`: `[{ bold?, text }]` (text uses `| safe`)
+- `ticketOptions`: `{ sectionLabel, heading, description, tableHeaders: [4 strings], tableRows: [{ name, included }, { name, included }], tableFootnote, cta }`
+- `pricingCards`: `{ sectionLabel, heading, description, cards: [{ h3, period, features: [], cta }, { h3, period, features: [], cta }, { h3, period, features: [], cta }] }` (features use `| safe`)
+- `addons`: `{ sectionLabel, heading, description, items: [{ h3, text }, ...4 items] }` (text uses `| safe`)
+- `howToBook`: `{ sectionLabel, heading, description, items: [{ h3, text }, ...4 items], cta }` (description/text use `| safe`)
+- `cancellation`: `{ sectionLabel, heading, items: [{ bold?, text }], footerNote }` (text/footerNote use `| safe`)
+- `savingsTips`: `{ sectionLabel, heading, description, tips: [{ h3, text }, ...5 items], cta }` (text uses `| safe`)
+- `cta1`: `{ heading, text, button, subtextPrefix }`
+- `faq`: `{ sectionLabel, heading, description, items: [{ question, answer }], viewAll }` (answer uses `| safe`)
+- `priceGuide`: `{ heading, description, blogSlug, button }`
+- `cta2`: `{ heading, text, button }`
 
 Each subagent should also generate SEO metadata for its pages:
 - `title` (55–65 chars), `metaDescription` (148–158 chars), `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`
