@@ -222,8 +222,9 @@
   updateParkStatus();
   setInterval(updateParkStatus, 60000);
 
-  // ===== Booking link tracking =====
+  // ===== Site config from data attributes =====
   const BOOKING_URL = document.body.dataset.bookingUrl || '#';
+  const BASE_CURRENCY = document.body.dataset.baseCurrency || 'THB';
 
   document.querySelectorAll('[data-booking]').forEach(btn => {
     btn.href = BOOKING_URL;
@@ -316,10 +317,11 @@
     // Price note lines under cards
     document.querySelectorAll('[data-price-note]').forEach(el => {
       const type = el.getAttribute('data-price-note');
-      if (currency === 'THB') {
-        if (type === 'gate') el.textContent = '~$50 USD per person';
-        if (type === 'online') el.innerHTML = '~$36 USD per person &mdash; Save ~27%!';
-        if (type === 'vip') el.innerHTML = '~$69 USD &mdash; Starting price';
+      if (currency === BASE_CURRENCY) {
+        // Show USD equivalent when viewing in base currency
+        if (type === 'gate') el.textContent = 'per person';
+        if (type === 'online') el.innerHTML = 'per person &mdash; Best online price!';
+        if (type === 'vip') el.innerHTML = 'Starting price';
       } else {
         if (type === 'gate') el.textContent = 'per person';
         if (type === 'online') el.innerHTML = 'per person &mdash; Save ~27%!';
@@ -526,7 +528,7 @@
     if (localStorage.getItem('aq_currency')) return;
 
     const browserLang = (navigator.language || 'en').toLowerCase();
-    let currency = 'THB';
+    let currency = BASE_CURRENCY;
 
     if (browserLang.startsWith('zh-tw') || browserLang.startsWith('zh-hant')) currency = 'TWD';
     else if (browserLang.startsWith('zh')) currency = 'CNY';
@@ -541,7 +543,7 @@
     else if (browserLang.startsWith('en-gb')) currency = 'GBP';
     else if (browserLang.startsWith('en-au')) currency = 'AUD';
 
-    if (currency !== 'THB') {
+    if (currency !== BASE_CURRENCY) {
       updateAllPrices(currency);
     }
   }
