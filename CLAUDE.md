@@ -183,13 +183,31 @@ Edit `css/style.css` CSS custom properties to match the attraction's brand:
 }
 ```
 
-### Step 13: Build, Test & Deploy
+### Step 13: Build, Image Review & Deploy
 
 ```bash
 npm install
 npm run build          # Should build 276+ HTML files with no errors
-npx serve -p 3001     # Preview locally
 ```
+
+After build succeeds, present an **image review checklist** — list all auto-downloaded images with file sizes, flag any missing or suspiciously small (<10KB), and remind the user to create logo files manually:
+
+```
+📸 Image Review — check and replace any you don't like:
+
+Auto-downloaded:
+  ✅ images/hero-desktop.jpg          (size)
+  ✅ images/og-home.jpg               (size)
+  ✅ images/og-*.jpg                  (per page)
+  ✅ images/zone-*.jpg                (per zone)
+
+Manual — create these yourself:
+  ⬜ images/logo.png             (220×19px, navbar)
+  ⬜ images/logo-light.png       (footer, light version)
+  ⬜ images/logo-icon.svg        (favicon)
+```
+
+Preview locally: `npx serve -p 3001`
 
 Update these files for deployment (setup script handles CNAME and robots.txt automatically):
 - `sitemap.xml` — regenerate with correct URLs

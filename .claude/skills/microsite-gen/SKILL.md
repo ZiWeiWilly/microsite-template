@@ -257,9 +257,10 @@ Wait for all four tracks to complete, then proceed to Phase 8.
 
 ---
 
-## Phase 8 — Build & Verify
+## Phase 8 — Build, Image Review & Verify
 
-Run:
+### Step 8a: Build
+
 ```bash
 npm install
 npm run build
@@ -269,16 +270,42 @@ Report the result:
 - **Success**: count the generated `.html` files (should be 276+) and confirm
 - **Error**: show the error output and fix before marking done
 
-When everything passes, send this closing message:
-> "Your microsite is ready!
+### Step 8b: Image Review
+
+After build succeeds, list all images in `images/` with file sizes. Flag any that are missing or suspiciously small (<10KB). Present a checklist:
+
+```
+📸 Image Review — please check and replace any you don't like:
+
+Auto-downloaded:
+  ✅ images/hero-desktop.jpg          (245 KB)
+  ✅ images/og-home.jpg               (89 KB)
+  ✅ images/og-attractions.jpg        (92 KB)
+  ✅ images/og-tickets.jpg            (78 KB)
+  ✅ images/og-tips.jpg               (85 KB)
+  ✅ images/og-getting-there.jpg      (91 KB)
+  ✅ images/og-faq.jpg                (76 KB)
+  ✅ images/zone-{id}.jpg             (per zone)
+  ...
+
+Manual — create these yourself:
+  ⬜ images/logo.png             (220×19px, navbar)
+  ⬜ images/logo-light.png       (footer, light version)
+  ⬜ images/logo-icon.svg        (favicon)
+```
+
+### Step 8c: Closing message
+
+> **Your microsite is ready!**
 >
 > **Preview locally:** `npx serve -p 3001`
 >
 > **Next steps:**
-> - Add images to `images/` (logo.png, hero-desktop.jpg, og-home.jpg)
+> - Review and replace any auto-downloaded images you don't like
+> - Create logo files (logo.png, logo-light.png, logo-icon.svg)
 > - Set brand colours in `css/style.css` (CSS variables at the top)
 > - Add GitHub Secrets: `FIRECRAWL_API_KEY` + `OPENROUTER_API_KEY`
-> - Run `npm run generate-blog` for your first AI blog post"
+> - Run `npm run generate-blog` for your first AI blog post
 
 ---
 
@@ -304,3 +331,8 @@ If the user says **"continue from phase X"** or **"resume at phase X"**:
 
 **Merge conflicts in fragments:**
 - If `.tmp/` fragments overlap in keys, the later `Object.assign()` wins. The section split is designed to be non-overlapping, so this shouldn't happen. If it does, check which agent wrote extra keys and re-run it with stricter instructions.
+
+**Image download fails:**
+- Bing image search can be unreliable (blocked requests, expired URLs, low quality results). If the subagent fails to download some images, it will report which ones are missing.
+- The user can manually download and place images in `images/` with the correct filenames.
+- Re-run `npm run build` after replacing images.
