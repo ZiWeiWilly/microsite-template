@@ -243,9 +243,10 @@ Launch a Sonnet subagent to find and download images for the site. The subagent 
 1. **Search Bing Images** for the attraction and each zone/area name
 2. **Download** the best matching images (landscape, high quality, no watermarks)
 3. **Save** to the `images/` directory with correct filenames:
-   - `hero-desktop.jpg` — wide landscape hero shot of the attraction
-   - `og-home.jpg` — OG image (1200×630), can be same as hero
-   - `og-attractions.jpg`, `og-tickets.jpg`, `og-tips.jpg`, `og-getting-there.jpg`, `og-faq.jpg` — per-page OG images
+   - `hero-desktop.jpg` — wide landscape hero shot (1920×800)
+   - `hero-mobile.jpg` — mobile hero shot (portrait or square crop)
+   - `og-home.jpg` — homepage OG image (1200×630)
+   - `og-attractions.jpg`, `og-tickets.jpg`, `og-tips.jpg`, `og-getting-there.jpg`, `og-faq.jpg`, `og-blog.jpg` — per-page OG images (1200×630)
    - `zone-{id}.jpg` — one image per zone/area (filenames must match CSS classes in `css/style.css`)
 4. **Update `css/style.css`** — replace the old zone CSS classes (e.g. `.zone-ghostbusters`) with new ones matching the attraction's actual zones, using the downloaded images
 
@@ -278,13 +279,15 @@ After build succeeds, list all images in `images/` with file sizes. Flag any tha
 📸 Image Review — please check and replace any you don't like:
 
 Auto-downloaded:
-  ✅ images/hero-desktop.jpg          (245 KB)
-  ✅ images/og-home.jpg               (89 KB)
-  ✅ images/og-attractions.jpg        (92 KB)
-  ✅ images/og-tickets.jpg            (78 KB)
-  ✅ images/og-tips.jpg               (85 KB)
-  ✅ images/og-getting-there.jpg      (91 KB)
-  ✅ images/og-faq.jpg                (76 KB)
+  ✅ images/hero-desktop.jpg          (size) — hero banner
+  ✅ images/hero-mobile.jpg           (size) — mobile hero
+  ✅ images/og-home.jpg               (size) — homepage OG
+  ✅ images/og-attractions.jpg        (size)
+  ✅ images/og-tickets.jpg            (size)
+  ✅ images/og-tips.jpg               (size)
+  ✅ images/og-getting-there.jpg      (size)
+  ✅ images/og-faq.jpg                (size)
+  ✅ images/og-blog.jpg               (size) — blog index OG
   ✅ images/zone-{id}.jpg             (per zone)
   ...
 

@@ -156,8 +156,9 @@ Launch a single `Agent(model: "haiku")` to generate `scripts/topics.json` with 1
 
 **Track D — Image sourcing (Sonnet subagent):**
 Launch a Sonnet subagent to search Bing Images, download, and save images for the site:
-- `hero-desktop.jpg` — wide landscape hero shot
-- `og-home.jpg`, `og-attractions.jpg`, `og-tickets.jpg`, `og-tips.jpg`, `og-getting-there.jpg`, `og-faq.jpg` — OG images (1200×630)
+- `hero-desktop.jpg` — wide landscape hero shot (1920×800)
+- `hero-mobile.jpg` — mobile hero shot (portrait or square crop)
+- `og-home.jpg`, `og-attractions.jpg`, `og-tickets.jpg`, `og-tips.jpg`, `og-getting-there.jpg`, `og-faq.jpg`, `og-blog.jpg` — OG images (1200×630)
 - `zone-{id}.jpg` — one per zone/area
 - Update `css/style.css` zone CSS classes to match the attraction's actual zones
 
