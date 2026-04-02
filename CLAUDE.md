@@ -109,13 +109,28 @@ This is the largest task. Use **Sonnet subagents** to write sections in parallel
 |----------|----------|
 | Sonnet A | `home` — read `index.njk` first. Hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
 | Sonnet B | `faq` — read `faq.njk` first. 30-40 FAQs in 7 categories. **CRITICAL:** Use `questions` (NOT `items`) as the array key — `buildFaqSchema()` calls `cat.questions`. |
-| Sonnet C | `attractions` + `tickets` — read `attractions.njk` AND `tickets.njk` first. Match the exact key structures from templates. |
+| Sonnet C | `attractions` + `tickets` — read `attractions.njk` AND `tickets.njk` first. Match the exact key structures below. |
 | Sonnet D | `gettingThere` — read `getting-there.njk` first. Transport options, directions, parking |
 | Sonnet E | `tips` — read `tips.njk` first. Visitor tips by category |
+
+**Sonnet C required key structures:**
+
+`t.attractions` keys: `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`, `breadcrumbCurrent`, `schema { name, alternateName[], description, touristType[], containsPlace[] }`, `pageHeader { h1, description }`, `tldr [{ bold, text }]`, `zoneNav { heading, sectionLabel, description, zones [{ tag, name, subtitle }] }`, `zones [{ h2, tag, subtitle, intro, keyAttractionsLabel, attractions [{ name, desc }], highlights [], tipContent }]`, `extras { heading, sectionLabel, description, items [{ h3, content, highlights [] }] }`, `faq { heading, sectionLabel, description, items [{ question, answer }], viewAll }`, `cta { heading, text, button, link }`
+
+`t.tickets` keys: `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`, `breadcrumbCurrent`, `schema { breadcrumbCurrent }`, `hero { badge, h1, h1Sub, sub, cta1, cta2, stats [4 items with number/label] }`, `tldr [{ bold?, text }]`, `ticketOptions { sectionLabel, heading, description, tableHeaders [4], tableRows [{ name, included }], tableFootnote, cta }`, `pricingCards { sectionLabel, heading, description, cards [3 items: { h3, period, features [], cta }] }`, `addons { sectionLabel, heading, description, items [4 items: { h3, text }] }`, `howToBook { sectionLabel, heading, description, items [4 items: { h3, text }], cta }`, `cancellation { sectionLabel, heading, items [{ bold?, text }], footerNote }`, `savingsTips { sectionLabel, heading, description, tips [5 items: { h3, text }], cta }`, `cta1 { heading, text, button, subtextPrefix }`, `faq { sectionLabel, heading, description, items [{ question, answer }], viewAll }`, `priceGuide { heading, description, blogSlug, button }`, `cta2 { heading, text, button }`
 
 Each subagent also generates SEO metadata (`title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`) for its pages.
 
 **Step 6c:** Merge all subagent results into a single `src/i18n/en.json`.
+
+**Step 6d — Verify content completeness:** After merging, run a quick check on the generated `en.json` to confirm key pages have real content (not empty or placeholder values):
+- `en.json` → `attractions.pageHeader.h1` exists and is not empty
+- `en.json` → `attractions.zones` array has entries
+- `en.json` → `tickets.hero.h1` exists and is not empty
+- `en.json` → `tickets.pricingCards.cards` array has 3 entries
+- `en.json` → `faq.categories` array has entries with `questions` arrays
+- `en.json` → `home.hero.title` exists and is not empty
+If any are missing, re-run the corresponding subagent before proceeding.
 
 Content guidelines for all subagents:
 - **Headings (h1, h2, h3, heading keys): max 10 words.** Keep them punchy and scannable — e.g. "Top Rides & Attractions" not "Discover All the Amazing Rides and Attractions You Can Enjoy"
@@ -157,8 +172,14 @@ Batch order (5 agents × 3 languages = 15 agents per batch):
 - `src/data/home.json` — icons, prices, blog slugs
 - `scripts/scrape-klook.js` — update `PACKAGE_MATCHERS`
 
-**Track C — Blog topics (Haiku subagent):**
-Launch a single `Agent(model: "haiku")` to generate `scripts/topics.json` with 10-20 blog topics.
+**Track C — Blog topics + first post:**
+1. Launch a Haiku subagent to generate `scripts/topics.json` with 10-20 blog topics.
+2. After topics are ready, generate the first blog post using subagents (do NOT run `npm run generate-blog`):
+   - **Sonnet subagent A** writes English HTML → `src/content/blog/{slug}/en.html`
+   - **Sonnet subagent B** (parallel) generates SEO metadata for all 12 languages → temp JSON
+   - **Haiku subagents** (after English done) translate the HTML to 11 languages in batches of 3
+   - **Main conversation** writes `src/data/blog/{slug}.json`, prepends to `src/data/blog/index.json`, merges metadata into each `src/i18n/{lang}.json`
+   See SKILL.md Track C for full details and exact file structures.
 
 **Track D — Image sourcing (Sonnet subagent):**
 Launch a Sonnet subagent to search Bing Images, download, and save images for the site:
@@ -197,7 +218,18 @@ npm install
 npm run build          # Should build 276+ HTML files with no errors
 ```
 
-After build succeeds, present an **image review checklist** — list all auto-downloaded images with file sizes, flag any missing or suspiciously small (<10KB), and remind the user to create logo files manually:
+After build succeeds, **verify page content is not empty** by spot-checking the built HTML:
+```bash
+# Check attractions page has real content (not just nav/footer)
+node -e "const h=require('fs').readFileSync('attractions.html','utf8'); const m=h.match(/<article/g); console.log('attractions.html articles:', m?m.length:0)"
+# Check tickets page
+node -e "const h=require('fs').readFileSync('tickets.html','utf8'); const m=h.match(/<section/g); console.log('tickets.html sections:', m?m.length:0)"
+# Check blog post exists
+node -e "const d=JSON.parse(require('fs').readFileSync('src/data/blog/index.json','utf8')); console.log('blog posts:', d.cards.length)"
+```
+If any page has 0 sections/articles, the i18n keys are mismatched — go back and fix before continuing.
+
+Then present an **image review checklist** — list all auto-downloaded images with file sizes, flag any missing or suspiciously small (<10KB), and remind the user to create logo files manually:
 
 ```
 📸 Image Review — check and replace any you don't like:

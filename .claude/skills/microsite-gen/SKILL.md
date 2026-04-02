@@ -179,6 +179,18 @@ Each subagent should also generate SEO metadata for its pages:
 
 After all subagents complete, merge their JSON fragments into a single `src/i18n/en.json` and write the file.
 
+### Step 3d: Verify content completeness
+
+**Do NOT skip this step.** After merging, verify that key pages have real content:
+- `attractions.pageHeader.h1` exists and is not empty
+- `attractions.zones` array has entries matching the number of zones researched
+- `tickets.hero.h1` exists and is not empty
+- `tickets.pricingCards.cards` array has exactly 3 entries
+- `faq.categories` array has entries, each with a `questions` array
+- `home.hero.title` exists and is not empty
+
+If any are missing or empty, the subagent output was wrong — re-run that specific subagent before proceeding to translations.
+
 Proceed to Phase 4+5+6+7 immediately (run in parallel).
 
 ---
@@ -478,6 +490,21 @@ npm run build
 Report the result:
 - **Success**: count the generated `.html` files (should be 276+) and confirm
 - **Error**: show the error output and fix before marking done
+
+### Step 8a.1: Verify page content (DO NOT SKIP)
+
+Build success does NOT mean content is correct — Nunjucks silently renders empty strings for missing keys. Run these checks:
+
+```bash
+# Attractions page has real content
+node -e "const h=require('fs').readFileSync('attractions.html','utf8'); const m=h.match(/<section/g); console.log('attractions sections:', m?m.length:0)"
+# Tickets page has real content
+node -e "const h=require('fs').readFileSync('tickets.html','utf8'); const m=h.match(/<section/g); console.log('tickets sections:', m?m.length:0)"
+# Blog post was generated
+node -e "const d=JSON.parse(require('fs').readFileSync('src/data/blog/index.json','utf8')); console.log('blog posts:', d.cards.length)"
+```
+
+Expected: attractions 5+ sections, tickets 8+ sections, blog 1+ posts. If any is 0, the i18n keys are wrong — go back and fix the content before continuing.
 
 ### Step 8b: Image Review
 
