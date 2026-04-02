@@ -170,6 +170,7 @@ Each subagent should also generate SEO metadata for its pages:
 
 **Content rules for all subagents:**
 - Tone: conversational, helpful, authoritative travel guide
+- **Headings (h1, h2, h3, heading keys): max 10 words.** Keep them punchy and scannable — e.g. "Top Rides & Attractions" not "Discover All the Amazing Rides and Attractions You Can Enjoy"
 - FAQ answers: use HTML (`<p>`, `<strong>`, `<a href="/tickets.html">`)
 - Reference real attraction details — no generic filler
 - Use real Klook prices, not placeholders

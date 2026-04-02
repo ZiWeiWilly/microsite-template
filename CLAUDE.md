@@ -118,6 +118,7 @@ Each subagent also generates SEO metadata (`title`, `metaDescription`, `metaKeyw
 **Step 6c:** Merge all subagent results into a single `src/i18n/en.json`.
 
 Content guidelines for all subagents:
+- **Headings (h1, h2, h3, heading keys): max 10 words.** Keep them punchy and scannable — e.g. "Top Rides & Attractions" not "Discover All the Amazing Rides and Attractions You Can Enjoy"
 - **SEO titles**: 55-65 characters, include attraction name and primary keyword
 - **Meta descriptions**: 148-158 characters, include call-to-action
 - **FAQ answers**: Use HTML (`<p>`, `<strong>`, `<a>` with internal links like `/tickets.html`)
