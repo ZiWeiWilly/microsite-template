@@ -70,25 +70,26 @@ For `schemaType`, the script lets you choose. Options are:
 - `Museum` — museums, galleries
 - `NaturalFeature` — natural landmarks
 
-### Step 4: Set Up Initial Prices (`data/prices.json`)
+### Step 4: Set `baseCurrency` in `src/data/site.json`
 
-The setup script fills in `activityId`. Now add the actual ticket packages:
-**CRITICAL:** The field name must ALWAYS be `priceTHB` regardless of the actual local currency. The build script hardcodes `priceTHB` — using any other name (e.g. `priceHKD`, `priceJPY`) will cause `Cannot read properties of undefined` errors. Put the local currency value in `priceTHB` and set the base currency's exchange rate to `1`.
+Set `baseCurrency` to the local currency code of the attraction's country (e.g. `"HKD"` for Hong Kong, `"JPY"` for Japan, `"THB"` for Thailand). This value is used by the build script, templates, and frontend currency switcher.
+
+### Step 5: Set Up Initial Prices (`data/prices.json`)
+
+The setup script fills in `activityId`. Now add the actual ticket packages. The price field is `basePrice` (in whatever currency `site.json → baseCurrency` is). Set the base currency's exchange rate to `1`.
 
 ```json
 {
   "activityId": "12345",
   "packages": [
-    { "id": "standard-admission", "name": "Standard Ticket", "priceTHB": 1000, "gatePrice": 1500, "priceUSD": 29 }
+    { "id": "standard-admission", "name": "Standard Ticket", "basePrice": 1000, "gatePrice": 1500, "priceUSD": 29 }
   ]
 }
 ```
 
-For non-THB attractions: put the local price in `priceTHB`, set that currency's rate to `1` in `exchangeRates`, and compute other currencies relative to it.
-
 Also update `src/data/home.json` with the ticket prices for the homepage pricing cards.
 
-### Step 5: Update Klook Scraper (`scripts/scrape-klook.js`)
+### Step 6: Update Klook Scraper (`scripts/scrape-klook.js`)
 
 Update `PACKAGE_MATCHERS` to match the Klook package names for this attraction. Tips:
 1. Visit the Klook activity URL in a browser
@@ -96,7 +97,7 @@ Update `PACKAGE_MATCHERS` to match the Klook package names for this attraction. 
 3. Write regex patterns to match those names
 4. Map each to an internal ID that matches your `data/prices.json` packages
 
-### Step 6: Generate English i18n Content (`src/i18n/en.json`) — Parallelized with Sonnet
+### Step 7: Generate English i18n Content (`src/i18n/en.json`) — Parallelized with Sonnet
 
 This is the largest task. Use **Sonnet subagents** to write sections in parallel.
 
@@ -124,7 +125,7 @@ Content guidelines for all subagents:
 - **Prices**: Use current Klook prices with THB as base currency
 - Research the attraction thoroughly — include real details, not generic filler
 
-### Step 7–10: Run in Parallel After English Content
+### Step 8–11: Run in Parallel After English Content
 
 Once `en.json` is complete, run these three tracks concurrently:
 

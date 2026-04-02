@@ -85,14 +85,18 @@ Update the `Sitemap:` URL to match the domain.
 ### 4. `package.json`
 Update `name` and `description`.
 
-### 5. `data/prices.json`
-Add ticket packages. **CRITICAL:** The field name must ALWAYS be `priceTHB` regardless of the actual local currency. The build script hardcodes `priceTHB` — using any other name (e.g. `priceHKD`, `priceJPY`) will cause `Cannot read properties of undefined` errors. Put the local currency value in `priceTHB` and set the base currency's exchange rate to `1` in the `exchangeRates` section.
+### 5. `src/data/site.json` — Set `baseCurrency`
+
+Set `baseCurrency` to the local currency code of the attraction's country (e.g. `"HKD"` for Hong Kong, `"JPY"` for Japan, `"THB"` for Thailand). This value is used by the build script, templates, and frontend currency switcher.
+
+### 6. `data/prices.json`
+Add ticket packages. The price field is always `basePrice` (in whatever currency `site.json → baseCurrency` is). Set the base currency's exchange rate to `1`, and compute all other currencies relative to it.
 
 ```json
 {
   "activityId": "12345",
   "packages": [
-    { "id": "adult", "name": "Adult Ticket", "priceTHB": 1000, "gatePrice": 1500, "priceUSD": 29 }
+    { "id": "adult", "name": "Adult Ticket", "basePrice": 1000, "gatePrice": 1500, "priceUSD": 29 }
   ],
   "exchangeRates": {
     "HKD": { "rate": 1, "symbol": "HK$", "code": "HKD", "decimals": 0 },
@@ -101,7 +105,7 @@ Add ticket packages. **CRITICAL:** The field name must ALWAYS be `priceTHB` rega
 }
 ```
 
-For example, if the attraction is in Hong Kong and prices are in HKD: put the HKD value in `priceTHB`, set HKD rate to `1`, and compute other currencies relative to HKD. The field name `priceTHB` is a legacy convention — it just means "base currency price".
+For example, if the attraction is in Hong Kong: set `baseCurrency: "HKD"` in site.json, put HKD values in `basePrice`, and set HKD rate to `1`.
 
 Proceed to Phase 3 immediately.
 

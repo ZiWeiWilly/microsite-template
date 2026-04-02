@@ -3,8 +3,8 @@
     <div class="container sticky-bar-inner">
       <div class="sticky-bar-info">
         <div>
-          <div class="sticky-bar-price" data-price-thb="{{ stickyPrice }}" data-price-original-thb="{{ stickyOriginalPrice }}">
-            THB {{ stickyPriceFormatted }} <small>THB {{ stickyOriginalPriceFormatted }}</small>
+          <div class="sticky-bar-price" data-base-price="{{ stickyPrice }}" data-base-price-original="{{ stickyOriginalPrice }}">
+            {{ site.baseCurrency }} {{ stickyPriceFormatted }} <small>{{ site.baseCurrency }} {{ stickyOriginalPriceFormatted }}</small>
           </div>
           <div class="text-sm text-muted">{{ t.stickyBar.subText }}</div>
         </div>

@@ -17,7 +17,7 @@ const ROOT = path.join(__dirname, '..');
 const PRICES_FILE = path.join(ROOT, 'data', 'prices.json');
 const SITE = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'data', 'site.json'), 'utf8'));
 
-// Core files that always contain data-price-thb attributes
+// Core files that always contain data-base-price attributes
 const CORE_PRICE_FILES = [
   'tickets.html',
   'index.html',
@@ -34,11 +34,11 @@ const CORE_PRICE_FILES = [
   'zh-TW/index.html'
 ];
 
-// Dynamically find all HTML files that contain data-price-thb
+// Dynamically find all HTML files that contain data-base-price
 function findAllPriceFiles() {
   const files = new Set(CORE_PRICE_FILES);
   try {
-    // Find blog files and language blog files with data-price-thb
+    // Find blog files and language blog files with data-base-price
     const blogDirs = ['blog'];
     const langs = ['zh-TW', 'zh-CN', 'ja', 'ko', 'de', 'fr', 'hi', 'ru', 'vi', 'ms', 'lo'];
     langs.forEach(l => blogDirs.push(`${l}/blog`));
@@ -52,7 +52,7 @@ function findAllPriceFiles() {
         const relPath = `${dir}/${entry}`;
         const fullPath = path.join(ROOT, relPath);
         const content = fs.readFileSync(fullPath, 'utf8');
-        if (content.includes('data-price-thb') || content.includes('sticky-bar-price')) {
+        if (content.includes('data-base-price') || content.includes('sticky-bar-price')) {
           files.add(relPath);
         }
       }
@@ -71,7 +71,7 @@ function loadPrices() {
 
 function getPackagePrice(packages, id) {
   const pkg = packages.find(p => p.id === id);
-  return pkg ? pkg.priceTHB : null;
+  return pkg ? pkg.basePrice : null;
 }
 
 function getPackageGatePrice(packages, id) {
@@ -140,7 +140,7 @@ function updateBookingUrl() {
 }
 
 // ============================================================
-// 2. Update data-price-thb attributes across all HTML files
+// 2. Update data-base-price attributes across all HTML files
 // ============================================================
 function updatePriceAttributes(filePath, packages) {
   const fullPath = path.join(ROOT, filePath);
@@ -151,16 +151,16 @@ function updatePriceAttributes(filePath, packages) {
   const gatePrice = getPackageGatePrice(packages, 'standard-admission');
   const allInclusivePrice = getPackagePrice(packages, 'admission-food-surf');
 
-  // The pricing cards have 3 data-price-thb values in order:
+  // The pricing cards have 3 data-base-price values in order:
   // 1st: gate price (1595), 2nd: online price (1171), 3rd: all-inclusive price (1580)
   //
-  // Strategy: Find all data-price-thb="..." and update based on context.
+  // Strategy: Find all data-base-price="..." and update based on context.
   // We use the surrounding HTML to identify which price each is.
 
   // Update gate price card (first pricing-amount)
   if (gatePrice) {
-    // Match the gate price card - it's the first data-price-thb in a pricing-card
-    const gatePattern = /(<div class="pricing-card">\s*<h3>[^<]*<\/h3>\s*<div[^>]*data-price-thb=")(\d+)(")/;
+    // Match the gate price card - it's the first data-base-price in a pricing-card
+    const gatePattern = /(<div class="pricing-card">\s*<h3>[^<]*<\/h3>\s*<div[^>]*data-base-price=")(\d+)(")/;
     const gateMatch = content.match(gatePattern);
     if (gateMatch && gateMatch[2] !== String(gatePrice)) {
       content = content.replace(gatePattern, `$1${gatePrice}$3`);
@@ -168,9 +168,9 @@ function updatePriceAttributes(filePath, packages) {
     }
   }
 
-  // Broader approach: replace all data-price-thb values based on known prices
+  // Broader approach: replace all data-base-price values based on known prices
   // For files that have the 3-card pattern, update them positionally
-  const priceAttrRegex = /data-price-thb="(\d+)"/g;
+  const priceAttrRegex = /data-base-price="(\d+)"/g;
   let match;
   const positions = [];
   while ((match = priceAttrRegex.exec(content)) !== null) {
@@ -180,7 +180,7 @@ function updatePriceAttributes(filePath, packages) {
   if (positions.length >= 3) {
     // Typical pattern: [gatePrice, onlinePrice, vipPrice, ...stickyBar]
     // Identify by checking surrounding context
-    const newContent = content.replace(/data-price-thb="(\d+)"/g, (fullMatch, oldVal) => {
+    const newContent = content.replace(/data-base-price="(\d+)"/g, (fullMatch, oldVal) => {
       const val = parseInt(oldVal, 10);
 
       // Sticky bar always has online price
@@ -192,7 +192,7 @@ function updatePriceAttributes(filePath, packages) {
       if (before.includes('sticky-bar-price')) {
         if (onlinePrice && val !== onlinePrice) {
           changed = true;
-          return `data-price-thb="${onlinePrice}"`;
+          return `data-base-price="${onlinePrice}"`;
         }
         return fullMatch;
       }
@@ -205,7 +205,7 @@ function updatePriceAttributes(filePath, packages) {
         if (!afterCard.includes('featured')) {
           if (gatePrice && val !== gatePrice) {
             changed = true;
-            return `data-price-thb="${gatePrice}"`;
+            return `data-base-price="${gatePrice}"`;
           }
         }
       }
@@ -215,17 +215,17 @@ function updatePriceAttributes(filePath, packages) {
     content = newContent;
   }
 
-  // Update data-price-thb and data-price-original-thb based on context
+  // Update data-base-price and data-price-original-thb based on context
   // Use a smarter approach: identify pricing cards by their structure
   if (onlinePrice) {
     const old = content;
     // Featured card (online price) and sticky bar — update any stale value
     content = content.replace(
-      /(pricing-card featured[\s\S]*?data-price-thb=")(\d+)(")/,
+      /(pricing-card featured[\s\S]*?data-base-price=")(\d+)(")/,
       `$1${onlinePrice}$3`
     );
     content = content.replace(
-      /(sticky-bar-price[^>]*data-price-thb=")(\d+)(")/g,
+      /(sticky-bar-price[^>]*data-base-price=")(\d+)(")/g,
       `$1${onlinePrice}$3`
     );
     if (content !== old) changed = true;
@@ -235,7 +235,7 @@ function updatePriceAttributes(filePath, packages) {
     const old = content;
     // Gate price card (non-featured, non-VIP)
     content = content.replace(
-      /(pricing-card">\s*<h3>[^<]*(?:Gate|Walk)[^<]*<\/h3>\s*<div[^>]*data-price-thb=")(\d+)(")/,
+      /(pricing-card">\s*<h3>[^<]*(?:Gate|Walk)[^<]*<\/h3>\s*<div[^>]*data-base-price=")(\d+)(")/,
       `$1${gatePrice}$3`
     );
     // Original price in sticky bar
@@ -256,9 +256,9 @@ function updatePriceAttributes(filePath, packages) {
       /올인클루시브/i, /Всё включено/i, /Trọn Gói/i, /Semua Termasuk/i,
       /ລວມທັງໝົດ/i, /ऑल-इंक्लूसिव/i, /All-Inclusive/i
     ];
-    // Simple approach: find all pricing-amount with data-price-thb that's NOT gate or online price
+    // Simple approach: find all pricing-amount with data-base-price that's NOT gate or online price
     content = content.replace(
-      /(pricing-amount[^>]*data-price-thb=")(\d+)(")/g,
+      /(pricing-amount[^>]*data-base-price=")(\d+)(")/g,
       (match, pre, val, post) => {
         const v = parseInt(val, 10);
         if (v !== gatePrice && v !== onlinePrice && v !== allInclusivePrice) {
@@ -273,9 +273,9 @@ function updatePriceAttributes(filePath, packages) {
   }
 
   // Also update visible fallback text inside pricing-amount divs
-  // Pattern: data-price-thb="1171">\n  <span class="pricing-currency">THB</span>870
+  // Pattern: data-base-price="1171">\n  <span class="pricing-currency">THB</span>870
   // Should become: ...>THB</span>1,171
-  const fallbackPattern = /(data-price-thb="(\d+)">\s*<span class="pricing-currency">THB<\/span>)([\d,]+)/g;
+  const fallbackPattern = /(data-base-price="(\d+)">\s*<span class="pricing-currency">THB<\/span>)([\d,]+)/g;
   const beforeFallback = content;
   content = content.replace(fallbackPattern, (match, prefix, thbValue, visibleText) => {
     const formatted = formatNumber(parseInt(thbValue, 10));
@@ -314,27 +314,27 @@ function updateTicketsTable(packages) {
 
   // Extract current prices from the HTML to build old->new mapping
   // This avoids hardcoding old values that become stale after first update
-  const currentOnlineAttr = content.match(/data-price-thb="(\d+)"[^>]*>\s*<span class="pricing-currency">THB<\/span>([\d,]+)/);
+  const currentOnlineAttr = content.match(/data-base-price="(\d+)"[^>]*>\s*<span class="pricing-currency">THB<\/span>([\d,]+)/);
 
   for (const pkg of packages) {
-    if (!pkg.priceTHB) continue;
-    const newFormatted = `THB ${formatNumber(pkg.priceTHB)}`;
+    if (!pkg.basePrice) continue;
+    const newFormatted = `${SITE.baseCurrency} ${formatNumber(pkg.basePrice)}`;
 
-    // Update gate price references (THB X,XXX in table cells and prose)
+    // Update gate price references in table cells and prose
     if (pkg.gatePrice) {
-      const newGateFormatted = `THB ${formatNumber(pkg.gatePrice)}`;
+      const newGateFormatted = `${SITE.baseCurrency} ${formatNumber(pkg.gatePrice)}`;
       // Gate price doesn't change often, but keep consistent
     }
   }
 
   // Update all THB price references in the comparison table
-  // Strategy: find table cells with <strong>THB X,XXX</strong> and update based on data-price-thb
-  const tablePricePattern = /data-price-thb="(\d+)"[^>]*>[\s\S]*?<strong>THB ([\d,]+)<\/strong>/g;
+  // Strategy: find table cells with <strong>THB X,XXX</strong> and update based on data-base-price
+  const tablePricePattern = /data-base-price="(\d+)"[^>]*>[\s\S]*?<strong>THB ([\d,]+)<\/strong>/g;
   const beforeTable = content;
   content = content.replace(tablePricePattern, (match, attrVal, visibleVal) => {
     const expected = formatNumber(parseInt(attrVal, 10));
     if (visibleVal !== expected) {
-      return match.replace(`THB ${visibleVal}`, `THB ${expected}`);
+      return match.replace(`${SITE.baseCurrency} ${visibleVal}`, `${SITE.baseCurrency} ${expected}`);
     }
     return match;
   });
@@ -498,23 +498,32 @@ function updateIndexText(filePath, packages, exchangeRates) {
       if (content !== old) changed = true;
     }
 
-    // Update THB prices in prose — use dynamic pattern to match any old value
+    // Update prices in prose — use dynamic pattern to match any old value
+    const cur = SITE.baseCurrency;
     if (standardGate) {
       const old = content;
-      // Gate price references like "THB 1,595" in structured data and prose
-      content = content.replace(/gate price THB [\d,]+/g, `gate price THB ${formatNumber(standardGate)}`);
-      content = content.replace(/gate price is <strong>THB [\d,]+<\/strong>/g, `gate price is <strong>THB ${formatNumber(standardGate)}</strong>`);
+      // Gate price references in structured data and prose
+      const gateProseRe = new RegExp(`gate price ${cur} [\\d,]+`, 'g');
+      content = content.replace(gateProseRe, `gate price ${cur} ${formatNumber(standardGate)}`);
+      const gateStrongRe = new RegExp(`gate price is <strong>${cur} [\\d,]+<\\/strong>`, 'g');
+      content = content.replace(gateStrongRe, `gate price is <strong>${cur} ${formatNumber(standardGate)}</strong>`);
       if (content !== old) changed = true;
     }
     if (standardOnline) {
       const old = content;
-      // Online price references like "THB 870" or "THB 1,171" in structured data
-      content = content.replace(/From THB [\d,]+ online/g, `From THB ${formatNumber(standardOnline)} online`);
-      content = content.replace(/from THB [\d,]+ online/g, `from THB ${formatNumber(standardOnline)} online`);
-      content = content.replace(/from just THB [\d,]+ online/g, `from just THB ${formatNumber(standardOnline)} online`);
-      content = content.replace(/start from just THB [\d,]+/g, `start from just THB ${formatNumber(standardOnline)}`);
-      content = content.replace(/start from THB [\d,]+/g, `start from THB ${formatNumber(standardOnline)}`);
-      content = content.replace(/price from THB [\d,]+!/g, `price from THB ${formatNumber(standardOnline)}!`);
+      // Online price references in structured data
+      const fromOnlineRe = new RegExp(`From ${cur} [\\d,]+ online`, 'g');
+      content = content.replace(fromOnlineRe, `From ${cur} ${formatNumber(standardOnline)} online`);
+      const fromLcRe = new RegExp(`from ${cur} [\\d,]+ online`, 'g');
+      content = content.replace(fromLcRe, `from ${cur} ${formatNumber(standardOnline)} online`);
+      const fromJustRe = new RegExp(`from just ${cur} [\\d,]+ online`, 'g');
+      content = content.replace(fromJustRe, `from just ${cur} ${formatNumber(standardOnline)} online`);
+      const startJustRe = new RegExp(`start from just ${cur} [\\d,]+`, 'g');
+      content = content.replace(startJustRe, `start from just ${cur} ${formatNumber(standardOnline)}`);
+      const startFromRe = new RegExp(`start from ${cur} [\\d,]+`, 'g');
+      content = content.replace(startFromRe, `start from ${cur} ${formatNumber(standardOnline)}`);
+      const priceFromRe = new RegExp(`price from ${cur} [\\d,]+!`, 'g');
+      content = content.replace(priceFromRe, `price from ${cur} ${formatNumber(standardOnline)}!`);
       if (content !== old) changed = true;
     }
   }
@@ -543,9 +552,11 @@ function updateMetaTags(packages, exchangeRates) {
 
     // Update meta description patterns
     const old = content;
+    const cur = SITE.baseCurrency;
+    const metaPriceRe = new RegExp(`${cur} \\d[\\d,]* online \\(gate price ${cur} \\d[\\d,]*\\)\\. Save \\d+%`, 'g');
     content = content.replace(
-      /THB \d[\d,]* online \(gate price THB \d[\d,]*\)\. Save \d+%/g,
-      `THB ${formatNumber(standardOnline)} online (gate price THB ${formatNumber(standardGate)}). Save ${savings}%`
+      metaPriceRe,
+      `${cur} ${formatNumber(standardOnline)} online (gate price ${cur} ${formatNumber(standardGate)}). Save ${savings}%`
     );
     if (content !== old) changed = true;
   }
@@ -569,7 +580,7 @@ function main() {
 
   console.log('Current prices:');
   for (const pkg of packages) {
-    console.log(`  ${pkg.name}: ฿${formatNumber(pkg.priceTHB)}${pkg.gatePrice ? ` (gate: ฿${formatNumber(pkg.gatePrice)})` : ''}`);
+    console.log(`  ${pkg.name}: ${SITE.baseCurrency} ${formatNumber(pkg.basePrice)}${pkg.gatePrice ? ` (gate: ${SITE.baseCurrency} ${formatNumber(pkg.gatePrice)})` : ''}`);
   }
   console.log('');
 
@@ -581,7 +592,7 @@ function main() {
   console.log('Updating booking URL...');
   updateBookingUrl();
 
-  // 2. Update data-price-thb attributes in all HTML files
+  // 2. Update data-base-price attributes in all HTML files
   console.log('\nUpdating price attributes...');
   for (const file of PRICE_ATTR_FILES) {
     updatePriceAttributes(file, packages);

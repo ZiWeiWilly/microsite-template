@@ -6,7 +6,7 @@
     {
       "id": "standard-admission",
       "name": "Standard Admission",
-      "priceTHB": 0,
+      "basePrice": 0,
       "gatePrice": 0,
       "priceUSD": 0
     }

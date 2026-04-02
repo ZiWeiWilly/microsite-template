@@ -200,13 +200,13 @@ function updateHistory(history, packages, rates) {
 
   const priceMap = {};
   for (const pkg of packages) {
-    priceMap[pkg.id] = pkg.priceTHB;
+    priceMap[pkg.id] = pkg.basePrice;
   }
 
   const rateMap = {};
   if (rates) {
     for (const [code, info] of Object.entries(rates)) {
-      if (code !== 'THB') rateMap[code] = info.rate;
+      if (code !== SITE.baseCurrency) rateMap[code] = info.rate;
     }
   }
 
@@ -287,14 +287,14 @@ async function main() {
     process.exit(0);
   }
 
-  // Convert USD prices to THB using exchange rate
+  // Convert USD prices to base currency using exchange rate
   const usdRate = existingData.exchangeRates?.USD?.rate;
   if (usdRate && usdRate > 0) {
-    console.log(`\nConverting USD -> THB (rate: 1 THB = ${usdRate} USD)`);
+    console.log(`\nConverting USD -> ${SITE.baseCurrency} (rate: 1 ${SITE.baseCurrency} = ${usdRate} USD)`);
     for (const item of scraped) {
-      const thbPrice = Math.round(item.priceUSD / usdRate);
-      console.log(`  ${item.name}: $${item.priceUSD} -> ฿${thbPrice}`);
-      item.priceTHB = thbPrice;
+      const basePrice = Math.round(item.priceUSD / usdRate);
+      console.log(`  ${item.name}: $${item.priceUSD} -> ${SITE.baseCurrency} ${basePrice}`);
+      item.basePrice = basePrice;
     }
   } else {
     console.log('\nWARNING: No USD exchange rate available. Using USD prices directly.');
@@ -304,16 +304,16 @@ async function main() {
   console.log('\nMapping scraped packages...');
   const updatedPackages = mapScrapedToPackages(scraped, existingData.packages);
 
-  // Update THB prices from converted values
+  // Update base prices from converted values
   for (const pkg of updatedPackages) {
     const scrapedItem = scraped.find(s => matchPackage(s.name) === pkg.id);
-    if (scrapedItem?.priceTHB) {
-      const oldPrice = pkg.priceTHB;
-      pkg.priceTHB = scrapedItem.priceTHB;
+    if (scrapedItem?.basePrice) {
+      const oldPrice = pkg.basePrice;
+      pkg.basePrice = scrapedItem.basePrice;
 
-      const changePercent = oldPrice ? Math.abs((pkg.priceTHB - oldPrice) / oldPrice * 100) : 0;
+      const changePercent = oldPrice ? Math.abs((pkg.basePrice - oldPrice) / oldPrice * 100) : 0;
       if (changePercent > 50) {
-        console.log(`  WARNING: ${pkg.id} price changed by ${changePercent.toFixed(1)}% (฿${oldPrice} -> ฿${pkg.priceTHB})`);
+        console.log(`  WARNING: ${pkg.id} price changed by ${changePercent.toFixed(1)}% (${SITE.baseCurrency} ${oldPrice} -> ${SITE.baseCurrency} ${pkg.basePrice})`);
       }
     }
   }

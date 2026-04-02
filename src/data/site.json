@@ -29,6 +29,7 @@
     "best": "5"
   },
   "amenities": [],
+  "baseCurrency": "THB",
   "klook": {
     "activityUrl": "https://www.klook.com/activity/CHANGE-ME",
     "affiliateUrl": "https://affiliate.klook.com/redirect?aid=CHANGE-ME"

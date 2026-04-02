@@ -284,7 +284,7 @@
     return n.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   }
 
-  // Convert price from THB to target currency
+  // Convert price from base currency to target currency
   function convertPrice(thbAmount, currency) {
     const c = CURRENCY_RATES[currency];
     if (!c) return thbAmount;
@@ -298,8 +298,8 @@
     if (!c) return;
 
     // Pricing cards
-    document.querySelectorAll('[data-price-thb]').forEach(el => {
-      const thb = parseFloat(el.getAttribute('data-price-thb'));
+    document.querySelectorAll('[data-base-price]').forEach(el => {
+      const thb = parseFloat(el.getAttribute('data-base-price'));
       const converted = convertPrice(thb, currency);
       const currencyEl = el.querySelector('.pricing-currency');
 
@@ -307,7 +307,7 @@
         currencyEl.textContent = c.code;
         currencyEl.nextSibling.textContent = ' ' + converted;
       } else if (el.classList.contains('sticky-bar-price')) {
-        const origThb = parseFloat(el.getAttribute('data-price-original-thb'));
+        const origThb = parseFloat(el.getAttribute('data-base-price-original'));
         const origConverted = origThb ? convertPrice(origThb, currency) : '';
         el.innerHTML = `${c.code} ${converted}` + (origConverted ? ` <small>${c.code} ${origConverted}</small>` : '');
       }

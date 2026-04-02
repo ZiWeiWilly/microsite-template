@@ -168,7 +168,7 @@ function loadPrices() {
   // Fallback defaults
   return {
     packages: [
-      { id: 'standard-admission', priceTHB: 1176, gatePrice: 1595 },
+      { id: 'standard-admission', basePrice: 1176, gatePrice: 1595 },
     ],
   };
 }
@@ -177,10 +177,10 @@ function buildPage(pageKey, pageConfig) {
   const translations = loadI18n();
   const prices = loadPrices();
   const standardPkg = prices.packages.find(p => p.id === 'standard-admission') || prices.packages[0];
-  const stickyPrice = standardPkg.priceTHB;
+  const stickyPrice = standardPkg.basePrice;
   const stickyOriginalPrice = standardPkg.gatePrice || 1595;
   const allInclusivePkg = prices.packages.find(p => p.id === 'admission-food-surf') || prices.packages[1];
-  const allInclusivePrice = allInclusivePkg.priceTHB;
+  const allInclusivePrice = allInclusivePkg.basePrice;
 
   let built = 0;
 
@@ -266,7 +266,7 @@ function buildBlogPost(slug) {
   const translations = loadI18n();
   const prices = loadPrices();
   const standardPkg = prices.packages.find(p => p.id === 'standard-admission') || prices.packages[0];
-  const stickyPrice = standardPkg.priceTHB;
+  const stickyPrice = standardPkg.basePrice;
   const stickyOriginalPrice = standardPkg.gatePrice || 1595;
 
   const blogPostDataPath = path.join(__dirname, 'data', 'blog', `${slug}.json`);

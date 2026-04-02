@@ -189,8 +189,8 @@
 
           <div class="pricing-card">
             <h3>{{ t.tickets.pricingCards.cards[0].h3 }}</h3>
-            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-price-thb="{{ stickyOriginalPrice }}">
-              <span class="pricing-currency">THB</span>{{ stickyOriginalPriceFormatted }}
+            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-base-price="{{ stickyOriginalPrice }}">
+              <span class="pricing-currency">{{ site.baseCurrency }}</span>{{ stickyOriginalPriceFormatted }}
             </div>
             <div class="pricing-period" data-price-note="gate">{{ t.tickets.pricingCards.cards[0].period }}</div>
             <div class="pricing-features">
@@ -203,8 +203,8 @@
 
           <div class="pricing-card featured">
             <h3>{{ t.tickets.pricingCards.cards[1].h3 }}</h3>
-            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-price-thb="{{ stickyPrice }}">
-              <span class="pricing-currency">THB</span>{{ stickyPriceFormatted }}
+            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-base-price="{{ stickyPrice }}">
+              <span class="pricing-currency">{{ site.baseCurrency }}</span>{{ stickyPriceFormatted }}
             </div>
             <div class="pricing-period" data-price-note="online">{{ t.tickets.pricingCards.cards[1].period }}</div>
             <div class="pricing-features">
@@ -217,8 +217,8 @@
 
           <div class="pricing-card">
             <h3>{{ t.tickets.pricingCards.cards[2].h3 }}</h3>
-            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-price-thb="{{ allInclusivePrice }}">
-              <span class="pricing-currency">THB</span>{{ allInclusivePriceFormatted }}
+            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-base-price="{{ allInclusivePrice }}">
+              <span class="pricing-currency">{{ site.baseCurrency }}</span>{{ allInclusivePriceFormatted }}
             </div>
             <div class="pricing-period" data-price-note="allinclusive">{{ t.tickets.pricingCards.cards[2].period }}</div>
             <div class="pricing-features">

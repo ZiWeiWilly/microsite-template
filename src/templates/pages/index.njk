@@ -300,8 +300,8 @@
 
           <div class="pricing-card{{ ' featured' if loop.index0 == 1 }}">
             <h3>{{ card.heading }}</h3>
-            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-price-thb="{{ homeData.ticketPrices[loop.index0] }}">
-              <span class="pricing-currency">THB</span>{{ homeData.ticketPricesFormatted[loop.index0] }}
+            <div class="pricing-amount" style="margin: 1rem 0 0.25rem;" data-base-price="{{ homeData.ticketPrices[loop.index0] }}">
+              <span class="pricing-currency">{{ site.baseCurrency }}</span>{{ homeData.ticketPricesFormatted[loop.index0] }}
             </div>
             <div class="pricing-period" data-price-note="{{ homeData.ticketPriceNotes[loop.index0] }}">{{ card.periodText }}</div>
             <div class="pricing-features">
