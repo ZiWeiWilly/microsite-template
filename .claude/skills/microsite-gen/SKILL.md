@@ -86,15 +86,22 @@ Update the `Sitemap:` URL to match the domain.
 Update `name` and `description`.
 
 ### 5. `data/prices.json`
-Add ticket packages:
+Add ticket packages. **CRITICAL:** The field name must ALWAYS be `priceTHB` regardless of the actual local currency. The build script hardcodes `priceTHB` — using any other name (e.g. `priceHKD`, `priceJPY`) will cause `Cannot read properties of undefined` errors. Put the local currency value in `priceTHB` and set the base currency's exchange rate to `1` in the `exchangeRates` section.
+
 ```json
 {
   "activityId": "12345",
   "packages": [
     { "id": "adult", "name": "Adult Ticket", "priceTHB": 1000, "gatePrice": 1500, "priceUSD": 29 }
-  ]
+  ],
+  "exchangeRates": {
+    "HKD": { "rate": 1, "symbol": "HK$", "code": "HKD", "decimals": 0 },
+    "USD": { "rate": 0.128, "symbol": "$", "code": "USD", "decimals": 2 }
+  }
 }
 ```
+
+For example, if the attraction is in Hong Kong and prices are in HKD: put the HKD value in `priceTHB`, set HKD rate to `1`, and compute other currencies relative to HKD. The field name `priceTHB` is a legacy convention — it just means "base currency price".
 
 Proceed to Phase 3 immediately.
 
@@ -116,7 +123,7 @@ Each subagent receives the Phase 1 research summary and the en.json key structur
 | Subagent | Sections | Details |
 |----------|----------|---------|
 | **Sonnet A** | `home` | Hero text, stats, TL;DR, GBP card, 4 "Why Visit" cards, 4–6 zones with highlights, 3 ticket cards, 3 transport options, 3 testimonials, 3–5 homepage FAQs, CTA |
-| **Sonnet B** | `faq` | 30–40 FAQs in 7 categories: Tickets & Pricing, Hours & Schedule, Getting There, What to Bring, Attractions & Rides, Food & Dining, Facilities |
+| **Sonnet B** | `faq` | 30–40 FAQs in 7 categories: Tickets & Pricing, Hours & Schedule, Getting There, What to Bring, Attractions & Rides, Food & Dining, Facilities. **CRITICAL:** Each category's FAQ array key MUST be `questions` (NOT `items`). The build script calls `cat.questions` in `buildFaqSchema()` — using `items` will crash with `cat.questions is not iterable`. |
 | **Sonnet C** | `attractions` + `tickets` | Full page content for zones/areas and ticket types with descriptions, inclusions, booking CTAs |
 | **Sonnet D** | `gettingThere` | Transport options, directions, parking info |
 | **Sonnet E** | `tips` | Visitor tips organized by category (best time, what to bring, crowds, etc.) |
@@ -189,6 +196,7 @@ Rules:
 - Keep currency values and numbers unchanged
 - Native-speaker fluency, travel-writer tone
 - If blog.posts exists inside any section, translate it too
+- CRITICAL: Output must be valid JSON. No literal newlines inside strings (use spaces instead). No broken HTML like <p\"<strong> — always use proper <p><strong>. Double-check all quote marks are properly escaped.
 
 Write the JSON fragment to src/i18n/.tmp/zh-TW_home.json"
 )
@@ -197,10 +205,15 @@ Write the JSON fragment to src/i18n/.tmp/zh-TW_home.json"
 #### Merge step
 
 After all 5 agents for a language complete, merge in the main conversation:
-1. Read all 5 fragment files
-2. Combine into one JSON object with `Object.assign()` or equivalent
-3. Write to `src/i18n/{lang}.json`
-4. Delete the `.tmp/` fragments
+1. Read all 5 fragment files from `src/i18n/.tmp/`
+2. **Validate each fragment is valid JSON** before merging. If any fragment has invalid JSON:
+   - Try to auto-fix common issues: literal newlines inside strings (replace with spaces), broken HTML tags like `<p"<strong>` → `<p><strong>`, strings prematurely closed by unescaped quotes
+   - If auto-fix fails, re-run that specific section agent
+3. Combine into one JSON object (use the Read tool to read each fragment, then write the merged result)
+4. Write to `src/i18n/{lang}.json` (path: `src/i18n/{lang}.json` relative to project root)
+5. Delete the `.tmp/` fragments
+
+**Path note:** Fragment files are at `src/i18n/.tmp/{lang}_{section}.json`. Output files go to `src/i18n/{lang}.json`. Do NOT use `__dirname`-relative paths in merge scripts — use project-root-relative paths.
 
 #### Resume after interruption
 
@@ -218,9 +231,9 @@ While translations run, the main conversation handles these in sequence:
 3. **`src/data/home.json`** — update icon names, ticket prices for homepage cards, initial blog slugs
 4. **`scripts/scrape-klook.js`** — update `PACKAGE_MATCHERS` with regex patterns matching Klook ticket names
 
-### Track C: Blog Topics (Phase 7) — Haiku subagent
+### Track C: Blog Topics + First Post (Phase 7)
 
-Launch a single Haiku subagent to generate `scripts/topics.json` with 10–20 blog topics:
+**Step C1:** Launch a Haiku subagent to generate `scripts/topics.json` with 10–20 blog topics:
 
 ```
 Agent(
@@ -235,6 +248,163 @@ Categories: Travel Guide, Tips & Tricks, Comparison, Itinerary, Hidden Gems, Fam
 Write the JSON array to scripts/topics.json."
 )
 ```
+
+**Step C2:** After the topics subagent completes, generate the first blog post using subagents (do NOT run `npm run generate-blog`). Pick the first topic from `scripts/topics.json` and do the following:
+
+#### C2a — English article (Sonnet subagent)
+
+```
+Agent(
+  model: "sonnet",
+  description: "Write English blog article",
+  prompt: "Write a full HTML blog post for [attraction name].
+
+Topic: [topic.titleHint]
+Primary keyword: [topic.keyword]
+Slug: [topic.slug]
+Published: [today's date, e.g. 2026-04-02]
+
+Read src/data/site.json for attraction details.
+
+REQUIREMENTS:
+- 1,200–1,600 words (excluding HTML tags)
+- Conversational but authoritative travel guide tone
+- Primary keyword used 4–6 times naturally
+- FAQ section (3–5 Q&A) at the end
+- 2–4 internal links to: /tickets.html, /attractions.html, /faq.html, /tips.html, /getting-there.html
+
+EXACT HTML STRUCTURE:
+<article class='article-content'>
+  <div class='container'>
+    <header class='article-header'>
+      <h1>[title]</h1>
+      <div class='article-meta'>
+        <time datetime='[date]'>Updated [formatted date]</time> &bull; [X] min read
+      </div>
+    </header>
+    <div class='info-card' style='border-left: 4px solid var(--primary); background: var(--surface);'>
+      <strong>TL;DR:</strong> [2–3 sentence summary]
+    </div>
+    <nav class='toc' aria-label='Table of Contents'>
+      <h2>Table of Contents</h2>
+      <ol>[list items with #anchor links]</ol>
+    </nav>
+    [<section id='...'> blocks with <h2>/<h3> headings]
+    <section id='faq'>
+      <h2>Frequently Asked Questions</h2>
+      [questions and answers]
+    </section>
+    <div class='info-card' style='text-align:center; background: var(--surface);'>
+      <strong>Ready to visit [attraction name]?</strong><br>
+      <a href='/tickets.html' style='color: var(--primary);'>Book online and save off the gate price &rarr;</a>
+    </div>
+  </div>
+</article>
+
+Return ONLY raw HTML. No explanation, no markdown fences.
+
+Write the result to src/content/blog/[slug]/en.html (create directories as needed)."
+)
+```
+
+#### C2b — SEO metadata for all 12 languages (Sonnet subagent, run in parallel with C2a)
+
+```
+Agent(
+  model: "sonnet",
+  description: "Generate blog SEO metadata",
+  prompt: "Generate SEO metadata for a blog post about [attraction name].
+
+Topic: [topic.titleHint]
+Primary keyword: [topic.keyword]
+
+Generate for all 12 language codes: en, zh-CN, zh-TW, ja, ko, ru, hi, ms, vi, de, fr, lo
+
+For each language provide:
+- title (55–65 chars)
+- metaDescription (148–158 chars)
+- metaKeywords (6–8 comma-separated)
+- ogTitle (50–60 chars)
+- ogDescription (100–150 chars)
+- twitterTitle (50–60 chars)
+- twitterDescription (100–140 chars)
+- breadcrumbName (3–5 words)
+- cardCategory: one of [Practical Guide, Planning, Tickets & Prices, Family Guide, Travel Guide, Food & Dining, Comparison, Getting There, Itinerary, Budget Guide]
+- cardTitle (60–70 chars)
+- cardDescription (110–130 chars)
+
+Return ONLY a JSON object: { \"en\": {...}, \"zh-CN\": {...}, ... }
+
+Write the result to src/data/blog/.tmp/[slug]-meta.json"
+)
+```
+
+#### C2c — Translate article to 11 languages (Haiku subagents, after C2a completes)
+
+Launch in batches of 3 (same pattern as Track A translations). Each agent:
+- Reads `src/content/blog/[slug]/en.html`
+- Also reads `src/data/site.json` for `blog.doNotTranslate`
+- Translates the HTML (keep all tags, attributes, href values unchanged; don't translate proper nouns from `doNotTranslate`)
+- Writes to `src/content/blog/[slug]/[lang].html`
+
+Batch order:
+- Batch 1: `zh-CN`, `zh-TW`, `ja`
+- Batch 2: `ko`, `ru`, `hi`
+- Batch 3: `ms`, `vi`, `de`
+- Batch 4: `fr`, `lo`
+
+#### C2d — Write data files (main conversation, after C2a + C2b complete)
+
+Once English HTML and metadata JSON are ready:
+
+1. **`src/data/blog/[slug].json`** — create with:
+   ```json
+   {
+     "slug": "[slug]",
+     "ogImage": "og-home.jpg",
+     "schemaType": "Article",
+     "schemaHeadline": "[en meta title]",
+     "schemaDescription": "[en meta metaDescription]",
+     "schemaImage": "og-home.jpg",
+     "datePublished": "[today]",
+     "dateModified": "[today]",
+     "authorName": "[site.blog.authorName]",
+     "authorUrl": "[site.blog.authorUrl]"
+   }
+   ```
+
+2. **`src/data/blog/index.json`** — prepend to `cards` array:
+   ```json
+   { "slug": "[slug]", "date": "[today]", "readTime": "[X] min read" }
+   ```
+   (estimate read time: word count of HTML ÷ 230, minimum 4)
+
+3. **Each `src/i18n/{lang}.json`** — for all 12 languages, merge in:
+   ```json
+   {
+     "blog": {
+       "posts": {
+         "[slug]": {
+           "title": "...",
+           "metaDescription": "...",
+           "metaKeywords": "...",
+           "ogTitle": "...",
+           "ogDescription": "...",
+           "twitterTitle": "...",
+           "twitterDescription": "...",
+           "breadcrumbName": "..."
+         }
+       },
+       "index": {
+         "cards": [{ "slug": "...", "category": "...", "title": "...", "description": "..." }, ...existing...]
+       }
+     }
+   }
+   ```
+
+4. Delete `src/data/blog/.tmp/[slug]-meta.json`
+
+Report the generated slug when done.
 
 ### Track D: Image Sourcing — Sonnet subagent
 

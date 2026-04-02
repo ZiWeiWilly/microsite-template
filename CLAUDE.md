@@ -73,6 +73,8 @@ For `schemaType`, the script lets you choose. Options are:
 ### Step 4: Set Up Initial Prices (`data/prices.json`)
 
 The setup script fills in `activityId`. Now add the actual ticket packages:
+**CRITICAL:** The field name must ALWAYS be `priceTHB` regardless of the actual local currency. The build script hardcodes `priceTHB` — using any other name (e.g. `priceHKD`, `priceJPY`) will cause `Cannot read properties of undefined` errors. Put the local currency value in `priceTHB` and set the base currency's exchange rate to `1`.
+
 ```json
 {
   "activityId": "12345",
@@ -81,6 +83,8 @@ The setup script fills in `activityId`. Now add the actual ticket packages:
   ]
 }
 ```
+
+For non-THB attractions: put the local price in `priceTHB`, set that currency's rate to `1` in `exchangeRates`, and compute other currencies relative to it.
 
 Also update `src/data/home.json` with the ticket prices for the homepage pricing cards.
 
@@ -103,7 +107,7 @@ This is the largest task. Use **Sonnet subagents** to write sections in parallel
 | Subagent | Sections |
 |----------|----------|
 | Sonnet A | `home` — hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
-| Sonnet B | `faq` — 30-40 FAQs in 7 categories |
+| Sonnet B | `faq` — 30-40 FAQs in 7 categories. **CRITICAL:** Each category's array key MUST be `questions` (NOT `items`) — `buildFaqSchema()` calls `cat.questions`. |
 | Sonnet C | `attractions` + `tickets` — full page content |
 | Sonnet D | `gettingThere` — transport options, directions, parking |
 | Sonnet E | `tips` — visitor tips by category |
