@@ -68,12 +68,43 @@ function log(msg) { console.log(`[generate-site] ${msg}`); }
 function warn(msg) { console.warn(`[generate-site] WARN: ${msg}`); }
 function die(msg) { console.error(`[generate-site] ERROR: ${msg}`); process.exit(1); }
 
-/** Strip markdown code fences and parse JSON (reused from generate-blog.js) */
+/** Strip markdown code fences and parse JSON, with repair for truncated responses */
 function extractJSON(text) {
   const stripped = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
   const start = stripped.search(/[{[]/);
   if (start === -1) throw new Error('No JSON found in model response');
-  return JSON.parse(stripped.slice(start));
+  let jsonStr = stripped.slice(start);
+  try {
+    return JSON.parse(jsonStr);
+  } catch (firstErr) {
+    // Attempt to repair truncated JSON by closing open strings and brackets
+    warn(`JSON parse failed (${firstErr.message}), attempting repair...`);
+    let repaired = jsonStr;
+    // Close any unterminated string
+    const quotes = (repaired.match(/(?<!\\)"/g) || []).length;
+    if (quotes % 2 !== 0) repaired += '"';
+    // Close open brackets/braces from innermost out
+    const stack = [];
+    let inStr = false;
+    for (let i = 0; i < repaired.length; i++) {
+      const ch = repaired[i];
+      if (ch === '"' && (i === 0 || repaired[i - 1] !== '\\')) { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (ch === '{') stack.push('}');
+      else if (ch === '[') stack.push(']');
+      else if (ch === '}' || ch === ']') stack.pop();
+    }
+    // Remove trailing comma before closing
+    repaired = repaired.replace(/,\s*$/, '');
+    while (stack.length) repaired += stack.pop();
+    try {
+      const result = JSON.parse(repaired);
+      warn('JSON repair succeeded (response was likely truncated — some content may be incomplete)');
+      return result;
+    } catch (secondErr) {
+      throw new Error(`JSON parse failed and repair unsuccessful: ${firstErr.message}`);
+    }
+  }
 }
 
 /** Retry an async fn up to maxAttempts times with exponential back-off */
@@ -104,7 +135,11 @@ async function chat(client, model, systemPrompt, userPrompt, options = {}) {
     max_tokens: options.max_tokens ?? 16000,
   });
 
-  return response.choices[0].message.content;
+  const choice = response.choices[0];
+  if (choice.finish_reason === 'length') {
+    warn(`Response truncated (hit max_tokens). Output may be incomplete.`);
+  }
+  return choice.message.content;
 }
 
 /** Search Bing Images and return a list of full-size image URLs */
@@ -461,13 +496,23 @@ Also fill in jumpLabels as { "tag": "Category Name" } for each category.
 
 Return ONLY the JSON object with key "faq".`;
 
-  // ── Call C: attractions + tickets ──────────────────────────────────────────
-  const promptC = `Generate the attractions and tickets page content.
+  // ── Call C1: attractions ────────────────────────────────────────────────────
+  const promptC1 = `Generate the attractions page content for ${config.attractionName}.
 
 Here is the Nunjucks template for attractions (attractions.njk):
 \`\`\`njk
 ${attractionsNjk}
 \`\`\`
+
+Here is the EXACT JSON structure. Replace all "CHANGE ME" values:
+${JSON.stringify({ attractions: enTemplate.attractions }, null, 2)}
+
+Add a "pageHeader" with h1 and description, "tldr" array, "zoneNav" object, "zones" array with real zones/areas, "extras" object, "faq" object, and "cta" object.
+
+Return ONLY the JSON object with key "attractions".`;
+
+  // ── Call C2: tickets ──────────────────────────────────────────────────────
+  const promptC2 = `Generate the tickets page content for ${config.attractionName}.
 
 Here is the Nunjucks template for tickets (tickets.njk):
 \`\`\`njk
@@ -475,15 +520,11 @@ ${ticketsNjk}
 \`\`\`
 
 Here is the EXACT JSON structure. Replace all "CHANGE ME" values:
-${JSON.stringify({
-  attractions: enTemplate.attractions,
-  tickets: enTemplate.tickets,
-}, null, 2)}
+${JSON.stringify({ tickets: enTemplate.tickets }, null, 2)}
 
-For attractions: Add a "pageHeader" with h1 and description, "tldr" array, "zoneNav" object, "zones" array with real zones/areas, "extras" object, "faq" object, and "cta" object.
-For tickets: Fill hero, pricingCards (3 cards), ticketOptions, addons, howToBook, cancellation, savingsTips, and cta sections.
+Fill hero, pricingCards (3 cards), ticketOptions, addons, howToBook, cancellation, savingsTips, and cta sections.
 
-Return ONLY the JSON object with keys "attractions" and "tickets".`;
+Return ONLY the JSON object with key "tickets".`;
 
   // ── Call D: gettingThere ───────────────────────────────────────────────────
   const promptD = `Generate the "Getting There" page content for ${config.attractionName}.
@@ -521,30 +562,33 @@ Fill in ALL 15 tip sections (tip1 through tip15) plus toc, internalLinks, and ct
 
 Return ONLY the JSON object with key "tips".`;
 
-  // ── Run all 5 calls in parallel ────────────────────────────────────────────
-  const [resultA, resultB, resultC, resultD, resultE] = await Promise.all([
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 8000 }), 2, 'en-A'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 8000 }), 2, 'en-B'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC, { max_tokens: 12000 }), 2, 'en-C'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 10000 }), 2, 'en-D'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 10000 }), 2, 'en-E'),
+  // ── Run all 6 calls in parallel ────────────────────────────────────────────
+  const [resultA, resultB, resultC1, resultC2, resultD, resultE] = await Promise.all([
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 12000 }), 2, 'en-A'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 12000 }), 2, 'en-B'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 12000 }), 2, 'en-C1'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 12000 }), 2, 'en-C2'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 12000 }), 2, 'en-D'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 12000 }), 2, 'en-E'),
   ]);
 
-  log('All 5 English content calls complete. Merging...');
+  log('All 6 English content calls complete. Merging...');
 
   // Parse and merge
   const partA = extractJSON(resultA);
   const partB = extractJSON(resultB);
-  const partC = extractJSON(resultC);
+  const partC1 = extractJSON(resultC1);
+  const partC2 = extractJSON(resultC2);
   const partD = extractJSON(resultD);
   const partE = extractJSON(resultE);
 
   const enJson = {};
-  deepMerge(enJson, partA);  // skipLink, nav, announcement, stickyBar, footer, home
-  deepMerge(enJson, partB);  // faq
-  deepMerge(enJson, partC);  // attractions, tickets
-  deepMerge(enJson, partD);  // gettingThere
-  deepMerge(enJson, partE);  // tips
+  deepMerge(enJson, partA);   // skipLink, nav, announcement, stickyBar, footer, home
+  deepMerge(enJson, partB);   // faq
+  deepMerge(enJson, partC1);  // attractions
+  deepMerge(enJson, partC2);  // tickets
+  deepMerge(enJson, partD);   // gettingThere
+  deepMerge(enJson, partE);   // tips
 
   // Add empty blog section
   enJson.blog = enTemplate.blog;
