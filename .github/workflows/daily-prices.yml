@@ -1,0 +1,50 @@
+name: Daily Price Scrape
+
+on:
+  schedule:
+    - cron: '30 2 * * *'  # 2:30 AM UTC daily
+  workflow_dispatch:       # Allow manual trigger
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  scrape-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Scrape Klook prices
+        run: npm run scrape
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+
+      - name: Fetch exchange rates
+        run: npm run rates
+
+      - name: Rebuild site with new prices
+        run: npm run build
+
+      - name: Commit price data to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/prices.json data/prices-history.json
+          git diff --cached --quiet || git commit -m "Update prices $(date +%Y-%m-%d)"
+          git push
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+          exclude_assets: '.git,.github,node_modules,scripts,src,admin,site-config.json,package.json,package-lock.json,.gitignore,.eslintrc*'
