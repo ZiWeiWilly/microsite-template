@@ -21,3 +21,6 @@ npm-debug.log*
 # Editor
 .vscode/
 .idea/
+
+# Admin app (separate repo)
+admin/
