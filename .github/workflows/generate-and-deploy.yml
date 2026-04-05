@@ -1,4 +1,4 @@
-name: Generate Site & Deploy
+name: Generate Site
 
 on:
   workflow_dispatch:
@@ -10,16 +10,11 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 jobs:
   generate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -51,18 +46,3 @@ jobs:
           git add -A
           git diff --cached --quiet || git commit -m "Auto-generate site content for $(jq -r .attractionName site-config.json)"
           git push
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-        with:
-          enablement: true
-          token: ${{ secrets.PERSONAL_TOKEN }}
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
