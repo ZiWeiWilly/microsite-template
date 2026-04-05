@@ -722,15 +722,17 @@ Return ONLY the translated JSON. No explanatory text.`;
         }
       }
 
-      // Add blog section: use translated static UI fields, keep SEO placeholders for generate-blog.js
-      const translatedBlogStatic = langData.blogIndexStatic || {};
+      // Add blog section: reuse already-translated nav values for UI strings,
+      // keep SEO "CHANGE ME" placeholders for generate-blog.js to fill later.
+      // nav.home and nav.blog are translated in section A — guaranteed to be present.
+      const translatedBlogHeroTitle = langData.blogIndexStatic?.heroTitle;
       delete langData.blogIndexStatic;
       langData.blog = {
         index: {
           ...enJson.blog?.index,
-          heroTitle: translatedBlogStatic.heroTitle || enJson.blog?.index?.heroTitle,
-          breadcrumbHome: translatedBlogStatic.breadcrumbHome || enJson.blog?.index?.breadcrumbHome,
-          breadcrumbCurrent: translatedBlogStatic.breadcrumbCurrent || enJson.blog?.index?.breadcrumbCurrent,
+          heroTitle: translatedBlogHeroTitle || enJson.blog?.index?.heroTitle,
+          breadcrumbHome: langData.nav?.home || enJson.blog?.index?.breadcrumbHome,
+          breadcrumbCurrent: langData.nav?.blog || enJson.blog?.index?.breadcrumbCurrent,
           cards: [],
         },
         posts: {},
