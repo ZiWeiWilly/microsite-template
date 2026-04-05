@@ -738,6 +738,15 @@ Return ONLY the translated JSON. No explanatory text.`;
         posts: {},
       };
 
+      // Validate: ensure core sections are present before writing.
+      // If all API calls failed, langData will be empty — skip writing so a re-run can retry.
+      const requiredKeys = ['home', 'faq', 'tips', 'attractions', 'gettingThere'];
+      const missingKeys = requiredKeys.filter(k => !langData[k]);
+      if (missingKeys.length > 0) {
+        warn(`  ${lang.code}: translation incomplete (missing: ${missingKeys.join(', ')}) — skipping file write so next run can retry`);
+        continue;
+      }
+
       const langFile = path.join(I18N_DIR, `${lang.code}.json`);
       fs.writeFileSync(langFile, JSON.stringify(langData, null, 2) + '\n');
       log(`  ✓ ${lang.code}.json`);
