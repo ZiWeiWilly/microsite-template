@@ -635,6 +635,15 @@ Return ONLY the JSON object with key "tips".`;
       }
     }
 
+    // Include blog.index static UI fields in section A for translation
+    // (SEO "CHANGE ME" placeholders are excluded — they'll be filled by generate-blog.js)
+    const blogIndexStatic = {
+      heroTitle: enJson.blog?.index?.heroTitle || 'Blog & Travel Guides',
+      breadcrumbHome: enJson.blog?.index?.breadcrumbHome || 'Home',
+      breadcrumbCurrent: enJson.blog?.index?.breadcrumbCurrent || 'Blog',
+    };
+    sections.A.data.blogIndexStatic = blogIndexStatic;
+
     const doNotTranslate = site.blog.doNotTranslate.join(', ');
 
     // Batch: 3 languages per batch, 5 sections per language = 15 concurrent calls
@@ -713,8 +722,19 @@ Return ONLY the translated JSON. No explanatory text.`;
         }
       }
 
-      // Add blog section (not translated yet — will be populated by generate-blog.js)
-      langData.blog = { index: enJson.blog?.index || {}, posts: {} };
+      // Add blog section: use translated static UI fields, keep SEO placeholders for generate-blog.js
+      const translatedBlogStatic = langData.blogIndexStatic || {};
+      delete langData.blogIndexStatic;
+      langData.blog = {
+        index: {
+          ...enJson.blog?.index,
+          heroTitle: translatedBlogStatic.heroTitle || enJson.blog?.index?.heroTitle,
+          breadcrumbHome: translatedBlogStatic.breadcrumbHome || enJson.blog?.index?.breadcrumbHome,
+          breadcrumbCurrent: translatedBlogStatic.breadcrumbCurrent || enJson.blog?.index?.breadcrumbCurrent,
+          cards: [],
+        },
+        posts: {},
+      };
 
       const langFile = path.join(I18N_DIR, `${lang.code}.json`);
       fs.writeFileSync(langFile, JSON.stringify(langData, null, 2) + '\n');
