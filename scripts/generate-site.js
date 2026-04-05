@@ -46,7 +46,7 @@ const TMP_DIR     = path.join(I18N_DIR, '.tmp');
 
 // ── Config ───────────────────────────────────────────────────────────────────
 const TEXT_MODEL      = 'anthropic/claude-sonnet-4-6';
-const TRANSLATE_MODEL = 'anthropic/claude-3-5-haiku';
+const TRANSLATE_MODEL = 'anthropic/claude-haiku-4.5';
 
 const ALL_LANGUAGES = [
   { code: 'en',    name: 'English' },
