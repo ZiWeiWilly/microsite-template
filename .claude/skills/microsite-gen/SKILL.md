@@ -209,7 +209,7 @@ After English content is complete, run these concurrently:
 
 | Agent | Sections |
 |-------|----------|
-| A | `skipLink`, `nav`, `announcement`, `stickyBar`, `footer`, `home` |
+| A | `skipLink`, `nav`, `announcement`, `stickyBar`, `footer`, `home`, `blog` |
 | B | `faq` |
 | C | `attractions`, `tickets` |
 | D | `gettingThere` |
@@ -236,7 +236,7 @@ Agent(
 Read src/i18n/en.json and src/data/site.json.
 
 Translate ONLY the following top-level keys from en.json into Traditional Chinese (zh-TW):
-skipLink, nav, announcement, stickyBar, footer, home
+skipLink, nav, announcement, stickyBar, footer, home, blog
 
 Rules:
 - Output a valid JSON object containing ONLY these keys
