@@ -83,6 +83,26 @@ function generateZoneGradientColors(primaryHex, secondaryHex, index) {
   };
 }
 
+/** Walk a JSON string to find the index of the closing bracket/brace that ends the top-level value */
+function findJsonEnd(str) {
+  let depth = 0;
+  let inString = false;
+  let escape = false;
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    if (escape) { escape = false; continue; }
+    if (ch === '\\' && inString) { escape = true; continue; }
+    if (ch === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (ch === '{' || ch === '[') depth++;
+    else if (ch === '}' || ch === ']') {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
 /** Strip markdown code fences and parse JSON, with repair for truncated responses */
 function extractJSON(text) {
   const stripped = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
@@ -92,7 +112,17 @@ function extractJSON(text) {
   try {
     return JSON.parse(jsonStr);
   } catch (firstErr) {
-    // Attempt to repair truncated JSON by closing open strings and brackets
+    // Case 1: extra content after valid JSON — extract just the JSON portion
+    if (firstErr.message.includes('after JSON')) {
+      const end = findJsonEnd(jsonStr);
+      if (end !== -1) {
+        try {
+          return JSON.parse(jsonStr.slice(0, end + 1));
+        } catch { /* fall through to truncation repair */ }
+      }
+    }
+
+    // Case 2: truncated JSON — attempt repair by closing open strings and brackets
     warn(`JSON parse failed (${firstErr.message}), attempting repair...`);
     let repaired = jsonStr;
     // Close any unterminated string
