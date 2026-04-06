@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://CHANGE-ME.example.com</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://CHANGE-ME.example.com/attractions.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo/attractions.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com/attractions.html" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://CHANGE-ME.example.com/tickets.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo/tickets.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com/tickets.html" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://CHANGE-ME.example.com/getting-there.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo/getting-there.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com/getting-there.html" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://CHANGE-ME.example.com/tips.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com/tips.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN/tips.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW/tips.html" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja/tips.html" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko/tips.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru/tips.html" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi/tips.html" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms/tips.html" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi/tips.html" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de/tips.html" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr/tips.html" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo/tips.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com/tips.html" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://CHANGE-ME.example.com/faq.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com/faq.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN/faq.html" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW/faq.html" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja/faq.html" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko/faq.html" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru/faq.html" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi/faq.html" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms/faq.html" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi/faq.html" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de/faq.html" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr/faq.html" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo/faq.html" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com/faq.html" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://CHANGE-ME.example.com/blog/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://CHANGE-ME.example.com/blog/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://CHANGE-ME.example.com/zh-CN/blog/" />
+    <xhtml:link rel="alternate" hreflang="zh-Hant" href="https://CHANGE-ME.example.com/zh-TW/blog/" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://CHANGE-ME.example.com/ja/blog/" />
+    <xhtml:link rel="alternate" hreflang="ko" href="https://CHANGE-ME.example.com/ko/blog/" />
+    <xhtml:link rel="alternate" hreflang="ru" href="https://CHANGE-ME.example.com/ru/blog/" />
+    <xhtml:link rel="alternate" hreflang="hi" href="https://CHANGE-ME.example.com/hi/blog/" />
+    <xhtml:link rel="alternate" hreflang="ms" href="https://CHANGE-ME.example.com/ms/blog/" />
+    <xhtml:link rel="alternate" hreflang="vi" href="https://CHANGE-ME.example.com/vi/blog/" />
+    <xhtml:link rel="alternate" hreflang="de" href="https://CHANGE-ME.example.com/de/blog/" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://CHANGE-ME.example.com/fr/blog/" />
+    <xhtml:link rel="alternate" hreflang="lo" href="https://CHANGE-ME.example.com/lo/blog/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://CHANGE-ME.example.com/blog/" />
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>
