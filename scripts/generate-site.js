@@ -68,6 +68,21 @@ function log(msg) { console.log(`[generate-site] ${msg}`); }
 function warn(msg) { console.warn(`[generate-site] WARN: ${msg}`); }
 function die(msg) { console.error(`[generate-site] ERROR: ${msg}`); process.exit(1); }
 
+/** Derive per-zone gradient overlay colors from site brand colors, rotated by index */
+function generateZoneGradientColors(primaryHex, secondaryHex, index) {
+  function hexToRgb(hex) {
+    return [parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)];
+  }
+  const [pr, pg, pb] = hexToRgb(primaryHex);
+  const [sr, sg, sb] = hexToRgb(secondaryHex);
+  const shift = (index * 25) % 80;
+  const clamp = (v, d) => Math.max(0, Math.min(255, v - d));
+  return {
+    r1: clamp(pr, shift), g1: clamp(pg, shift + 15), b1: clamp(pb, shift + 30),
+    r2: clamp(sr, shift), g2: clamp(sg, shift + 10), b2: clamp(sb, shift + 20),
+  };
+}
+
 /** Strip markdown code fences and parse JSON, with repair for truncated responses */
 function extractJSON(text) {
   const stripped = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
@@ -144,22 +159,29 @@ async function chat(client, model, systemPrompt, userPrompt, options = {}) {
 
 /** Search Bing Images and return a list of full-size image URLs */
 async function searchWebImages(query) {
-  const url = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}&form=HDRSC2&first=1`;
-  const res = await fetch(url, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.5',
-    },
-    signal: AbortSignal.timeout(15000),
-  });
-  if (!res.ok) throw new Error(`Bing search returned HTTP ${res.status}`);
-  const html = await res.text();
-  const decoded = html.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
-  const urls = [...decoded.matchAll(/"murl":"([^"]+)"/g)]
-    .map(m => m[1].replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16))))
-    .filter(u => /^https?:\/\/.+\.(jpe?g|png|webp)/i.test(u));
-  return [...new Set(urls)].slice(0, 8);
+  async function fetchUrls(extraParams) {
+    const url = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}&form=HDRSC2&first=1${extraParams}`;
+    const res = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`Bing search returned HTTP ${res.status}`);
+    const html = await res.text();
+    const decoded = html.replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+    return [...new Set(
+      [...decoded.matchAll(/"murl":"([^"]+)"/g)]
+        .map(m => m[1].replace(/\\u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16))))
+        .filter(u => /^https?:\/\/.+\.(jpe?g|png|webp)/i.test(u))
+    )].slice(0, 8);
+  }
+  // Prefer large images; fall back to unfiltered if no results
+  const urls = await fetchUrls('&qft=+filterui:imagesize-large');
+  if (urls.length > 0) return urls;
+  return fetchUrls('');
 }
 
 /** Download an image URL → { buffer, mime } */
@@ -180,25 +202,32 @@ async function downloadImage(url) {
   return { buffer, mime };
 }
 
-/** Download first successful image from a search query */
-async function downloadFirstImage(query, filename) {
+/** Download the best image from a search query (largest file = best quality proxy) */
+async function downloadBestImage(query, filename, { minSize = 20000 } = {}) {
   try {
     const urls = await searchWebImages(query);
-    for (const url of urls) {
-      try {
-        const { buffer, mime } = await downloadImage(url);
-        const ext = mime.includes('png') ? 'png' : 'jpg';
-        const outPath = path.join(IMAGES_DIR, `${filename}.${ext}`);
-        fs.writeFileSync(outPath, buffer);
-        log(`Downloaded ${filename}.${ext} (${(buffer.length / 1024).toFixed(0)} KB)`);
-        return outPath;
-      } catch (e) { /* try next */ }
+    // Download all candidates in parallel, collect successes
+    const results = await Promise.allSettled(urls.map(u => downloadImage(u)));
+    const candidates = results
+      .filter(r => r.status === 'fulfilled')
+      .map(r => r.value);
+    if (candidates.length === 0) {
+      warn(`No usable image found for: ${query}`);
+      return null;
     }
-    warn(`No usable image found for: ${query}`);
+    // Pick largest that meets threshold; fall back to overall largest
+    const qualified = candidates.filter(c => c.buffer.length >= minSize);
+    const best = (qualified.length > 0 ? qualified : candidates)
+      .sort((a, b) => b.buffer.length - a.buffer.length)[0];
+    const ext = best.mime.includes('png') ? 'png' : 'jpg';
+    const outPath = path.join(IMAGES_DIR, `${filename}.${ext}`);
+    fs.writeFileSync(outPath, best.buffer);
+    log(`Downloaded ${filename}.${ext} (${(best.buffer.length / 1024).toFixed(0)} KB)`);
+    return outPath;
   } catch (e) {
     warn(`Image search failed for "${query}": ${e.message}`);
+    return null;
   }
-  return null;
 }
 
 function readTemplate(name) {
@@ -849,9 +878,28 @@ Return ONLY the translated JSON. No explanatory text.`;
   // Download 3 at a time to avoid rate limits
   for (let i = 0; i < imageQueries.length; i += 3) {
     const batch = imageQueries.slice(i, i + 3);
-    await Promise.all(batch.map(q => downloadFirstImage(q.query, q.filename)));
+    await Promise.all(batch.map(q => {
+      const minSize = q.filename.startsWith('hero-') ? 50000
+        : q.filename.startsWith('og-') ? 30000
+        : 20000;
+      return downloadBestImage(q.query, q.filename, { minSize });
+    }));
   }
   log('Image download complete');
+
+  // Build a map of zone id → actual saved filename (extension may be jpg or png)
+  const zoneImageMap = {};
+  for (const zone of (research.zones || []).slice(0, 8)) {
+    const zoneId = zone.id || zone.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const base = `zone-${zoneId}`;
+    for (const ext of ['jpg', 'png', 'webp']) {
+      if (fs.existsSync(path.join(IMAGES_DIR, `${base}.${ext}`))) {
+        zoneImageMap[zoneId] = `${base}.${ext}`;
+        break;
+      }
+    }
+    if (!zoneImageMap[zoneId]) zoneImageMap[zoneId] = `${base}.jpg`;
+  }
 
   // ══════════════════════════════════════════════════════════════════════════════
   // STEP 8: Apply CSS theme colours
@@ -883,6 +931,24 @@ Return ONLY the translated JSON. No explanatory text.`;
     css = css.replace(/--secondary:\s*[^;]+;/, `--secondary: ${colors.secondary};`);
     css = css.replace(/--accent:\s*[^;]+;/, `--accent: ${colors.accent};`);
     css = css.replace(/--surface:\s*[^;]+;/, `--surface: ${surfaceHex(colors.primary)};`);
+
+    // Replace old hardcoded zone image CSS with generated rules for this attraction's zones
+    css = css.replace(/\/\* Zone color themes[^\n]*\n?/, '');
+    css = css.replace(/^\.zone-[\w-]+ \{ background:[^}]+\}\s*$/gm, '');
+    if ((research.zones || []).length > 0) {
+      const zoneCss = '/* Zone color themes - generated */\n' +
+        (research.zones || []).slice(0, 8).map((z, i) => {
+          const zoneId = z.id || z.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          const c = generateZoneGradientColors(colors.primary, colors.secondary, i);
+          const imgFile = zoneImageMap[zoneId] || `zone-${zoneId}.jpg`;
+          return `.zone-${zoneId} { background: linear-gradient(135deg, rgba(${c.r1},${c.g1},${c.b1},0.45), rgba(${c.r2},${c.g2},${c.b2},0.45)), url('/images/${imgFile}') center/cover no-repeat; }`;
+        }).join('\n') + '\n';
+      // Insert before the FAQ section
+      css = css.includes('/* ===== FAQ ACCORDION ===== */')
+        ? css.replace('/* ===== FAQ ACCORDION ===== */', zoneCss + '\n/* ===== FAQ ACCORDION ===== */')
+        : css + '\n' + zoneCss;
+      log(`Generated CSS for ${(research.zones || []).length} zones`);
+    }
 
     fs.writeFileSync(cssPath, css);
     log('CSS theme applied');
