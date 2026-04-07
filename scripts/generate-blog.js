@@ -38,20 +38,18 @@ const slugArg     = (() => {
   return i !== -1 ? process.argv[i + 1] : null;
 })();
 
-const LANGUAGES = [
-  { code: 'en',    name: 'English' },
-  { code: 'zh-CN', name: 'Simplified Chinese (Mandarin)' },
-  { code: 'zh-TW', name: 'Traditional Chinese' },
-  { code: 'ja',    name: 'Japanese' },
-  { code: 'ko',    name: 'Korean' },
-  { code: 'ru',    name: 'Russian' },
-  { code: 'hi',    name: 'Hindi' },
-  { code: 'ms',    name: 'Malay' },
-  { code: 'vi',    name: 'Vietnamese' },
-  { code: 'de',    name: 'German' },
-  { code: 'fr',    name: 'French' },
-  { code: 'lo',    name: 'Lao' },
-];
+// Language name lookup for translation prompts
+const LANG_NAMES = {
+  'en': 'English', 'zh-CN': 'Simplified Chinese (Mandarin)', 'zh-TW': 'Traditional Chinese',
+  'ja': 'Japanese', 'ko': 'Korean', 'ru': 'Russian', 'hi': 'Hindi',
+  'ms': 'Malay', 'vi': 'Vietnamese', 'de': 'German', 'fr': 'French', 'lo': 'Lao',
+};
+
+// Derive LANGUAGES from site.json instead of hardcoding
+const LANGUAGES = SITE.languages.map(l => ({
+  code: l.code,
+  name: LANG_NAMES[l.code] || l.label,
+}));
 
 // Add blog slugs here as you generate posts, so new posts can link to them
 const EXISTING_BLOG_SLUGS = [];
@@ -216,7 +214,7 @@ async function withRetry(fn, maxAttempts, label) {
 }
 
 // ── Topic selection ───────────────────────────────────────────────────────────
-function selectTopic() {
+async function selectTopic(client) {
   const topics   = JSON.parse(fs.readFileSync(TOPICS_FILE, 'utf8'));
   const indexData = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'blog', 'index.json'), 'utf8'));
   const used = new Set([...indexData.cards.map(c => c.slug), ...EXISTING_BLOG_SLUGS]);
@@ -226,8 +224,38 @@ function selectTopic() {
     if (!t) die(`Topic "${slugArg}" not found in topics.json`);
     return t;
   }
-  const next = topics.find(t => !used.has(t.slug));
-  if (!next) die('All topics used. Add more to scripts/topics.json.');
+
+  let next = topics.find(t => !used.has(t.slug));
+  if (!next) {
+    log('All topics used — generating 15 more...');
+    const usedTitles = topics.map(t => t.titleHint).join('\n');
+    const prompt = `Generate 15 NEW blog post topics for ${SITE.attractionName}.
+
+Each topic must be a JSON object with:
+- "slug": URL-friendly slug
+- "titleHint": suggested article title (60-70 chars)
+- "keyword": primary SEO keyword
+
+Topics should cover: ticket pricing guides, best time to visit, family tips, food guides, nearby attractions, transport guides, seasonal events, photography tips, comparison guides, history/culture.
+
+Do NOT repeat any of these already-used titles:
+${usedTitles}
+
+Return a JSON array of 15 topic objects. No explanatory text.`;
+
+    const raw = await client.chat.completions.create({
+      model: TEXT_MODEL,
+      max_tokens: 4000,
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const newTopics = extractJSON(raw.choices[0].message.content);
+    const merged = [...topics, ...newTopics];
+    fs.writeFileSync(TOPICS_FILE, JSON.stringify(merged, null, 2) + '\n');
+    log(`Added ${newTopics.length} new topics (total: ${merged.length})`);
+    next = newTopics.find(t => !used.has(t.slug));
+    if (!next) die('Failed to generate unused topics.');
+  }
+
   return next;
 }
 
@@ -297,7 +325,7 @@ function promptAllMetadata(topic, enBodySnippet) {
 
 Article topic: "${topic.titleHint}" — primary keyword: "${topic.keyword}"
 
-Generate SEO metadata for all 12 languages. For each language provide:
+Generate SEO metadata for all ${LANGUAGES.length} languages. For each language provide:
 - title (55–65 chars)
 - metaDescription (148–158 chars)
 - metaKeywords (6–8 comma-separated)
@@ -311,7 +339,7 @@ Generate SEO metadata for all 12 languages. For each language provide:
 - cardDescription (110–130 chars)
 
 Languages (JSON key = language code):
-en, zh-CN, zh-TW, ja, ko, ru, hi, ms, vi, de, fr, lo
+${LANGUAGES.map(l => l.code).join(', ')}
 
 Context (English article opening):
 ${enBodySnippet}
@@ -433,8 +461,9 @@ async function main() {
     die('OPENROUTER_API_KEY environment variable is not set.');
   }
 
-  const topic   = selectTopic();
   const dateStr = today();
+  const client  = DRY_RUN ? null : createClient();
+  const topic   = await selectTopic(client);
 
   log(`Topic:    ${topic.slug}`);
   log(`Title:    ${topic.titleHint}`);
@@ -447,16 +476,14 @@ async function main() {
   if (DRY_RUN) {
     log('Would run 5 steps:');
     log('  1. Generate English article body');
-    log('  2. Generate SEO metadata (all 12 languages)');
-    log('  3. Translate article to 11 languages (batches of 3)');
+    log(`  2. Generate SEO metadata (all ${LANGUAGES.length} languages)`);
+    log(`  3. Translate article to ${LANGUAGES.length - 1} languages (batches of 3)`);
     log('  4. Search Bing Images → download source → modify with Gemini (retry ×3)');
-    log('  5. Write files (26 content files + 12 i18n updates + 2 data JSONs + 1 image)');
+    log(`  5. Write files (${LANGUAGES.length * 2} content files + ${LANGUAGES.length} i18n updates + 2 data JSONs + 1 image)`);
     log('');
     log('Done (dry run). No files written.');
     return;
   }
-
-  const client = createClient();
 
   // ── Step 1: English article body ────────────────────────────────────────────
   log('Step 1/5  Generating English article…');

@@ -10,7 +10,8 @@
  *   5. Generate data files (attractions.json, tips.json, home.json)
  *   6. Download images (hero, OG)
  *   7. Apply CSS theme colours
- *   8. Generate blog topics + first post
+ *   8. Generate blog topics
+ *   8b. Generate first blog post (via generate-blog.js)
  *   9. Build + generate sitemap
  *
  * Usage:
@@ -1007,6 +1008,22 @@ Return a JSON array of 15 topic objects. No explanatory text.`;
   const topics = extractJSON(topicsRaw);
   fs.writeFileSync(path.join(__dirname, 'topics.json'), JSON.stringify(topics, null, 2) + '\n');
   log(`Generated ${topics.length} blog topics`);
+
+  // ══════════════════════════════════════════════════════════════════════════════
+  // STEP 9b: Generate first blog post
+  // ══════════════════════════════════════════════════════════════════════════════
+  log('Step 9b: Generating first blog post...');
+  try {
+    execSync('node scripts/generate-blog.js', {
+      cwd: ROOT,
+      stdio: 'inherit',
+      env: { ...process.env },
+    });
+    log('First blog post generated');
+  } catch (e) {
+    warn(`Blog generation failed: ${e.message}`);
+    warn('Continuing without blog post — run "npm run generate-blog" manually later.');
+  }
 
   // ══════════════════════════════════════════════════════════════════════════════
   // STEP 10: Build + sitemap
