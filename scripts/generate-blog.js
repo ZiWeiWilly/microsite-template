@@ -30,7 +30,7 @@ const SITE        = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'site.json'),
 
 // ── Config ───────────────────────────────────────────────────────────────────
 const TEXT_MODEL      = 'anthropic/claude-sonnet-4-6';
-const TRANSLATE_MODEL = 'anthropic/claude-haiku-3-5';
+const TRANSLATE_MODEL = 'anthropic/claude-haiku-4-5';
 const IMAGE_MODEL     = 'google/gemini-3.1-flash-image-preview';
 const DRY_RUN     = process.argv.includes('--dry-run');
 const slugArg     = (() => {
