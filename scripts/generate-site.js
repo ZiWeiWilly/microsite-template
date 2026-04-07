@@ -388,6 +388,8 @@ async function main() {
   "highlights": ["top 3-5 things that make this attraction special"]
 }
 
+IMPORTANT: For "ticketTypes", "priceLocal" and "gatePrice" must be in ${baseCurrency} (the site's base currency). "priceUSD" is the approximate USD equivalent. Do NOT put USD values into "priceLocal" or "gatePrice".
+
 Be as accurate as possible. Use real data. If you don't know a field, leave it as empty string or 0.
 The Klook activity URL is: ${config.klookUrl}`;
 
