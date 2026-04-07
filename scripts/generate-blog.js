@@ -54,6 +54,45 @@ const LANGUAGES = SITE.languages.map(l => ({
 // Add blog slugs here as you generate posts, so new posts can link to them
 const EXISTING_BLOG_SLUGS = [];
 
+// ── Token usage tracker ─────────────────────────────────────────────────────
+const usageTracker = {
+  calls: [],
+  track(label, model, usage) {
+    if (!usage) return;
+    this.calls.push({
+      label,
+      model: model.replace('anthropic/', '').replace('google/', ''),
+      prompt_tokens: usage.prompt_tokens || 0,
+      completion_tokens: usage.completion_tokens || 0,
+      total_tokens: usage.total_tokens || 0,
+    });
+  },
+  summary() {
+    if (!this.calls.length) return '  (no usage data captured)';
+    const lines = [];
+    let totalPrompt = 0, totalCompletion = 0, totalAll = 0;
+    const byModel = {};
+    for (const c of this.calls) {
+      lines.push(`  ${c.label.padEnd(28)} ${c.model.padEnd(22)} ${String(c.prompt_tokens).padStart(8)} in  ${String(c.completion_tokens).padStart(8)} out  ${String(c.total_tokens).padStart(8)} total`);
+      totalPrompt += c.prompt_tokens;
+      totalCompletion += c.completion_tokens;
+      totalAll += c.total_tokens;
+      if (!byModel[c.model]) byModel[c.model] = { prompt: 0, completion: 0, total: 0, count: 0 };
+      byModel[c.model].prompt += c.prompt_tokens;
+      byModel[c.model].completion += c.completion_tokens;
+      byModel[c.model].total += c.total_tokens;
+      byModel[c.model].count++;
+    }
+    lines.push('  ' + '─'.repeat(90));
+    for (const [model, m] of Object.entries(byModel)) {
+      lines.push(`  ${(model + ' (' + m.count + ' calls)').padEnd(28)} ${''.padEnd(22)} ${String(m.prompt).padStart(8)} in  ${String(m.completion).padStart(8)} out  ${String(m.total).padStart(8)} total`);
+    }
+    lines.push('  ' + '─'.repeat(90));
+    lines.push(`  ${'TOTAL (' + this.calls.length + ' calls)'.padEnd(28)} ${''.padEnd(22)} ${String(totalPrompt).padStart(8)} in  ${String(totalCompletion).padStart(8)} out  ${String(totalAll).padStart(8)} total`);
+    return lines.join('\n');
+  },
+};
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function log(msg) { console.log(`[generate-blog] ${msg}`); }
 function warn(msg) { console.warn(`[generate-blog] WARN: ${msg}`); }
@@ -195,6 +234,7 @@ async function modifyImageWithGemini(sourceBuffer, sourceMime, topic, client) {
       ],
     }],
   });
+  usageTracker.track('og-image', IMAGE_MODEL, response.usage);
   return extractImageData(response);
 }
 
@@ -248,6 +288,7 @@ Return a JSON array of 15 topic objects. No explanatory text.`;
       max_tokens: 4000,
       messages: [{ role: 'user', content: prompt }],
     });
+    usageTracker.track('refill-topics', TEXT_MODEL, raw.usage);
     const newTopics = extractJSON(raw.choices[0].message.content);
     const merged = [...topics, ...newTopics];
     fs.writeFileSync(TOPICS_FILE, JSON.stringify(merged, null, 2) + '\n');
@@ -492,6 +533,7 @@ async function main() {
     max_tokens: 4096,
     messages:   [{ role: 'user', content: promptEnglishArticle(topic, dateStr) }],
   });
+  usageTracker.track('blog-en-article', TEXT_MODEL, enRes.usage);
   const enBody   = enRes.choices[0].message.content.trim();
   const readTime = estimateReadTime(enBody);
   log(`          ${enBody.length} chars · ${readTime}`);
@@ -503,6 +545,7 @@ async function main() {
     max_tokens: 8192,
     messages:   [{ role: 'user', content: promptAllMetadata(topic, enBody.slice(0, 1200)) }],
   });
+  usageTracker.track('blog-seo-metadata', TEXT_MODEL, metaRes.usage);
   const allMeta = extractJSON(metaRes.choices[0].message.content);
   log(`          Got metadata for: ${Object.keys(allMeta).join(', ')}`);
 
@@ -520,7 +563,10 @@ async function main() {
           model:      TRANSLATE_MODEL,
           max_tokens: 4096,
           messages:   [{ role: 'user', content: promptTranslateBody(enBody, lang.code, lang.name) }],
-        }).then(r => ({ code: lang.code, body: r.choices[0].message.content.trim() }))
+        }).then(r => {
+          usageTracker.track(`blog-translate-${lang.code}`, TRANSLATE_MODEL, r.usage);
+          return { code: lang.code, body: r.choices[0].message.content.trim() };
+        })
       )
     );
     for (const { code, body } of results) {
@@ -592,6 +638,10 @@ async function main() {
   log('');
   log(`✓ Done!  New post: ${topic.slug}`);
   log(`  OG image: images/${ogImage}`);
+  log('');
+  log('API Token Usage:');
+  log(usageTracker.summary());
+  log('');
   log(`  Next: npm run build`);
 }
 

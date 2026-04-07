@@ -64,6 +64,47 @@ const ALL_LANGUAGES = [
   { code: 'lo',    name: 'Lao' },
 ];
 
+// ── Token usage tracker ─────────────────────────────────────────────────────
+const usageTracker = {
+  calls: [],  // { label, model, prompt_tokens, completion_tokens, total_tokens }
+  track(label, model, usage) {
+    if (!usage) return;
+    this.calls.push({
+      label,
+      model: model.replace('anthropic/', ''),
+      prompt_tokens: usage.prompt_tokens || 0,
+      completion_tokens: usage.completion_tokens || 0,
+      total_tokens: usage.total_tokens || 0,
+    });
+  },
+  summary() {
+    if (!this.calls.length) return '  (no usage data captured)';
+    // Per-call breakdown
+    const lines = [];
+    let totalPrompt = 0, totalCompletion = 0, totalAll = 0;
+    const byModel = {};
+    for (const c of this.calls) {
+      lines.push(`  ${c.label.padEnd(28)} ${c.model.padEnd(22)} ${String(c.prompt_tokens).padStart(8)} in  ${String(c.completion_tokens).padStart(8)} out  ${String(c.total_tokens).padStart(8)} total`);
+      totalPrompt += c.prompt_tokens;
+      totalCompletion += c.completion_tokens;
+      totalAll += c.total_tokens;
+      if (!byModel[c.model]) byModel[c.model] = { prompt: 0, completion: 0, total: 0, count: 0 };
+      byModel[c.model].prompt += c.prompt_tokens;
+      byModel[c.model].completion += c.completion_tokens;
+      byModel[c.model].total += c.total_tokens;
+      byModel[c.model].count++;
+    }
+    lines.push('  ' + '─'.repeat(90));
+    // Per-model subtotals
+    for (const [model, m] of Object.entries(byModel)) {
+      lines.push(`  ${(model + ' (' + m.count + ' calls)').padEnd(28)} ${''.padEnd(22)} ${String(m.prompt).padStart(8)} in  ${String(m.completion).padStart(8)} out  ${String(m.total).padStart(8)} total`);
+    }
+    lines.push('  ' + '─'.repeat(90));
+    lines.push(`  ${'TOTAL (' + this.calls.length + ' calls)'.padEnd(28)} ${''.padEnd(22)} ${String(totalPrompt).padStart(8)} in  ${String(totalCompletion).padStart(8)} out  ${String(totalAll).padStart(8)} total`);
+    return lines.join('\n');
+  },
+};
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function log(msg) { console.log(`[generate-site] ${msg}`); }
 function warn(msg) { console.warn(`[generate-site] WARN: ${msg}`); }
@@ -185,6 +226,7 @@ async function chat(client, model, systemPrompt, userPrompt, options = {}) {
   if (choice.finish_reason === 'length') {
     warn(`Response truncated (hit max_tokens). Output may be incomplete.`);
   }
+  usageTracker.track(options.label || 'unknown', model, response.usage);
   return choice.message.content;
 }
 
@@ -350,7 +392,7 @@ Be as accurate as possible. Use real data. If you don't know a field, leave it a
 The Klook activity URL is: ${config.klookUrl}`;
 
   const researchRaw = await withRetry(
-    () => chat(client, TEXT_MODEL, null, researchPrompt, { max_tokens: 4000 }),
+    () => chat(client, TEXT_MODEL, null, researchPrompt, { max_tokens: 4000, label: 'research' }),
     3, 'research'
   );
   const research = extractJSON(researchRaw);
@@ -624,12 +666,12 @@ Return ONLY the JSON object with key "tips".`;
 
   // ── Run all 6 calls in parallel ────────────────────────────────────────────
   const [resultA, resultB, resultC1, resultC2, resultD, resultE] = await Promise.all([
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 12000 }), 2, 'en-A'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 12000 }), 2, 'en-B'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 12000 }), 2, 'en-C1'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 12000 }), 2, 'en-C2'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 12000 }), 2, 'en-D'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 12000 }), 2, 'en-E'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 12000, label: 'en-home' }), 2, 'en-A'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 12000, label: 'en-faq' }), 2, 'en-B'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 12000, label: 'en-attractions' }), 2, 'en-C1'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 12000, label: 'en-tickets' }), 2, 'en-C2'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 12000, label: 'en-getting-there' }), 2, 'en-D'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 12000, label: 'en-tips' }), 2, 'en-E'),
   ]);
 
   log('All 6 English content calls complete. Merging...');
@@ -754,7 +796,7 @@ Return ONLY the translated JSON. No explanatory text.`;
 
           calls.push(
             withRetry(
-              () => chat(client, TRANSLATE_MODEL, null, translatePrompt, { max_tokens: 16000 }),
+              () => chat(client, TRANSLATE_MODEL, null, translatePrompt, { max_tokens: 16000, label: `translate-${lang.code}-${sectionId}` }),
               2, `translate-${lang.code}-${sectionId}`
             ).then(result => {
               const parsed = extractJSON(result);
@@ -1002,7 +1044,7 @@ Topics should cover: ticket pricing guides, best time to visit, family tips, foo
 Return a JSON array of 15 topic objects. No explanatory text.`;
 
   const topicsRaw = await withRetry(
-    () => chat(client, TEXT_MODEL, null, topicsPrompt, { max_tokens: 4000 }),
+    () => chat(client, TEXT_MODEL, null, topicsPrompt, { max_tokens: 4000, label: 'blog-topics' }),
     2, 'topics'
   );
   const topics = extractJSON(topicsRaw);
@@ -1061,6 +1103,9 @@ Return a JSON array of 15 topic objects. No explanatory text.`;
   log('  - images/logo.png (220x19px, navbar)');
   log('  - images/logo-light.png (footer, light version)');
   log('  - images/logo-icon.svg (favicon)');
+  log('');
+  log('API Token Usage:');
+  log(usageTracker.summary());
   log('');
   log('Next: npm run build && npx serve -p 3001');
 }
