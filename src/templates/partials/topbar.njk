@@ -20,7 +20,7 @@
         </button>
         <div class="selector-dropdown" role="listbox" id="currencyMenu">
 {%- for cur in site.currencies %}
-          <button data-currency="{{ cur.code }}"{% if cur.code == "THB" %} class="active"{% endif %} role="option">{{ cur.code }} {{ cur.symbol }} {{ cur.label }}</button>
+          <button data-currency="{{ cur.code }}"{% if cur.code == site.baseCurrency %} class="active"{% endif %} role="option">{{ cur.code }} {{ cur.symbol }} {{ cur.label }}</button>
 {%- endfor %}
         </div>
       </div>

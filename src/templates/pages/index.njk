@@ -57,7 +57,7 @@
 
 {% endfor %}
     ],
-    "priceRange": "THB {{ stickyPriceFormatted }} - THB {{ stickyOriginalPriceFormatted }}",
+    "priceRange": "{{ site.baseCurrency }} {{ stickyPriceFormatted }} - {{ site.baseCurrency }} {{ stickyOriginalPriceFormatted }}",
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": "{{ site.rating.value }}",
@@ -102,7 +102,7 @@
       "longitude": {{ site.geo.longitude }}
     },
     "openingHours": "{{ site.openingHoursText }}",
-    "priceRange": "THB {{ stickyPriceFormatted }}-{{ stickyOriginalPriceFormatted }}",
+    "priceRange": "{{ site.baseCurrency }} {{ stickyPriceFormatted }}-{{ site.baseCurrency }} {{ stickyOriginalPriceFormatted }}",
     "telephone": "{{ site.phoneTel }}",
     "image": "{{ site.baseUrl }}/images/og-home.jpg",
     "sameAs": []

@@ -75,7 +75,7 @@
       </div>
       <div class="hero-stats">
         <div class="hero-stat">
-          <span class="hero-stat-number">THB {{ stickyPriceFormatted }}</span>
+          <span class="hero-stat-number" data-base-price="{{ stickyPrice }}"><span class="pricing-currency">{{ site.baseCurrency }}</span> {{ stickyPriceFormatted }}</span>
           <span class="hero-stat-label">{{ t.tickets.hero.stats[0].label }}</span>
         </div>
         <div class="hero-stat">
@@ -152,14 +152,14 @@
             <tbody>
               <tr>
                 <td><strong>{{ t.tickets.ticketOptions.tableRows[0].name }}</strong></td>
-                <td>THB {{ stickyOriginalPriceFormatted }}</td>
-                <td><strong>THB {{ stickyPriceFormatted }}</strong></td>
+                <td data-base-price="{{ stickyOriginalPrice }}"><span class="pricing-currency">{{ site.baseCurrency }}</span> {{ stickyOriginalPriceFormatted }}</td>
+                <td data-base-price="{{ stickyPrice }}"><strong><span class="pricing-currency">{{ site.baseCurrency }}</span> {{ stickyPriceFormatted }}</strong></td>
                 <td>{{ t.tickets.ticketOptions.tableRows[0].included }}</td>
               </tr>
               <tr>
                 <td><strong>{{ t.tickets.ticketOptions.tableRows[1].name }}</strong></td>
                 <td>&mdash;</td>
-                <td><strong>THB {{ allInclusivePriceFormatted }}</strong></td>
+                <td data-base-price="{{ allInclusivePrice }}"><strong><span class="pricing-currency">{{ site.baseCurrency }}</span> {{ allInclusivePriceFormatted }}</strong></td>
                 <td>{{ t.tickets.ticketOptions.tableRows[1].included }}</td>
               </tr>
             </tbody>
