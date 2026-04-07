@@ -11,6 +11,8 @@ const fs = require('fs');
 const path = require('path');
 
 const PRICES_FILE = path.join(__dirname, '..', 'data', 'prices.json');
+const SITE = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', 'site.json'), 'utf8'));
+const BASE_CURRENCY = SITE.baseCurrency || 'THB';
 
 const CURRENCIES = [
   'THB', 'USD', 'EUR', 'GBP', 'JPY', 'CNY', 'KRW', 'TWD',
@@ -24,8 +26,8 @@ const SYMBOLS = {
 };
 
 async function fetchFromPrimary() {
-  console.log('Fetching rates from open.er-api.com...');
-  const resp = await fetch('https://open.er-api.com/v6/latest/THB');
+  console.log(`Fetching rates from open.er-api.com (base: ${BASE_CURRENCY})...`);
+  const resp = await fetch(`https://open.er-api.com/v6/latest/${BASE_CURRENCY}`);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const data = await resp.json();
   if (data.result !== 'success') throw new Error('API returned error');
@@ -33,14 +35,15 @@ async function fetchFromPrimary() {
 }
 
 async function fetchFromFallback() {
-  console.log('Fetching rates from fallback API...');
-  const resp = await fetch('https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/thb.json');
+  const code = BASE_CURRENCY.toLowerCase();
+  console.log(`Fetching rates from fallback API (base: ${BASE_CURRENCY})...`);
+  const resp = await fetch(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${code}.json`);
   if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
   const data = await resp.json();
-  // This API returns lowercase codes under data.thb
+  // This API returns lowercase codes under data.<baseCurrency>
   const rates = {};
-  for (const [code, rate] of Object.entries(data.thb || {})) {
-    rates[code.toUpperCase()] = rate;
+  for (const [k, rate] of Object.entries(data[code] || {})) {
+    rates[k.toUpperCase()] = rate;
   }
   return rates;
 }
@@ -49,7 +52,7 @@ function buildExchangeRates(apiRates) {
   const result = {};
 
   for (const code of CURRENCIES) {
-    if (code === 'THB') {
+    if (code === BASE_CURRENCY) {
       result[code] = { rate: 1, symbol: SYMBOLS[code], code, decimals: 0 };
       continue;
     }
@@ -118,8 +121,8 @@ async function main() {
   const rateCount = Object.keys(exchangeRates).length;
   console.log(`\nBuilt rates for ${rateCount} currencies:`);
   for (const [code, info] of Object.entries(exchangeRates)) {
-    if (code !== 'THB') {
-      console.log(`  1 THB = ${info.rate} ${code}`);
+    if (code !== BASE_CURRENCY) {
+      console.log(`  1 ${BASE_CURRENCY} = ${info.rate} ${code}`);
     }
   }
 

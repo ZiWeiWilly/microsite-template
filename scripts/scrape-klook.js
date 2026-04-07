@@ -13,12 +13,23 @@ const path = require('path');
 
 const SITE = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', 'site.json'), 'utf8'));
 const ACTIVITY_URL = SITE.klook.activityUrl;
+const BASE_CURRENCY = SITE.baseCurrency || 'THB';
 const FIRECRAWL_API = 'https://api.firecrawl.dev/v1/scrape';
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const PRICES_FILE = path.join(DATA_DIR, 'prices.json');
 const HISTORY_FILE = path.join(DATA_DIR, 'prices-history.json');
 const MAX_RETRIES = parseInt(process.env.SCRAPE_RETRIES || '3', 10);
 const MAX_HISTORY_DAYS = 365;
+
+// Currency display prefixes used by Klook for different currencies
+const KLOOK_CURRENCY_PREFIX = {
+  USD: 'US\\$', THB: '฿', HKD: 'HK\\$', SGD: 'S\\$', MYR: 'RM',
+  JPY: '¥', KRW: '₩', TWD: 'NT\\$', EUR: '€', GBP: '£',
+  PHP: '₱', IDR: 'Rp', VND: '₫', INR: '₹', RUB: '₽', AUD: 'A\\$',
+  CNY: '¥',
+};
+// We scrape in USD for consistent parsing (US$ XX.XX format)
+const SCRAPE_CURRENCY = 'USD';
 
 // Firecrawl API key from environment (stored as GitHub Secret)
 const FIRECRAWL_KEY = process.env.FIRECRAWL_API_KEY;
@@ -287,17 +298,25 @@ async function main() {
     process.exit(0);
   }
 
-  // Convert USD prices to base currency using exchange rate
-  const usdRate = existingData.exchangeRates?.USD?.rate;
-  if (usdRate && usdRate > 0) {
-    console.log(`\nConverting USD -> ${SITE.baseCurrency} (rate: 1 ${SITE.baseCurrency} = ${usdRate} USD)`);
+  // Convert scraped USD prices to baseCurrency using exchange rate
+  if (BASE_CURRENCY === 'USD') {
+    // No conversion needed — scraped prices are already in baseCurrency
+    console.log('\nbaseCurrency is USD — no conversion needed.');
     for (const item of scraped) {
-      const basePrice = Math.round(item.priceUSD / usdRate);
-      console.log(`  ${item.name}: $${item.priceUSD} -> ${SITE.baseCurrency} ${basePrice}`);
-      item.basePrice = basePrice;
+      item.basePrice = Math.round(item.priceUSD);
     }
   } else {
-    console.log('\nWARNING: No USD exchange rate available. Using USD prices directly.');
+    const usdRate = existingData.exchangeRates?.USD?.rate;
+    if (usdRate && usdRate > 0) {
+      console.log(`\nConverting USD -> ${BASE_CURRENCY} (rate: 1 ${BASE_CURRENCY} = ${usdRate} USD)`);
+      for (const item of scraped) {
+        const basePrice = Math.round(item.priceUSD / usdRate);
+        console.log(`  ${item.name}: $${item.priceUSD} -> ${BASE_CURRENCY} ${basePrice}`);
+        item.basePrice = basePrice;
+      }
+    } else {
+      console.log(`\nWARNING: No USD exchange rate available. Cannot convert to ${BASE_CURRENCY}.`);
+    }
   }
 
   // Map and update packages

@@ -18,20 +18,12 @@ const PRICES_FILE = path.join(ROOT, 'data', 'prices.json');
 const SITE = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'data', 'site.json'), 'utf8'));
 
 // Core files that always contain data-base-price attributes
+const LANG_DIRS = ['de', 'fr', 'hi', 'ja', 'ko', 'lo', 'ms', 'ru', 'vi', 'zh-CN', 'zh-TW'];
 const CORE_PRICE_FILES = [
   'tickets.html',
   'index.html',
-  'de/index.html',
-  'fr/index.html',
-  'hi/index.html',
-  'ja/index.html',
-  'ko/index.html',
-  'lo/index.html',
-  'ms/index.html',
-  'ru/index.html',
-  'vi/index.html',
-  'zh-CN/index.html',
-  'zh-TW/index.html'
+  ...LANG_DIRS.map(l => `${l}/index.html`),
+  ...LANG_DIRS.map(l => `${l}/tickets.html`),
 ];
 
 // Dynamically find all HTML files that contain data-base-price
@@ -40,8 +32,7 @@ function findAllPriceFiles() {
   try {
     // Find blog files and language blog files with data-base-price
     const blogDirs = ['blog'];
-    const langs = ['zh-TW', 'zh-CN', 'ja', 'ko', 'de', 'fr', 'hi', 'ru', 'vi', 'ms', 'lo'];
-    langs.forEach(l => blogDirs.push(`${l}/blog`));
+    LANG_DIRS.forEach(l => blogDirs.push(`${l}/blog`));
 
     for (const dir of blogDirs) {
       const fullDir = path.join(ROOT, dir);
@@ -275,10 +266,13 @@ function updatePriceAttributes(filePath, packages) {
   // Also update visible fallback text inside pricing-amount divs
   // Pattern: data-base-price="1171">\n  <span class="pricing-currency">THB</span>870
   // Should become: ...>THB</span>1,171
-  const fallbackPattern = /(data-base-price="(\d+)">\s*<span class="pricing-currency">THB<\/span>)([\d,]+)/g;
+  const cur = SITE.baseCurrency;
+  const fallbackPattern = new RegExp(
+    `(data-base-price="(\\d+)">\\s*<span class="pricing-currency">${cur}<\\/span>)([\\d,]+)`, 'g'
+  );
   const beforeFallback = content;
-  content = content.replace(fallbackPattern, (match, prefix, thbValue, visibleText) => {
-    const formatted = formatNumber(parseInt(thbValue, 10));
+  content = content.replace(fallbackPattern, (match, prefix, baseVal, visibleText) => {
+    const formatted = formatNumber(parseInt(baseVal, 10));
     if (visibleText !== formatted) {
       return `${prefix}${formatted}`;
     }
@@ -288,9 +282,11 @@ function updatePriceAttributes(filePath, packages) {
 
   // Update sticky bar visible text: THB X,XXX <small>THB Y,YYY</small>
   if (onlinePrice) {
-    const stickyPattern = /(sticky-bar-price[^>]*>\s*)THB [\d,]+(\s*<small>)/g;
+    const stickyPattern = new RegExp(
+      `(sticky-bar-price[^>]*>\\s*)${cur} [\\d,]+(\\s*<small>)`, 'g'
+    );
     const beforeSticky = content;
-    content = content.replace(stickyPattern, `$1THB ${formatNumber(onlinePrice)}$2`);
+    content = content.replace(stickyPattern, `$1${cur} ${formatNumber(onlinePrice)}$2`);
     if (content !== beforeSticky) changed = true;
   }
 
