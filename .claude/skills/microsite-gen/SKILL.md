@@ -51,6 +51,7 @@ Use WebSearch to find:
 - Key amenities (parking, lockers, food, wheelchair access, etc.)
 - Social media links (Facebook, Instagram, TikTok)
 - 3–5 unique selling points (what makes this attraction special)
+- **Gallery images**: check the attraction's official website theme directory (e.g. `/wp-content/themes/*/images/main/` or `/images/`) for promotional photos. Note 5–6 usable URLs: 1 park overview (wide shot) + zone/activity shots
 
 Present findings as a structured summary. Proceed to Phase 2 immediately.
 
@@ -174,6 +175,15 @@ Each subagent should also generate SEO metadata for its pages:
 - FAQ answers: use HTML (`<p>`, `<strong>`, `<a href="/tickets.html">`)
 - Reference real attraction details — no generic filler
 - Use real Klook prices, not placeholders
+
+**Tone rules (mandatory — BD/merchant relations requirement):**
+- **Hero**: Do NOT write a CTA button label for the hero. Use `heroTrustBadge` instead: `"Official e-tickets via Klook — Authorized partner"`
+- **Avoid these words/phrases**: "Discounted", "Save X%", "Save big", "Limited Time", "Don't pay full price", "Book Discounted Tickets"
+- **CTA buttons**: always `"Book Tickets Online →"` (never "Discounted")
+- **Stats / subText**: use `"Online Exclusive Pricing"` not `"~X% Off Online"`; sticky bar `subText` = `"per person • Online Price"`
+- **Announcement bar**: `"Plan Your Visit — Online tickets from [PRICE] with instant confirmation"`
+- **Phone numbers**: Do NOT include the venue phone in footer or FAQ. Link to official website instead
+- Prices may be shown (e.g. "from THB 1,176") but do not use strikethrough gate-price comparisons
 
 ### Step 3c: Merge results
 

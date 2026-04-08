@@ -304,3 +304,63 @@ npx serve -p 3001             # Dev server
 - **i18n files contain ALL page content** — templates only have structure, never text. Content changes go in i18n files.
 - **Non-translatable data goes in `src/data/*.json`** — things like emoji arrays, CSS classes, image paths.
 - **Blog posts are stored as per-language HTML** in `src/content/blog/{slug}/{lang}.html`, with metadata in `src/data/blog/{slug}.json` and SEO data in the i18n files.
+
+---
+
+## Design & Tone Guidelines
+
+These guidelines apply to all microsites and were established based on BD/merchant relations feedback. Follow them when generating initial content and when making any edits.
+
+### Hero Area — Blog-like, Not Transactional
+
+- **Do not** place a large CTA button in the Hero section. It signals aggressive advertising and can undermine trust.
+- Instead, place a **trust badge** below the hero heading:
+  ```
+  "Official e-tickets via Klook — Authorized partner"
+  ```
+  Use `home.heroTrustBadge` as the i18n key. The template class is `hero-trust-badge` (small, semi-transparent white text).
+- The top half of the homepage should feel like a travel guide, not an ad. The first booking CTA should appear no earlier than the GBP card or tickets section (below the fold).
+
+### Tone & Promotional Language
+
+Avoid aggressive promotional copy. Use the following substitutions:
+
+| Avoid | Use instead |
+|-------|-------------|
+| "Book Discounted Tickets →" | "Book Tickets Online →" |
+| "Get Discounted Tickets →" | "Book Tickets Online →" |
+| "Save ~27% Online" | "Online Exclusive Pricing" |
+| "Save big on your visit" | "Book ahead for the best experience" |
+| "Limited Time: Save X%..." | "Plan Your Visit — Online tickets from [PRICE] with instant confirmation" |
+| "Don't pay full price" | (remove entirely) |
+| "Save X% booking online" | "Online Exclusive Pricing" |
+
+- Prices can be shown (e.g. "from THB 1,176"), but **do not use strikethrough gate price comparisons**.
+- Sticky bar `subText`: use `"per person • Online Price"` not `"per person • Save X%"`.
+
+### Phone Numbers — Do Not Expose
+
+- **Do not** include the venue's phone number in the Footer or FAQ pages.
+- Anywhere that previously linked to a phone number (contact sections, FAQ contact buttons), link to the **official website** instead: `href="[site.officialWebsiteUrl]"`.
+- Schema.org structured data may retain `telephone` (it's not user-visible and helps SEO).
+
+### Photo Gallery Section
+
+Add a **Photo Gallery** section between the Themed Zones and Tickets Preview sections on the homepage.
+
+**Layout (CSS Grid):**
+```css
+.gallery-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 260px 220px;
+  gap: 0.625rem;
+}
+.gallery-item-hero { grid-column: span 2; }  /* first image = hero */
+```
+
+Mobile breakpoint: `grid-template-columns: 1fr 1fr` (hero item still spans 2).
+
+**Image sourcing:** Look in the attraction's official website theme directory (e.g. `/wp-content/themes/*/images/main/`) for promotional images. Target: 1 park overview (hero), plus 4–5 zone/activity shots. Download and save as `images/gallery-*.jpg` or `images/gallery-*.webp`.
+
+**i18n key:** `home.gallery` with `sectionLabel`, `heading`, `description`, and `items[]` (each with `alt` and `caption`).
