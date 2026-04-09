@@ -107,15 +107,15 @@ This is the largest task. Use **Sonnet subagents** to write sections in parallel
 
 | Subagent | Sections |
 |----------|----------|
-| Sonnet A | `home` — read `index.njk` first. Hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA |
+| Sonnet A | `home` — read `index.njk` first. Hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA. **Blog cards must include a `slug` field** (e.g. `{ slug: "blog/best-time-to-visit.html", title: "...", ... }`). |
 | Sonnet B | `faq` — read `faq.njk` first. 30-40 FAQs in 7 categories. **CRITICAL:** Use `questions` (NOT `items`) as the array key — `buildFaqSchema()` calls `cat.questions`. |
 | Sonnet C | `attractions` + `tickets` — read `attractions.njk` AND `tickets.njk` first. Match the exact key structures below. |
 | Sonnet D | `gettingThere` — read `getting-there.njk` first. Transport options, directions, parking |
-| Sonnet E | `tips` — read `tips.njk` first. Visitor tips by category |
+| Sonnet E | `tips` — read `tips.njk` first. Visitor tips by category. **Each card must include an `emoji` field** (e.g. `{ emoji: "🎫", h3: "...", p: "..." }`). TOC items must use `{ id, label }` format (e.g. `{ "id": "before-you-go", "label": "Before You Go" }`). |
 
 **Sonnet C required key structures:**
 
-`t.attractions` keys: `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`, `breadcrumbCurrent`, `schema { name, alternateName[], description, touristType[], containsPlace[] }`, `pageHeader { h1, description }`, `tldr [{ bold, text }]`, `zoneNav { heading, sectionLabel, description, zones [{ tag, name, subtitle }] }`, `zones [{ h2, tag, subtitle, intro, keyAttractionsLabel, attractions [{ name, desc }], highlights [], tipContent }]`, `extras { heading, sectionLabel, description, items [{ h3, content, highlights [] }] }`, `faq { heading, sectionLabel, description, items [{ question, answer }], viewAll }`, `cta { heading, text, button, link }`
+`t.attractions` keys: `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`, `breadcrumbCurrent`, `schema { name, alternateName[], description, touristType[], containsPlace[] }`, `pageHeader { h1, description }`, `tldr [{ bold, text }]`, `zoneNav { heading, sectionLabel, description, zones [{ tag, name, subtitle }] }`, `zones [{ h2, tag, subtitle, intro, keyAttractionsLabel, attractions [{ name, desc }], highlights [], tipContent }]`, `extras { heading, sectionLabel, description, items [{ id, emoji, h3, content, highlights [] }] }` ← **`id` is the HTML anchor (e.g. `"dining"`), `emoji` is the icon; both live here, not in attractions.json**, `faq { heading, sectionLabel, description, items [{ question, answer }], viewAll }`, `cta { heading, text, button, link }`
 
 `t.tickets` keys: `title`, `metaDescription`, `metaKeywords`, `ogTitle`, `ogDescription`, `twitterTitle`, `twitterDescription`, `breadcrumbCurrent`, `schema { breadcrumbCurrent }`, `hero { badge, h1, h1Sub, sub, cta1, cta2, stats [4 items with number/label] }`, `tldr [{ bold?, text }]`, `ticketOptions { sectionLabel, heading, description, tableHeaders [4], tableRows [{ name, included }], tableFootnote, cta }`, `pricingCards { sectionLabel, heading, description, cards [3 items: { h3, period, features [], cta }] }`, `addons { sectionLabel, heading, description, items [4 items: { h3, text }] }`, `howToBook { sectionLabel, heading, description, items [4 items: { h3, text }], cta }`, `cancellation { sectionLabel, heading, items [{ bold?, text }], footerNote }`, `savingsTips { sectionLabel, heading, description, tips [5 items: { h3, text }], cta }`, `cta1 { heading, text, button, subtextPrefix }`, `faq { sectionLabel, heading, description, items [{ question, answer }], viewAll }`, `priceGuide { heading, description, blogSlug, button }`, `cta2 { heading, text, button }`
 
@@ -186,8 +186,11 @@ Launch a Sonnet subagent to search Bing Images, download, and save images for th
 - `hero-desktop.jpg` — wide landscape hero shot (1920×800)
 - `hero-mobile.jpg` — mobile hero shot (portrait or square crop)
 - `og-home.jpg`, `og-attractions.jpg`, `og-tickets.jpg`, `og-tips.jpg`, `og-getting-there.jpg`, `og-faq.jpg`, `og-blog.jpg` — OG images (1200×630)
-- `zone-{id}.jpg` — one per zone/area
-- Update `css/style.css` zone CSS classes to match the attraction's actual zones
+- `zone-{id}.jpg` — one per zone/area (where `{id}` matches the zone `id` in `src/data/attractions.json`)
+
+**CRITICAL — image format:** All images must be saved with `.jpg` extension. If a downloaded file is `.png` or `.webp`, rename it or convert it: `sips -s format jpeg input.png --out output.jpg`. The CSS references `.jpg` filenames — extension mismatches cause images to silently not appear.
+
+**Zone images — no CSS needed:** Zone background images are set automatically via inline style in the templates. The image path is derived directly from each zone's `cssClass` field: `url('/images/{cssClass}.jpg')`. You only need to ensure the downloaded image filename matches `{cssClass}.jpg` exactly — no CSS edits required.
 
 Note: Logo files (`logo.png`, `logo-light.png`, `logo-icon.svg`) must be created manually by the user.
 

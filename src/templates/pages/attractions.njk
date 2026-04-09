@@ -141,7 +141,7 @@
 {% set zt = t.attractions.zoneNav.zones[loop.index0] %}
           <a href="#{{ zone.id }}" class="zone-card" style="text-decoration: none; color: inherit;">
             <div class="zone-card-image">
-              <div class="zone-gradient {{ zone.cssClass }}">
+              <div class="zone-gradient" style="background-image: url('/images/{{ zone.cssClass }}.jpg')">
                 <span class="zone-tag">{{ zt.tag }}</span>
               </div>
             </div>
@@ -164,7 +164,7 @@
       <div class="container">
         <article class="zone-card zone-card-detail fade-in">
           <div class="zone-card-image" style="min-height: 220px;">
-            <div class="zone-gradient {{ zone.cssClass }}">
+            <div class="zone-gradient" style="background-image: url('/images/{{ zone.cssClass }}.jpg')">
               <span class="zone-tag">{{ zt.tag }}</span>
             </div>
           </div>
@@ -207,8 +207,8 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
 {% for item in t.attractions.extras.items %}
-          <div class="info-card fade-in" id="{{ attractionsData.extraIds[loop.index0] }}">
-            <div class="info-icon" aria-hidden="true">{{ attractionsData.extraEmojis[loop.index0] }}</div>
+          <div class="info-card fade-in" id="{{ item.id }}">
+            <div class="info-icon" aria-hidden="true">{{ item.emoji }}</div>
             <h3>{{ item.h3 }}</h3>
             {{ item.content | safe }}
             <div class="zone-highlights" style="margin-top: 1rem;">

@@ -107,20 +107,9 @@
         <div class="info-card" style="max-width: 700px; margin: 0 auto;">
           <h2 style="font-size: 1.25rem; margin-bottom: 1rem;">{{ t.tips.toc.heading }}</h2>
           <ol style="columns: 2; column-gap: 2rem; padding-left: 1.25rem; line-height: 2;">
-            <li><a href="#before-you-go">{{ t.tips.toc.items[0] }}</a></li>
-            <li><a href="#what-to-bring">{{ t.tips.toc.items[1] }}</a></li>
-            <li><a href="#what-not-to-bring">{{ t.tips.toc.items[2] }}</a></li>
-            <li><a href="#dress-code">{{ t.tips.toc.items[3] }}</a></li>
-            <li><a href="#best-time">{{ t.tips.toc.items[4] }}</a></li>
-            <li><a href="#money-saving">{{ t.tips.toc.items[5] }}</a></li>
-            <li><a href="#food-guide">{{ t.tips.toc.items[6] }}</a></li>
-            <li><a href="#ride-order">{{ t.tips.toc.items[7] }}</a></li>
-            <li><a href="#families-kids">{{ t.tips.toc.items[8] }}</a></li>
-            <li><a href="#rainy-day">{{ t.tips.toc.items[9] }}</a></li>
-            <li><a href="#photo-tips">{{ t.tips.toc.items[10] }}</a></li>
-            <li><a href="#cabana">{{ t.tips.toc.items[11] }}</a></li>
-            <li><a href="#safety">{{ t.tips.toc.items[12] }}</a></li>
-            <li><a href="#after-the-park">{{ t.tips.toc.items[13] }}</a></li>
+{% for item in t.tips.toc.items %}
+            <li><a href="#{{ item.id }}">{{ item.label }}</a></li>
+{% endfor %}
           </ol>
         </div>
       </div>
@@ -138,7 +127,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip1.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip1Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -159,7 +148,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
 {% for card in t.tips.tip2.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip2Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -180,7 +169,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
 {% for card in t.tips.tip3.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip3Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -216,7 +205,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip5.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip5Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -237,7 +226,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip6.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip6Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -261,7 +250,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip7.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip7Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -300,7 +289,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip9.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip9Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -324,7 +313,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip10.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip10Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -381,7 +370,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip13.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip13Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>
@@ -402,7 +391,7 @@
         <div class="info-grid fade-in" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
 {% for card in t.tips.tip14.cards %}
           <div class="info-card">
-            <div class="info-icon" aria-hidden="true">{{ tipsData.tip14Emojis[loop.index0] }}</div>
+            <div class="info-icon" aria-hidden="true">{{ card.emoji }}</div>
             <h3>{{ card.h3 }}</h3>
             <p>{{ card.p | safe }}</p>
           </div>

@@ -262,7 +262,7 @@
           <!-- {{ zone.name }} -->
           <article class="zone-card fade-in">
             <div class="zone-card-image">
-              <div class="zone-gradient {{ zone.cssClass }}">
+              <div class="zone-gradient" style="background-image: url('/images/{{ zone.cssClass }}.jpg')">
                 <span class="zone-tag">{{ zone.tag }}</span>
               </div>
             </div>
@@ -428,13 +428,13 @@
         <div class="blog-grid fade-in">
 {% for card in t.home.blog.cards %}
           <article class="blog-card">
-            <div class="blog-card-image" style="{{ homeData.blogGradients[loop.index0] }}"></div>
+            <div class="blog-card-image"></div>
             <div class="blog-card-body">
               <div class="blog-card-meta">
                 <span class="blog-tag">{{ card.tag }}</span>
                 <span>{{ card.readTime }}</span>
               </div>
-              <h3><a href="/{{ lang.prefix }}{{ homeData.blogSlugs[loop.index0] }}">{{ card.title }}</a></h3>
+              <h3><a href="/{{ lang.prefix }}{{ card.slug }}">{{ card.title }}</a></h3>
               <p>{{ card.description | safe }}</p>
             </div>
           </article>

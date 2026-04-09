@@ -3,8 +3,5 @@
   "whyVisitIcons": ["🎯", "🌟", "👨‍👩‍👧‍👦", "🎉"],
   "ticketPrices": [0, 0, 0],
   "ticketPricesFormatted": ["0", "0", "0"],
-  "ticketPriceNotes": ["gate", "online", "allinclusive"],
-  "blogSlugs": [],
-  "blogGradients": [],
-  "footerGuideSlugs": []
+  "ticketPriceNotes": ["gate", "online", "allinclusive"]
 }

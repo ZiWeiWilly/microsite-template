@@ -793,6 +793,8 @@ p { margin-bottom: 1rem; }
   display: flex;
   align-items: flex-end;
   padding: 1.5rem;
+  background-size: cover;
+  background-position: center;
 }
 
 .zone-card-image .zone-gradient::before {
@@ -846,16 +848,8 @@ p { margin-bottom: 1rem; }
   color: var(--dark-600);
 }
 
-/* Zone color themes - real photos with gradient overlay */
-.zone-ghostbusters { background: linear-gradient(135deg, rgba(30,58,95,0.45), rgba(45,106,159,0.45)), url('/images/zone-ghostbusters.jpg') center/cover no-repeat; }
-.zone-jumanji { background: linear-gradient(135deg, rgba(20,83,45,0.45), rgba(22,101,52,0.45)), url('/images/zone-jumanji.jpg') center/cover no-repeat; }
-.zone-hotel-t { background: linear-gradient(135deg, rgba(88,28,135,0.45), rgba(124,58,237,0.45)), url('/images/zone-hotel-transylvania.jpg') center/cover no-repeat; }
-.zone-zombieland { background: linear-gradient(135deg, rgba(127,29,29,0.45), rgba(153,27,27,0.45)), url('/images/zone-zombieland.jpg') center/cover no-repeat; }
-.zone-cloudy { background: linear-gradient(135deg, rgba(3,105,161,0.45), rgba(14,165,233,0.45)), url('/images/zone-cloudy.jpg') center/cover no-repeat; }
-.zone-surfs-up { background: linear-gradient(135deg, rgba(8,145,178,0.45), rgba(34,211,238,0.45)), url('/images/zone-surfs-up.jpg') center/cover no-repeat; }
-.zone-bad-boys { background: linear-gradient(135deg, rgba(30,41,59,0.45), rgba(71,85,105,0.45)), url('/images/zone-bad-boys.jpg') center/cover no-repeat; }
-.zone-emoji { background: linear-gradient(135deg, rgba(194,65,12,0.45), rgba(249,115,22,0.45)), url('/images/zone-emoji.jpg') center/cover no-repeat; }
-.zone-wave-pool { background: linear-gradient(135deg, rgba(12,74,110,0.45), rgba(2,132,199,0.45)), url('/images/wave-pool.webp') center/cover no-repeat; }
+/* Zone images are set via inline style in the template (background-image: url('/images/{cssClass}.jpg')).
+ * No per-zone CSS classes needed — image path is derived directly from cssClass in attractions.json. */
 
 /* ===== FAQ ACCORDION ===== */
 .faq-list {
@@ -1156,6 +1150,11 @@ p { margin-bottom: 1rem; }
   background-position: center;
   position: relative;
 }
+
+/* Blog card gradient rotation — no data file needed */
+.blog-card:nth-child(3n+1) .blog-card-image { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+.blog-card:nth-child(3n+2) .blog-card-image { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+.blog-card:nth-child(3n+3) .blog-card-image { background: linear-gradient(135deg, var(--accent), #ef4444); }
 
 .blog-card-body {
   padding: 1.5rem;
