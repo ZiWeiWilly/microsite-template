@@ -146,6 +146,13 @@
         { "question": "CHANGE ME?", "answer": "<p>CHANGE ME</p>" }
       ]
     },
+    "blog": {
+      "sectionLabel": "CHANGE ME — e.g. Travel Guides",
+      "heading": "CHANGE ME — blog section heading",
+      "description": "CHANGE ME — one sentence describing the blog",
+      "cards": [],
+      "viewAll": "View All Guides &rarr;"
+    },
     "cta": {
       "ctaTitle": "Ready to Visit?",
       "ctaText": "CHANGE ME — CTA description",
@@ -567,10 +574,15 @@
       "ogDescription": "CHANGE ME",
       "twitterTitle": "CHANGE ME | Blog",
       "twitterDescription": "CHANGE ME",
-      "heroTitle": "Blog & Travel Guides",
-      "heroSubtitle": "CHANGE ME",
-      "breadcrumbHome": "Home",
-      "breadcrumbCurrent": "Blog",
+      "breadcrumbName": "Blog",
+      "h1": "Blog & Travel Guides",
+      "h1Sub": "CHANGE ME",
+      "overview": "<p>CHANGE ME — blog index overview text.</p>",
+      "cta": {
+        "h2": "CHANGE ME — CTA heading",
+        "text": "CHANGE ME — CTA body text.",
+        "button": "Book Tickets &rarr;"
+      },
       "cards": []
     },
     "posts": {}

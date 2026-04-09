@@ -463,6 +463,13 @@ The Klook activity URL is: ${config.klookUrl}`;
     longitude: lng,
   };
 
+  // Store brand colors in site.json so generate-blog.js can use them
+  site.colors = {
+    primary:   colors.primary,
+    secondary: colors.secondary,
+    accent:    colors.accent,
+  };
+
   // Filter languages if user selected a subset
   if (config.languages && config.languages.length < 12) {
     site.languages = site.languages.filter(l => config.languages.includes(l.code));
@@ -573,9 +580,46 @@ ${JSON.stringify({
   stickyBar: enTemplate.stickyBar,
   footer: enTemplate.footer,
   home: enTemplate.home,
+  blogIndexStatic: {
+    title: enTemplate.blog?.index?.title,
+    metaDescription: enTemplate.blog?.index?.metaDescription,
+    metaKeywords: enTemplate.blog?.index?.metaKeywords,
+    ogTitle: enTemplate.blog?.index?.ogTitle,
+    ogDescription: enTemplate.blog?.index?.ogDescription,
+    twitterTitle: enTemplate.blog?.index?.twitterTitle,
+    twitterDescription: enTemplate.blog?.index?.twitterDescription,
+    breadcrumbName: enTemplate.blog?.index?.breadcrumbName,
+    h1: enTemplate.blog?.index?.h1,
+    h1Sub: enTemplate.blog?.index?.h1Sub,
+    overview: enTemplate.blog?.index?.overview,
+    cta: enTemplate.blog?.index?.cta,
+  },
 }, null, 2)}
 
-Return ONLY the JSON object with these 6 top-level keys. Every key in the template must exist in your output.`;
+For home.blog (homepage blog preview section header — cards are added later by generate-blog.js):
+- sectionLabel: short uppercase label, e.g. "Travel Guides"
+- heading: short punchy heading for the blog preview section, e.g. "${config.attractionName} Insider Tips"
+- description: one sentence about what guides visitors will find
+- viewAll: "View All Guides →" (translated)
+- cards: keep as empty array [] — populated later by generate-blog.js
+
+For blogIndexStatic:
+- title: SEO title, 55-65 chars, e.g. "${config.attractionName} Blog | Guides, Tips & Reviews"
+- metaDescription: 148-158 chars describing the blog's content and value to visitors
+- metaKeywords: comma-separated keywords for the blog index
+- ogTitle: Open Graph title (can be same as title without char limit)
+- ogDescription: Open Graph description (1-2 sentences)
+- twitterTitle: Twitter Card title
+- twitterDescription: Twitter Card description
+- h1: Short blog section title, e.g. "${config.attractionName} Blog"
+- h1Sub: One sentence describing the blog's purpose for visitors
+- breadcrumbName: Translation of "Blog" (keep as "Blog" for English)
+- overview: 2-3 paragraphs of HTML (<p> tags) welcoming visitors to the blog and describing the types of guides available
+- cta.h2: Call-to-action heading encouraging ticket booking
+- cta.text: 1-2 sentences about online booking benefits
+- cta.button: CTA button label (e.g. "Book Tickets Online →")
+
+Return ONLY the JSON object with these 7 top-level keys. Every key in the template must exist in your output.`;
 
   // ── Call B: faq ────────────────────────────────────────────────────────────
   const promptB = `Generate the FAQ section with 30-40 real questions about ${config.attractionName}.
@@ -694,8 +738,28 @@ Return ONLY the JSON object with key "tips".`;
   deepMerge(enJson, partD);   // gettingThere
   deepMerge(enJson, partE);   // tips
 
-  // Add empty blog section
-  enJson.blog = enTemplate.blog;
+  // Add blog section — merge template defaults with AI-generated static UI content
+  const generatedBlogStatic = enJson.blogIndexStatic || {};
+  delete enJson.blogIndexStatic;
+  enJson.blog = {
+    index: {
+      ...enTemplate.blog?.index,
+      title:              generatedBlogStatic.title              || enTemplate.blog?.index?.title,
+      metaDescription:    generatedBlogStatic.metaDescription    || enTemplate.blog?.index?.metaDescription,
+      metaKeywords:       generatedBlogStatic.metaKeywords       || enTemplate.blog?.index?.metaKeywords,
+      ogTitle:            generatedBlogStatic.ogTitle            || enTemplate.blog?.index?.ogTitle,
+      ogDescription:      generatedBlogStatic.ogDescription      || enTemplate.blog?.index?.ogDescription,
+      twitterTitle:       generatedBlogStatic.twitterTitle       || enTemplate.blog?.index?.twitterTitle,
+      twitterDescription: generatedBlogStatic.twitterDescription || enTemplate.blog?.index?.twitterDescription,
+      breadcrumbName:     generatedBlogStatic.breadcrumbName     || enTemplate.blog?.index?.breadcrumbName,
+      h1:                 generatedBlogStatic.h1                 || enTemplate.blog?.index?.h1,
+      h1Sub:              generatedBlogStatic.h1Sub              || enTemplate.blog?.index?.h1Sub,
+      overview:           generatedBlogStatic.overview           || enTemplate.blog?.index?.overview,
+      cta:                generatedBlogStatic.cta                || enTemplate.blog?.index?.cta,
+      cards: [],
+    },
+    posts: {},
+  };
 
   // ── Validate completeness ──────────────────────────────────────────────────
   const checks = [
@@ -739,12 +803,20 @@ Return ONLY the JSON object with key "tips".`;
       }
     }
 
-    // Include blog.index static UI fields in section A for translation
-    // (SEO "CHANGE ME" placeholders are excluded — they'll be filled by generate-blog.js)
+    // Include blog.index fields in section A for translation (SEO + static UI)
     const blogIndexStatic = {
-      heroTitle: enJson.blog?.index?.heroTitle || 'Blog & Travel Guides',
-      breadcrumbHome: enJson.blog?.index?.breadcrumbHome || 'Home',
-      breadcrumbCurrent: enJson.blog?.index?.breadcrumbCurrent || 'Blog',
+      title:              enJson.blog?.index?.title              || '',
+      metaDescription:    enJson.blog?.index?.metaDescription    || '',
+      metaKeywords:       enJson.blog?.index?.metaKeywords       || '',
+      ogTitle:            enJson.blog?.index?.ogTitle            || '',
+      ogDescription:      enJson.blog?.index?.ogDescription      || '',
+      twitterTitle:       enJson.blog?.index?.twitterTitle       || '',
+      twitterDescription: enJson.blog?.index?.twitterDescription || '',
+      h1:                 enJson.blog?.index?.h1                 || 'Blog & Travel Guides',
+      h1Sub:              enJson.blog?.index?.h1Sub              || '',
+      breadcrumbName:     enJson.blog?.index?.breadcrumbName     || 'Blog',
+      overview:           enJson.blog?.index?.overview           || '',
+      cta:                enJson.blog?.index?.cta                || { h2: '', text: '', button: 'Book Tickets' },
     };
     sections.A.data.blogIndexStatic = blogIndexStatic;
 
@@ -826,17 +898,25 @@ Return ONLY the translated JSON. No explanatory text.`;
         }
       }
 
-      // Add blog section: reuse already-translated nav values for UI strings,
-      // keep SEO "CHANGE ME" placeholders for generate-blog.js to fill later.
-      // nav.home and nav.blog are translated in section A — guaranteed to be present.
-      const translatedBlogHeroTitle = langData.blogIndexStatic?.heroTitle;
+      // Add blog section: apply translated fields, fall back to English values.
+      // nav.blog is translated in section A — guaranteed to be present.
+      const translatedBlogStatic = langData.blogIndexStatic || {};
       delete langData.blogIndexStatic;
       langData.blog = {
         index: {
           ...enJson.blog?.index,
-          heroTitle: translatedBlogHeroTitle || enJson.blog?.index?.heroTitle,
-          breadcrumbHome: langData.nav?.home || enJson.blog?.index?.breadcrumbHome,
-          breadcrumbCurrent: langData.nav?.blog || enJson.blog?.index?.breadcrumbCurrent,
+          title:              translatedBlogStatic.title              || enJson.blog?.index?.title,
+          metaDescription:    translatedBlogStatic.metaDescription    || enJson.blog?.index?.metaDescription,
+          metaKeywords:       translatedBlogStatic.metaKeywords       || enJson.blog?.index?.metaKeywords,
+          ogTitle:            translatedBlogStatic.ogTitle            || enJson.blog?.index?.ogTitle,
+          ogDescription:      translatedBlogStatic.ogDescription      || enJson.blog?.index?.ogDescription,
+          twitterTitle:       translatedBlogStatic.twitterTitle       || enJson.blog?.index?.twitterTitle,
+          twitterDescription: translatedBlogStatic.twitterDescription || enJson.blog?.index?.twitterDescription,
+          breadcrumbName:     translatedBlogStatic.breadcrumbName     || langData.nav?.blog || enJson.blog?.index?.breadcrumbName,
+          h1:                 translatedBlogStatic.h1                 || enJson.blog?.index?.h1,
+          h1Sub:              translatedBlogStatic.h1Sub              || enJson.blog?.index?.h1Sub,
+          overview:           translatedBlogStatic.overview           || enJson.blog?.index?.overview,
+          cta:                translatedBlogStatic.cta                || enJson.blog?.index?.cta,
           cards: [],
         },
         posts: {},

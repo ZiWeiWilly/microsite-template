@@ -462,6 +462,32 @@ function updateBlogIndexJson(slug, dateStr, readTime) {
   log(`Updated: src/data/blog/index.json`);
 }
 
+function updateHomeJson(slug, ogImage, colors) {
+  if (DRY_RUN) { log(`[DRY RUN] Would update src/data/home.json`); return; }
+  const filePath = path.join(DATA_DIR, 'home.json');
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+  if (!Array.isArray(data.blogSlugs))    data.blogSlugs    = [];
+  if (!Array.isArray(data.blogGradients)) data.blogGradients = [];
+
+  const blogUrl = `blog/${slug}.html`;
+  if (!data.blogSlugs.includes(blogUrl)) {
+    // Derive a gradient from the og image and a rotation based on position
+    const idx = data.blogSlugs.length;
+    const primary   = (colors && colors.primary)   || '#0ea5e9';
+    const secondary = (colors && colors.secondary) || '#06b6d4';
+    const gradient = `background: linear-gradient(135deg, ${primary}66, ${secondary}66), url('/images/${ogImage}') center/cover no-repeat;`;
+    data.blogSlugs.unshift(blogUrl);
+    data.blogGradients.unshift(gradient);
+    // Cap at 3 most-recent for homepage preview
+    if (data.blogSlugs.length > 3)    data.blogSlugs    = data.blogSlugs.slice(0, 3);
+    if (data.blogGradients.length > 3) data.blogGradients = data.blogGradients.slice(0, 3);
+  }
+
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf8');
+  log(`Updated: src/data/home.json`);
+}
+
 function updateI18nFile(langCode, slug, meta) {
   const filePath = path.join(I18N_DIR, `${langCode}.json`);
   if (!fs.existsSync(filePath)) { warn(`i18n/${langCode}.json not found, skipping`); return; }
@@ -491,6 +517,19 @@ function updateI18nFile(langCode, slug, meta) {
     title:       meta.cardTitle,
     description: meta.cardDescription,
   });
+
+  // Add card to homepage blog preview section (home.blog.cards)
+  if (!i18n.home)                              i18n.home              = {};
+  if (!i18n.home.blog)                         i18n.home.blog         = {};
+  if (!Array.isArray(i18n.home.blog.cards))    i18n.home.blog.cards   = [];
+  // Keep homepage preview capped at 3 most-recent posts
+  i18n.home.blog.cards.unshift({
+    tag:         meta.cardCategory,
+    readTime:    meta.readTime || '5 min read',
+    title:       meta.cardTitle,
+    description: meta.cardDescription,
+  });
+  if (i18n.home.blog.cards.length > 3) i18n.home.blog.cards = i18n.home.blog.cards.slice(0, 3);
 
   fs.writeFileSync(filePath, JSON.stringify(i18n, null, 2) + '\n', 'utf8');
   log(`Updated: src/i18n/${langCode}.json`);
@@ -630,10 +669,11 @@ async function main() {
   for (const lang of LANGUAGES) {
     const meta = allMeta[lang.code];
     if (!meta) { warn(`No metadata for ${lang.code}, skipping`); continue; }
-    updateI18nFile(lang.code, topic.slug, meta);
+    updateI18nFile(lang.code, topic.slug, { ...meta, readTime });
   }
 
   updateBlogIndexJson(topic.slug, dateStr, readTime);
+  updateHomeJson(topic.slug, ogImage, SITE.colors);
 
   log('');
   log(`✓ Done!  New post: ${topic.slug}`);
