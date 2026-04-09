@@ -981,6 +981,12 @@ Return ONLY the translated JSON. No explanatory text.`;
   );
 
   // home.json — icons, prices, blog slugs
+  const standardPkg = prices.packages.find(p => p.id === 'standard-admission') || prices.packages[0];
+  const allIncPkg = prices.packages.find(p => p.id !== (standardPkg && standardPkg.id) && prices.packages.indexOf(p) > 0) || prices.packages[2] || null;
+  const gatePrice = standardPkg ? (standardPkg.gatePrice || 0) : 0;
+  const onlinePrice = standardPkg ? (standardPkg.basePrice || 0) : 0;
+  const allIncPrice = allIncPkg ? (allIncPkg.basePrice || 0) : 0;
+
   const homeData = {
     whyVisitIcons: ['🎢', '🎭', '🌊', '⭐'],
     zoneItems: zones.map(z => ({ id: z.id, image: `zone-${z.id}.jpg` })),
@@ -989,6 +995,13 @@ Return ONLY the translated JSON. No explanatory text.`;
       { highlight: true },
       { highlight: false },
     ],
+    ticketPrices: [gatePrice, onlinePrice, allIncPrice],
+    ticketPricesFormatted: [
+      gatePrice.toLocaleString('en-US'),
+      onlinePrice.toLocaleString('en-US'),
+      allIncPrice.toLocaleString('en-US'),
+    ],
+    ticketPriceNotes: ['gate', 'online', 'allinclusive'],
     transportCards: [
       { icon: 'car-icon.svg' },
       { icon: 'bus-icon.svg' },
