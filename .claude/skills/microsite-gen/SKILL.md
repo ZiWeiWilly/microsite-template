@@ -542,17 +542,35 @@ Manual — create these yourself:
   ⬜ images/logo-icon.svg        (favicon)
 ```
 
-### Step 8c: Closing message
+### Step 8c: Deploy to Vercel
+
+Run the following to deploy the static site to Vercel:
+
+```bash
+vercel --yes --prod
+```
+
+- `--yes` skips all interactive prompts (auto-detects static site, uses project name from `package.json`)
+- `--prod` deploys straight to production (not a preview URL)
+
+If this is the first deploy for this project, Vercel will create a new project automatically.
+
+Capture the production URL from the output (e.g. `https://my-attraction.vercel.app`) and show it to the user.
+
+**If `vercel` is not found:** tell the user to run `npm i -g vercel && vercel login` first, then re-run this step.
+
+### Step 8d: Closing message
 
 > **Your microsite is ready!**
 >
-> **Preview locally:** `npx serve -p 3001`
+> **Live URL:** [the production URL from Step 8c]
 >
 > **Next steps:**
 > - Review and replace any auto-downloaded images you don't like
 > - Create logo files (logo.png, logo-light.png, logo-icon.svg)
 > - Set brand colours in `css/style.css` (CSS variables at the top)
 > - Add GitHub Secrets: `FIRECRAWL_API_KEY` + `OPENROUTER_API_KEY`
+> - Point your custom domain in the Vercel dashboard (Settings → Domains)
 > - Run `npm run generate-blog` for your first AI blog post
 
 ---
