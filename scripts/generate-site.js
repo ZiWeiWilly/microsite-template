@@ -28,7 +28,7 @@
  *     "baseCurrency": "THB",
  *     "colors": { "primary": "#0ea5e9", "secondary": "#06b6d4", "accent": "#f59e0b" },
  *     "languages": ["en","zh-CN","zh-TW","ja","ko","ru","hi","ms","vi","de","fr","lo"],
- *     "headScripts": "<script>/* GTM, GA4, Hotjar, etc. */</script>"
+ *     "headScripts": "<script>// GTM, GA4, Hotjar, etc.</script>"
  *   }
  */
 
