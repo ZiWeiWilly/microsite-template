@@ -258,11 +258,10 @@
 
         <div class="zones-grid">
 {% for zone in t.home.zones.items %}
-{% set zoneData = attractionsData.zones | selectattr("id", "equalto", zone.id) | first %}
           <!-- {{ zone.name }} -->
           <article class="zone-card fade-in">
             <div class="zone-card-image">
-              <div class="zone-gradient" style="background-image: url('/images/{{ (zoneData.cssClass if zoneData else zone.cssClass) }}.jpg')">
+              <div class="zone-gradient" style="background-image: url('/images/zone-{{ zone.id }}.jpg')">
                 <span class="zone-tag">{{ zone.tag }}</span>
               </div>
             </div>
