@@ -99,6 +99,7 @@ function loadI18n() {
 
 // Strip HTML tags for Schema.org plain text
 function stripHtml(html) {
+  if (!html) return '';
   return html
     .replace(/<[^>]+>/g, '')
     .replace(/&mdash;/g, '—')
@@ -119,7 +120,8 @@ function stripHtml(html) {
 function buildFaqSchema(categories) {
   const mainEntity = [];
   for (const cat of categories) {
-    for (const q of cat.questions) {
+    for (const q of (cat.questions || [])) {
+      if (!q.question || !q.answer) continue;
       mainEntity.push({
         '@type': 'Question',
         name: q.question,
@@ -139,7 +141,7 @@ function buildFaqSchema(categories) {
 
 // Build FAQPage schema from home page FAQ items (flat array)
 function buildHomeFaqSchema(items) {
-  const mainEntity = items.map(q => ({
+  const mainEntity = items.filter(q => q.question && q.answer).map(q => ({
     '@type': 'Question',
     name: q.question,
     acceptedAnswer: {
