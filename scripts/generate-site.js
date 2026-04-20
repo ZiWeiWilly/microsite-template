@@ -925,13 +925,16 @@ Return ONLY the translated JSON. No explanatory text.`;
         posts: {},
       };
 
-      // Validate: ensure core sections are present before writing.
-      // If all API calls failed, langData will be empty — skip writing so a re-run can retry.
+      // Validate: if ALL core sections failed, skip entirely so next run can retry.
+      // If only some sections failed, write partial file — build.js will fall back to English for missing keys.
       const requiredKeys = ['home', 'faq', 'tips', 'attractions', 'gettingThere'];
       const missingKeys = requiredKeys.filter(k => !langData[k]);
-      if (missingKeys.length > 0) {
-        warn(`  ${lang.code}: translation incomplete (missing: ${missingKeys.join(', ')}) — skipping file write so next run can retry`);
+      if (missingKeys.length === requiredKeys.length) {
+        warn(`  ${lang.code}: all translations failed — skipping file write so next run can retry`);
         continue;
+      }
+      if (missingKeys.length > 0) {
+        warn(`  ${lang.code}: translation incomplete (missing: ${missingKeys.join(', ')}) — writing partial file, build will use English fallback`);
       }
 
       const langFile = path.join(I18N_DIR, `${lang.code}.json`);

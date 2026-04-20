@@ -83,15 +83,33 @@ const TIPS_DATA = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'tips.
 // (same order as footer.guideLabels in i18n files)
 const FOOTER_GUIDES_SLUGS = HOME_DATA.footerGuideSlugs || [];
 
-// Load all i18n files
+// Deep-merge source into target (target wins for existing keys)
+function deepMerge(target, source) {
+  for (const key of Object.keys(source)) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])
+        && target[key] && typeof target[key] === 'object' && !Array.isArray(target[key])) {
+      deepMerge(target[key], source[key]);
+    } else if (!(key in target)) {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
+// Load all i18n files; partial translations fall back to English for missing keys
 function loadI18n() {
   const translations = {};
+  const enPath = path.join(I18N_DIR, 'en.json');
+  const enData = fs.existsSync(enPath) ? JSON.parse(fs.readFileSync(enPath, 'utf8')) : {};
   for (const lang of SITE.languages) {
     const filePath = path.join(I18N_DIR, `${lang.code}.json`);
     if (fs.existsSync(filePath)) {
-      translations[lang.code] = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      translations[lang.code] = lang.code === 'en' ? data : deepMerge(data, enData);
+    } else if (lang.code === 'en') {
+      translations[lang.code] = enData;
     } else {
-      console.warn(`  Warning: Missing i18n file for ${lang.code}`);
+      console.warn(`  Warning: Missing i18n file for ${lang.code}, skipping`);
     }
   }
   return translations;
