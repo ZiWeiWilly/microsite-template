@@ -129,7 +129,7 @@ Each subagent also reads `src/i18n/en.json` for the existing key structure, then
 
 | Subagent | Sections | Details |
 |----------|----------|---------|
-| **Sonnet A** | `home` | Read `src/templates/pages/index.njk` first. Hero text, stats, TL;DR, GBP card, 4 "Why Visit" cards, 4–6 zones with highlights, 3 ticket cards, 3 transport options, 3 testimonials, 3–5 homepage FAQs, CTA |
+| **Sonnet A** | `home` | Read `src/templates/pages/index.njk` first. Hero text, stats, TL;DR, GBP card, 4 "Why Visit" cards, 4–6 zones with highlights, 3 ticket cards, 3 transport options, 3 testimonials, 3–5 homepage FAQs, CTA. **CRITICAL — zone items:** Each zone in `home.zones.items` must include an `id` field matching the zone `id` values in `src/data/attractions.json` (e.g. `{ "id": "adventure-zone", "name": "...", "tag": "...", ... }`). The template uses this `id` to look up the zone's `cssClass` for the background image — if `id` doesn't match, all zone cards show the wrong image. |
 | **Sonnet B** | `faq` | Read `src/templates/pages/faq.njk` first. 30–40 FAQs in 7 categories. **CRITICAL:** Each category's FAQ array key MUST be `questions` (NOT `items`). The build script calls `cat.questions` in `buildFaqSchema()` — using `items` will crash. |
 | **Sonnet C** | `attractions` + `tickets` | Read `src/templates/pages/attractions.njk` AND `src/templates/pages/tickets.njk` first. Must match the EXACT key structure from templates. See required key structures below. |
 | **Sonnet D** | `gettingThere` | Read `src/templates/pages/getting-there.njk` first. Transport options, directions, parking info |

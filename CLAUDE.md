@@ -107,7 +107,7 @@ This is the largest task. Use **Sonnet subagents** to write sections in parallel
 
 | Subagent | Sections |
 |----------|----------|
-| Sonnet A | `home` — read `index.njk` first. Hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA. **Blog cards must include a `slug` field** (e.g. `{ slug: "blog/best-time-to-visit.html", title: "...", ... }`). |
+| Sonnet A | `home` — read `index.njk` first. Hero, stats, TL;DR, GBP card, Why Visit cards, zones, tickets, transport, testimonials, FAQs, CTA. **Blog cards must include a `slug` field** (e.g. `{ slug: "blog/best-time-to-visit.html", title: "...", ... }`). **CRITICAL — zone items:** Each zone in `home.zones.items` must include an `id` field (e.g. `{ "id": "adventure-zone", "name": "...", "tag": "...", ... }`) that exactly matches the zone `id` values in `src/data/attractions.json`. The template uses this `id` to look up the zone's `cssClass` for the background image — if `id` doesn't match, all zone cards will show the wrong image. Use the zone ids established during the research/setup phase. |
 | Sonnet B | `faq` — read `faq.njk` first. 30-40 FAQs in 7 categories. **CRITICAL:** Use `questions` (NOT `items`) as the array key — `buildFaqSchema()` calls `cat.questions`. |
 | Sonnet C | `attractions` + `tickets` — read `attractions.njk` AND `tickets.njk` first. Match the exact key structures below. |
 | Sonnet D | `gettingThere` — read `getting-there.njk` first. Transport options, directions, parking |
