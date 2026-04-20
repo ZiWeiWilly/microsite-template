@@ -27,7 +27,8 @@
  *     "affiliateUrl": "https://affiliate.klook.com/redirect?aid=...",
  *     "baseCurrency": "THB",
  *     "colors": { "primary": "#0ea5e9", "secondary": "#06b6d4", "accent": "#f59e0b" },
- *     "languages": ["en","zh-CN","zh-TW","ja","ko","ru","hi","ms","vi","de","fr","lo"]
+ *     "languages": ["en","zh-CN","zh-TW","ja","ko","ru","hi","ms","vi","de","fr","lo"],
+ *     "headScripts": "<script>/* GTM, GA4, Hotjar, etc. */</script>"
  *   }
  */
 
@@ -469,6 +470,8 @@ The Klook activity URL is: ${config.klookUrl}`;
     secondary: colors.secondary,
     accent:    colors.accent,
   };
+
+  site.headScripts = config.headScripts || '';
 
   // Filter languages if user selected a subset
   if (config.languages && config.languages.length < 12) {
