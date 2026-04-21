@@ -62,6 +62,8 @@ The setup script fills in the most critical fields. Open `src/data/site.json` an
 - `alternateNames` — add common name variants (e.g. `["Ramayana", "Ramayana Pattaya"]`)
 - `rating` — aggregate rating from Google/Klook (`value`, `count`, `best`)
 - `amenities` — list of amenity strings (e.g. `["Free Parking", "Lockers", "Food Court"]`)
+- `mapsUrl` — Google Maps share URL (e.g. `https://maps.app.goo.gl/...`)
+- `mapsEmbed` — Google Maps embed src URL (from Share → Embed a map → copy the `src="..."` value). **Required for the Getting There page iframe.**
 
 For `schemaType`, the script lets you choose. Options are:
 - `AmusementPark` — theme parks, water parks

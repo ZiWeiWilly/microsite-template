@@ -74,6 +74,8 @@ Fill in all fields using Phase 1 research:
 - `amenities` (array of strings)
 - `schemaType` — choose one: `AmusementPark`, `TouristAttraction`, `Zoo`, `Museum`, `NaturalFeature`
 - `socialLinks` (facebook, instagram, tiktok)
+- `mapsUrl` — Google Maps share URL (e.g. `https://maps.app.goo.gl/...`)
+- `mapsEmbed` — Google Maps embed src URL (from Share → Embed a map → copy the `src="..."` value). **This is required for the Getting There page iframe — if left empty the map will not appear.**
 
 **Critical:** Set `klook.affiliateUrl` to the user's Klook affiliate redirect URL from Step 0. This URL is injected into every booking button on the site via `data-booking-url` on `<body>`. If not set correctly, all "Book Now" buttons will be broken.
 
