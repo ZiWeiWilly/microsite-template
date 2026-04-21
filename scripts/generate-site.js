@@ -36,6 +36,7 @@ const OpenAI = require('openai');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const { jsonrepair } = require('jsonrepair');
 
 // ── Paths ────────────────────────────────────────────────────────────────────
 const ROOT        = path.join(__dirname, '..');
@@ -146,50 +147,34 @@ function findJsonEnd(str) {
   return -1;
 }
 
-/** Strip markdown code fences and parse JSON, with repair for truncated responses */
+/** Strip markdown code fences and parse JSON, with repair for truncated/malformed responses */
 function extractJSON(text) {
   const stripped = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
   const start = stripped.search(/[{[]/);
   if (start === -1) throw new Error('No JSON found in model response');
   let jsonStr = stripped.slice(start);
+
+  // Case 1: valid JSON — fast path
   try {
     return JSON.parse(jsonStr);
   } catch (firstErr) {
-    // Case 1: extra content after valid JSON — extract just the JSON portion
+    // Case 2: extra content after valid JSON — trim to just the JSON object
     if (firstErr.message.includes('after JSON')) {
       const end = findJsonEnd(jsonStr);
       if (end !== -1) {
         try {
           return JSON.parse(jsonStr.slice(0, end + 1));
-        } catch { /* fall through to truncation repair */ }
+        } catch { /* fall through to jsonrepair */ }
       }
     }
 
-    // Case 2: truncated JSON — attempt repair by closing open strings and brackets
+    // Case 3: truncated or structurally malformed — use jsonrepair
     warn(`JSON parse failed (${firstErr.message}), attempting repair...`);
-    let repaired = jsonStr;
-    // Close any unterminated string
-    const quotes = (repaired.match(/(?<!\\)"/g) || []).length;
-    if (quotes % 2 !== 0) repaired += '"';
-    // Close open brackets/braces from innermost out
-    const stack = [];
-    let inStr = false;
-    for (let i = 0; i < repaired.length; i++) {
-      const ch = repaired[i];
-      if (ch === '"' && (i === 0 || repaired[i - 1] !== '\\')) { inStr = !inStr; continue; }
-      if (inStr) continue;
-      if (ch === '{') stack.push('}');
-      else if (ch === '[') stack.push(']');
-      else if (ch === '}' || ch === ']') stack.pop();
-    }
-    // Remove trailing comma before closing
-    repaired = repaired.replace(/,\s*$/, '');
-    while (stack.length) repaired += stack.pop();
     try {
-      const result = JSON.parse(repaired);
+      const result = JSON.parse(jsonrepair(jsonStr));
       warn('JSON repair succeeded (response was likely truncated — some content may be incomplete)');
       return result;
-    } catch (secondErr) {
+    } catch (repairErr) {
       throw new Error(`JSON parse failed and repair unsuccessful: ${firstErr.message}`);
     }
   }
@@ -715,12 +700,12 @@ Return ONLY the JSON object with key "tips".`;
 
   // ── Run all 6 calls in parallel ────────────────────────────────────────────
   const [resultA, resultB, resultC1, resultC2, resultD, resultE] = await Promise.all([
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 12000, label: 'en-home' }), 2, 'en-A'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 12000, label: 'en-faq' }), 2, 'en-B'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 12000, label: 'en-attractions' }), 2, 'en-C1'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 12000, label: 'en-tickets' }), 2, 'en-C2'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 12000, label: 'en-getting-there' }), 2, 'en-D'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 12000, label: 'en-tips' }), 2, 'en-E'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 16000, label: 'en-home' }), 2, 'en-A'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 16000, label: 'en-faq' }), 2, 'en-B'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 16000, label: 'en-attractions' }), 2, 'en-C1'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 16000, label: 'en-tickets' }), 2, 'en-C2'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 16000, label: 'en-getting-there' }), 2, 'en-D'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 16000, label: 'en-tips' }), 2, 'en-E'),
   ]);
 
   log('All 6 English content calls complete. Merging...');
