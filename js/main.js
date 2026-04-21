@@ -303,10 +303,66 @@
     return formatNum(converted, c.decimals);
   }
 
+  // Scan text nodes in content areas and wrap inline THB prices so the
+  // currency switcher can update them. Runs once on page load.
+  function wrapInlinePrices() {
+    // Matches: ฿1,176  |  THB 1,176  |  1,176 THB  |  ฿1176
+    const PRICE_RE = /฿([\d,]+)|([\d,]+)\s*THB\b|\bTHB\s*([\d,]+)/g;
+
+    function processNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent;
+        PRICE_RE.lastIndex = 0;
+        if (!PRICE_RE.test(text)) return;
+        PRICE_RE.lastIndex = 0;
+
+        const frag = document.createDocumentFragment();
+        let last = 0;
+        let m;
+        while ((m = PRICE_RE.exec(text)) !== null) {
+          if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+          const numStr = (m[1] || m[2] || m[3]).replace(/,/g, '');
+          const thb = parseInt(numStr, 10);
+          const span = document.createElement('span');
+          span.dataset.inlinePrice = thb;
+          span.dataset.inlinePriceOrig = m[0];
+          span.textContent = m[0];
+          frag.appendChild(span);
+          last = m.index + m[0].length;
+        }
+        if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+        node.parentNode.replaceChild(frag, node);
+      } else if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        node.tagName !== 'SCRIPT' &&
+        node.tagName !== 'STYLE' &&
+        !node.hasAttribute('data-base-price') &&
+        !node.hasAttribute('data-inline-price')
+      ) {
+        Array.from(node.childNodes).forEach(processNode);
+      }
+    }
+
+    // Only scan main content — skip nav, header, footer, selectors
+    document.querySelectorAll('main, article, .faq-body, .tip-card, .tldr, .zone-desc, .transport-item, .cancellation-body')
+      .forEach(el => Array.from(el.childNodes).forEach(processNode));
+  }
+
   // Update all prices on page
   function updateAllPrices(currency) {
     const c = CURRENCY_RATES[currency];
     if (!c) return;
+
+    // Inline text prices (wrapped by wrapInlinePrices)
+    document.querySelectorAll('[data-inline-price]').forEach(el => {
+      const thb = parseFloat(el.dataset.inlinePrice);
+      if (currency === BASE_CURRENCY) {
+        el.textContent = el.dataset.inlinePriceOrig;
+      } else {
+        const converted = convertPrice(thb, currency);
+        el.textContent = `${c.symbol}${converted}`;
+      }
+    });
 
     // Pricing cards
     document.querySelectorAll('[data-base-price]').forEach(el => {
@@ -634,6 +690,7 @@
 
   // Init all selectors
   if (document.querySelector('.top-bar')) {
+    wrapInlinePrices();
     initDropdowns();
     initCurrencySelector();
     initLanguageSelector();
