@@ -261,23 +261,33 @@
     IDR: { rate: 516, symbol: 'Rp', code: 'IDR', decimals: 0 },
     VND: { rate: 800, symbol: '₫', code: 'VND', decimals: 0 },
     INR: { rate: 2.85, symbol: '₹', code: 'INR', decimals: 0 },
-    RUB: { rate: 2.53, symbol: '₽', code: 'RUB', decimals: 0 },
-    AUD: { rate: 0.0433, symbol: '$', code: 'AUD', decimals: 0 }
+    RUB: { rate: 2.53,   symbol: '₽',   code: 'RUB', decimals: 0 },
+    AUD: { rate: 0.0433, symbol: '$',   code: 'AUD', decimals: 0 },
+    AED: { rate: 0.1116, symbol: 'د.إ', code: 'AED', decimals: 0 },
+    TRY: { rate: 0.973,  symbol: '₺',   code: 'TRY', decimals: 0 }
   };
 
   const LANG_MAP = {
-    'en': '/',
+    'en':    '/',
     'zh-CN': '/zh-CN/',
     'zh-TW': '/zh-TW/',
-    'ja': '/ja/',
-    'ko': '/ko/',
-    'ru': '/ru/',
-    'hi': '/hi/',
-    'ms': '/ms/',
-    'vi': '/vi/',
-    'de': '/de/',
-    'fr': '/fr/',
-    'lo': '/lo/'
+    'ja':    '/ja/',
+    'ko':    '/ko/',
+    'ru':    '/ru/',
+    'hi':    '/hi/',
+    'ms':    '/ms/',
+    'vi':    '/vi/',
+    'de':    '/de/',
+    'fr':    '/fr/',
+    'lo':    '/lo/',
+    'es':    '/es/',
+    'pt':    '/pt/',
+    'ar':    '/ar/',
+    'th':    '/th/',
+    'id':    '/id/',
+    'it':    '/it/',
+    'nl':    '/nl/',
+    'tr':    '/tr/',
   };
 
   // Format number with commas
@@ -421,6 +431,22 @@
       targetLang = 'fr';
     } else if (browserLang.startsWith('lo')) {
       targetLang = 'lo';
+    } else if (browserLang.startsWith('es')) {
+      targetLang = 'es';
+    } else if (browserLang.startsWith('pt')) {
+      targetLang = 'pt';
+    } else if (browserLang.startsWith('ar')) {
+      targetLang = 'ar';
+    } else if (browserLang.startsWith('th')) {
+      targetLang = 'th';
+    } else if (browserLang.startsWith('id')) {
+      targetLang = 'id';
+    } else if (browserLang.startsWith('it')) {
+      targetLang = 'it';
+    } else if (browserLang.startsWith('nl')) {
+      targetLang = 'nl';
+    } else if (browserLang.startsWith('tr')) {
+      targetLang = 'tr';
     }
 
     localStorage.setItem('aq_lang_set', '1');
@@ -527,6 +553,12 @@
   function autoDetectCurrency() {
     if (localStorage.getItem('aq_currency')) return;
 
+    // Only consider currencies rendered in the site's currency dropdown
+    const availableCurrencies = new Set(
+      Array.from(document.querySelectorAll('#currencyMenu [data-currency]'))
+        .map(btn => btn.getAttribute('data-currency'))
+    );
+
     const browserLang = (navigator.language || 'en').toLowerCase();
     let currency = BASE_CURRENCY;
 
@@ -539,9 +571,17 @@
     else if (browserLang.startsWith('ms')) currency = 'MYR';
     else if (browserLang.startsWith('vi')) currency = 'VND';
     else if (browserLang.startsWith('de') || browserLang.startsWith('fr')) currency = 'EUR';
+    else if (browserLang.startsWith('es') || browserLang.startsWith('it') || browserLang.startsWith('nl') || browserLang.startsWith('pt')) currency = 'EUR';
+    else if (browserLang.startsWith('ar')) currency = 'AED';
+    else if (browserLang.startsWith('th')) currency = 'THB';
+    else if (browserLang.startsWith('id')) currency = 'IDR';
+    else if (browserLang.startsWith('tr')) currency = 'TRY';
     else if (browserLang.startsWith('en-us')) currency = 'USD';
     else if (browserLang.startsWith('en-gb')) currency = 'GBP';
     else if (browserLang.startsWith('en-au')) currency = 'AUD';
+
+    // Fall back to base currency if detected currency is not available on this site
+    if (!availableCurrencies.has(currency)) currency = BASE_CURRENCY;
 
     if (currency !== BASE_CURRENCY) {
       updateAllPrices(currency);

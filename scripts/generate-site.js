@@ -51,6 +51,52 @@ const TMP_DIR     = path.join(I18N_DIR, '.tmp');
 const TEXT_MODEL      = 'anthropic/claude-sonnet-4-6';
 const TRANSLATE_MODEL = 'anthropic/claude-haiku-4.5';
 
+// Language code → primary currency for that language's audience
+const LANG_TO_CURRENCY = {
+  'en':    'USD',
+  'zh-CN': 'CNY',
+  'zh-TW': 'TWD',
+  'ja':    'JPY',
+  'ko':    'KRW',
+  'ru':    'RUB',
+  'hi':    'INR',
+  'ms':    'MYR',
+  'vi':    'VND',
+  'de':    'EUR',
+  'fr':    'EUR',
+  'lo':    'USD',
+  'es':    'EUR',
+  'pt':    'EUR',
+  'ar':    'AED',
+  'th':    'THB',
+  'id':    'IDR',
+  'it':    'EUR',
+  'nl':    'EUR',
+  'tr':    'TRY',
+};
+
+const ALL_CURRENCY_META = {
+  THB: { symbol: '฿',  label: 'Thai Baht' },
+  USD: { symbol: '$',  label: 'US Dollar' },
+  EUR: { symbol: '€',  label: 'Euro' },
+  GBP: { symbol: '£',  label: 'British Pound' },
+  JPY: { symbol: '¥',  label: 'Japanese Yen' },
+  CNY: { symbol: '¥',  label: 'Chinese Yuan' },
+  KRW: { symbol: '₩',  label: 'Korean Won' },
+  TWD: { symbol: '$',  label: 'Taiwan Dollar' },
+  HKD: { symbol: '$',  label: 'Hong Kong Dollar' },
+  SGD: { symbol: '$',  label: 'Singapore Dollar' },
+  MYR: { symbol: 'RM', label: 'Malaysian Ringgit' },
+  PHP: { symbol: '₱',  label: 'Philippine Peso' },
+  IDR: { symbol: 'Rp', label: 'Indonesian Rupiah' },
+  VND: { symbol: '₫',  label: 'Vietnamese Dong' },
+  INR: { symbol: '₹',  label: 'Indian Rupee' },
+  RUB: { symbol: '₽',  label: 'Russian Ruble' },
+  AUD: { symbol: '$',  label: 'Australian Dollar' },
+  AED: { symbol: 'د.إ', label: 'UAE Dirham' },
+  TRY: { symbol: '₺',  label: 'Turkish Lira' },
+};
+
 const ALL_LANGUAGES = [
   { code: 'en',    name: 'English' },
   { code: 'zh-CN', name: 'Simplified Chinese (Mandarin)' },
@@ -64,6 +110,14 @@ const ALL_LANGUAGES = [
   { code: 'de',    name: 'German' },
   { code: 'fr',    name: 'French' },
   { code: 'lo',    name: 'Lao' },
+  { code: 'es',    name: 'Spanish' },
+  { code: 'pt',    name: 'Portuguese' },
+  { code: 'ar',    name: 'Arabic' },
+  { code: 'th',    name: 'Thai' },
+  { code: 'id',    name: 'Indonesian' },
+  { code: 'it',    name: 'Italian' },
+  { code: 'nl',    name: 'Dutch' },
+  { code: 'tr',    name: 'Turkish' },
 ];
 
 // ── Token usage tracker ─────────────────────────────────────────────────────
@@ -462,6 +516,16 @@ The Klook activity URL is: ${config.klookUrl}`;
   if (config.languages && config.languages.length < 12) {
     site.languages = site.languages.filter(l => config.languages.includes(l.code));
   }
+
+  // Build currencies from selected languages — always include USD + baseCurrency
+  const currencyCodes = new Set(['USD', baseCurrency]);
+  for (const lang of site.languages) {
+    const c = LANG_TO_CURRENCY[lang.code];
+    if (c) currencyCodes.add(c);
+  }
+  site.currencies = Array.from(currencyCodes)
+    .filter(code => ALL_CURRENCY_META[code])
+    .map(code => ({ code, ...ALL_CURRENCY_META[code] }));
 
   fs.writeFileSync(sitePath, JSON.stringify(site, null, 2) + '\n');
   log('site.json updated');

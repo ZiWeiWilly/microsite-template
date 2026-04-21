@@ -53,7 +53,15 @@
     { "code": "vi", "hreflang": "vi", "label": "Tiếng Việt", "ogLocale": "vi_VN", "metaLanguage": "Vietnamese", "prefix": "vi/" },
     { "code": "de", "hreflang": "de", "label": "Deutsch", "ogLocale": "de_DE", "metaLanguage": "German", "prefix": "de/" },
     { "code": "fr", "hreflang": "fr", "label": "Français", "ogLocale": "fr_FR", "metaLanguage": "French", "prefix": "fr/" },
-    { "code": "lo", "hreflang": "lo", "label": "ລາວ", "ogLocale": "lo_LA", "metaLanguage": "Lao", "prefix": "lo/" }
+    { "code": "lo", "hreflang": "lo", "label": "ລາວ",             "ogLocale": "lo_LA", "metaLanguage": "Lao",        "prefix": "lo/" },
+    { "code": "es", "hreflang": "es", "label": "Español",         "ogLocale": "es_ES", "metaLanguage": "Spanish",    "prefix": "es/" },
+    { "code": "pt", "hreflang": "pt", "label": "Português",       "ogLocale": "pt_PT", "metaLanguage": "Portuguese", "prefix": "pt/" },
+    { "code": "ar", "hreflang": "ar", "label": "العربية",         "ogLocale": "ar_AE", "metaLanguage": "Arabic",     "prefix": "ar/" },
+    { "code": "th", "hreflang": "th", "label": "ภาษาไทย",          "ogLocale": "th_TH", "metaLanguage": "Thai",       "prefix": "th/" },
+    { "code": "id", "hreflang": "id", "label": "Bahasa Indonesia", "ogLocale": "id_ID", "metaLanguage": "Indonesian", "prefix": "id/" },
+    { "code": "it", "hreflang": "it", "label": "Italiano",        "ogLocale": "it_IT", "metaLanguage": "Italian",    "prefix": "it/" },
+    { "code": "nl", "hreflang": "nl", "label": "Nederlands",      "ogLocale": "nl_NL", "metaLanguage": "Dutch",      "prefix": "nl/" },
+    { "code": "tr", "hreflang": "tr", "label": "Türkçe",          "ogLocale": "tr_TR", "metaLanguage": "Turkish",    "prefix": "tr/" }
   ],
   "currencies": [
     { "code": "THB", "symbol": "฿", "label": "Thai Baht" },
@@ -71,8 +79,10 @@
     { "code": "IDR", "symbol": "Rp", "label": "Indonesian Rupiah" },
     { "code": "VND", "symbol": "₫", "label": "Vietnamese Dong" },
     { "code": "INR", "symbol": "₹", "label": "Indian Rupee" },
-    { "code": "RUB", "symbol": "₽", "label": "Russian Ruble" },
-    { "code": "AUD", "symbol": "$", "label": "Australian Dollar" }
+    { "code": "RUB", "symbol": "₽",   "label": "Russian Ruble" },
+    { "code": "AUD", "symbol": "$",   "label": "Australian Dollar" },
+    { "code": "AED", "symbol": "د.إ", "label": "UAE Dirham" },
+    { "code": "TRY", "symbol": "₺",   "label": "Turkish Lira" }
   ],
   "pages": [
     { "slug": "", "navKey": "home" },
