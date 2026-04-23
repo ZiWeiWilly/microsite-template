@@ -347,6 +347,125 @@ function readTemplate(name) {
   return fs.readFileSync(path.join(TEMPLATES, name), 'utf8');
 }
 
+/**
+ * Try to extract a lat/lng pair from any embedded Google Maps URL inside scraped
+ * markdown. Klook activity pages embed a Google Maps iframe whose URL contains
+ * coordinates in one of several known formats.
+ */
+function extractLatLngFromMarkdown(markdown) {
+  const candidates = [
+    // !2dLNG!3dLAT  (Google place "data" parameter — note: lng comes first)
+    { re: /!2d(-?\d+\.\d+)!3d(-?\d+\.\d+)/, swap: true },
+    // ?q=lat,lng  or  ?q=lat%2Clng
+    { re: /[?&]q=(-?\d+\.\d+)(?:,|%2[Cc])(-?\d+\.\d+)/, swap: false },
+    // @lat,lng,zoom
+    { re: /@(-?\d+\.\d+),(-?\d+\.\d+),\d+/, swap: false },
+    // ?ll=lat,lng
+    { re: /[?&]ll=(-?\d+\.\d+),(-?\d+\.\d+)/, swap: false },
+    // ?center=lat,lng  (Maps Embed API)
+    { re: /[?&]center=(-?\d+\.\d+),(-?\d+\.\d+)/, swap: false },
+  ];
+  for (const { re, swap } of candidates) {
+    const m = markdown.match(re);
+    if (!m) continue;
+    let a = parseFloat(m[1]);
+    let b = parseFloat(m[2]);
+    let lat, lng;
+    if (swap) { lat = b; lng = a; } else { lat = a; lng = b; }
+    if (
+      Number.isFinite(lat) && Number.isFinite(lng) &&
+      Math.abs(lat) <= 90 && Math.abs(lng) <= 180 &&
+      lat !== 0 && lng !== 0
+    ) {
+      return { lat, lng };
+    }
+  }
+  return null;
+}
+
+/**
+ * Build canonical Google Maps embed + share URLs.
+ *   - Prefer lat/lng (most accurate, never drifts).
+ *   - Fall back to encoding the address string as a search query.
+ *   - If we have neither, return empty strings (template will hide the iframe).
+ */
+function buildMapsUrls({ lat, lng, addressString }) {
+  const hasCoords =
+    lat && lng &&
+    String(lat) !== '0' && String(lng) !== '0' &&
+    Number.isFinite(parseFloat(lat)) && Number.isFinite(parseFloat(lng));
+  if (hasCoords) {
+    return {
+      mapsEmbed: `https://www.google.com/maps?q=${lat},${lng}&z=15&output=embed`,
+      mapsUrl:   `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+    };
+  }
+  if (addressString && addressString.trim()) {
+    const q = encodeURIComponent(addressString.trim());
+    return {
+      mapsEmbed: `https://www.google.com/maps?q=${q}&output=embed`,
+      mapsUrl:   `https://www.google.com/maps/search/?api=1&query=${q}`,
+    };
+  }
+  return { mapsEmbed: '', mapsUrl: '' };
+}
+
+/**
+ * Scrape the Klook activity page via Firecrawl. Returns { markdown, lat, lng }
+ * on success, or null if the API key is missing / scrape fails. Failures are
+ * non-fatal — the caller should fall back to pure LLM research.
+ */
+async function scrapeKlookActivity(url) {
+  const key = process.env.FIRECRAWL_API_KEY;
+  if (!key) {
+    warn('FIRECRAWL_API_KEY not set — skipping Klook page scrape (will rely on LLM research only). Address may be inaccurate.');
+    return null;
+  }
+  log(`Scraping Klook activity page for ground-truth address/coords: ${url}`);
+  try {
+    const res = await fetch('https://api.firecrawl.dev/v1/scrape', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        url,
+        formats: ['markdown'],
+        waitFor: 5000,
+        onlyMainContent: false,
+      }),
+      signal: AbortSignal.timeout(90000),
+    });
+    if (!res.ok) {
+      warn(`Firecrawl HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
+      return null;
+    }
+    const data = await res.json();
+    if (!data.success) {
+      warn(`Firecrawl scrape failed: ${JSON.stringify(data).slice(0, 200)}`);
+      return null;
+    }
+    const markdown = data.data?.markdown || '';
+    if (markdown.length < 500) {
+      warn(`Firecrawl returned only ${markdown.length} chars — page likely failed to load`);
+      return null;
+    }
+    log(`Scraped ${markdown.length} chars from Klook page`);
+
+    const coords = extractLatLngFromMarkdown(markdown);
+    if (coords) {
+      log(`Extracted coords from Klook embedded map: ${coords.lat}, ${coords.lng}`);
+    } else {
+      warn('Could not parse lat/lng from Klook page (no recognized Google Maps URL pattern)');
+    }
+    return { markdown, lat: coords?.lat, lng: coords?.lng };
+  } catch (e) {
+    warn(`Klook scrape error: ${e.message}`);
+    return null;
+  }
+}
+
 function deepMerge(target, source) {
   for (const key of Object.keys(source)) {
     if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
@@ -400,11 +519,27 @@ async function main() {
   log(`Languages: ${languages.map(l => l.code).join(', ')}`);
 
   // ══════════════════════════════════════════════════════════════════════════════
+  // STEP 0: Scrape Klook activity page for ground-truth location data
+  // ══════════════════════════════════════════════════════════════════════════════
+  log('Step 0: Scraping Klook activity page for authoritative address/coords...');
+  const klookScrape = await scrapeKlookActivity(config.klookUrl);
+
+  // ══════════════════════════════════════════════════════════════════════════════
   // STEP 1: Research Attraction
   // ══════════════════════════════════════════════════════════════════════════════
   log('Step 1: Researching attraction...');
 
-  const researchPrompt = `Research the tourist attraction "${config.attractionName}" and return a JSON object with these fields:
+  const klookContextBlock = klookScrape
+    ? `IMPORTANT — AUTHORITATIVE SOURCE: Below is the actual scraped content of the Klook activity page for this attraction. You MUST use it as the primary source for "address", "phone", "openingHours", "officialUrl", "latitude", "longitude", "rating", and any other factual fields. Only fall back to your own knowledge for fields that are clearly not present in the page below. Do NOT invent an address or phone number when the page contains one.
+
+=== BEGIN KLOOK PAGE CONTENT ===
+${klookScrape.markdown.slice(0, 30000)}
+=== END KLOOK PAGE CONTENT ===
+
+`
+    : '';
+
+  const researchPrompt = `${klookContextBlock}Research the tourist attraction "${config.attractionName}" and return a JSON object with these fields:
 
 {
   "officialName": "full official name",
@@ -449,8 +584,13 @@ The Klook activity URL is: ${config.klookUrl}`;
   const site = JSON.parse(fs.readFileSync(sitePath, 'utf8'));
 
   const addr = research.address || {};
-  const lat = research.latitude || '0';
-  const lng = research.longitude || '0';
+  // Prefer coords scraped directly from the Klook page's embedded Google Map —
+  // these come straight from Klook and are far more reliable than LLM recall.
+  const lat = klookScrape?.lat ? String(klookScrape.lat) : (research.latitude || '0');
+  const lng = klookScrape?.lng ? String(klookScrape.lng) : (research.longitude || '0');
+  if (klookScrape?.lat && klookScrape?.lng) {
+    log(`Using lat/lng from Klook scrape (${lat}, ${lng}) instead of LLM-reported (${research.latitude}, ${research.longitude})`);
+  }
   const locality = addr.locality || '';
   const country = addr.country || '';
 
@@ -489,8 +629,16 @@ The Klook activity URL is: ${config.klookUrl}`;
     imageSearchQuery: `${config.attractionName} ${locality} ${research.country || country}`.trim(),
     doNotTranslate: [config.attractionName, ...(research.alternateNames || [])],
   };
-  site.mapsEmbed = '';
-  site.mapsUrl = research.mapsUrl || '';
+  // Auto-generate Google Maps embed + share URLs from the most reliable source
+  // we have. Coords (preferably scraped from Klook) take priority; address is
+  // a fallback. This avoids LLM-hallucinated maps.app.goo.gl/<fake-slug> URLs.
+  const addressString = [addr.street, addr.locality, addr.region, addr.postalCode, addr.country]
+    .filter(Boolean).join(', ');
+  const maps = buildMapsUrls({ lat, lng, addressString });
+  site.mapsEmbed = maps.mapsEmbed;
+  site.mapsUrl   = maps.mapsUrl;
+  log(`mapsEmbed: ${site.mapsEmbed || '(empty)'}`);
+  log(`mapsUrl:   ${site.mapsUrl || '(empty)'}`);
   site.social = research.social || { facebook: '', instagram: '', tiktok: '' };
   site.phone = research.phone || '';
   site.phoneTel = research.phoneTel || '';

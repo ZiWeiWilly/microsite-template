@@ -156,7 +156,15 @@
             <div class="gbp-details">
               <div class="gbp-detail">
                 <span class="gbp-detail-icon" aria-hidden="true">📍</span>
-                <div>{{ t.gettingThere.location.gbp.details[0] | safe }}</div>
+                <div>
+                  {%- set a = site.address -%}
+                  {%- set sep = joiner(', ') -%}
+                  {%- if a.street     %}{{ sep() }}{{ a.street     }}{% endif -%}
+                  {%- if a.locality   %}{{ sep() }}{{ a.locality   }}{% endif -%}
+                  {%- if a.region     %}{{ sep() }}{{ a.region     }}{% endif -%}
+                  {%- if a.postalCode %}{{ sep() }}{{ a.postalCode }}{% endif -%}
+                  {%- if a.country    %}{{ sep() }}{{ a.country    }}{% endif -%}
+                </div>
               </div>
               <div class="gbp-detail">
                 <span class="gbp-detail-icon" aria-hidden="true">🕐</span>
