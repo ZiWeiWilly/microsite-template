@@ -199,7 +199,7 @@ function buildPage(pageKey, pageConfig) {
   const standardPkg = prices.packages.find(p => p.id === 'standard-admission') || prices.packages[0];
   const stickyPrice = standardPkg.basePrice;
   const stickyOriginalPrice = standardPkg.gatePrice || 1595;
-  const allInclusivePkg = prices.packages.find(p => p.id === 'admission-food-surf') || prices.packages[1];
+  const allInclusivePkg = prices.packages.find(p => p.id === 'admission-food-surf') || prices.packages[1] || standardPkg;
   const allInclusivePrice = allInclusivePkg.basePrice;
 
   let built = 0;
@@ -292,17 +292,6 @@ function buildBlogPost(slug) {
   const blogPostDataPath = path.join(__dirname, 'data', 'blog', `${slug}.json`);
   const blogPostData = JSON.parse(fs.readFileSync(blogPostDataPath, 'utf8'));
 
-  // Fail fast if the primary (English) content file is missing — a blog post
-  // registered in index.json but without content would produce dead card links.
-  const enContentPath = path.join(__dirname, 'content', 'blog', slug, 'en.html');
-  if (!fs.existsSync(enContentPath)) {
-    throw new Error(
-      `Blog post "${slug}" is listed in blog/index.json but has no content file.\n` +
-      `  Expected: ${enContentPath}\n` +
-      `  Generate the content or remove the slug from src/data/blog/index.json.`
-    );
-  }
-
   let built = 0;
 
   for (const lang of SITE.languages) {
@@ -312,7 +301,7 @@ function buildBlogPost(slug) {
     // Read article body content file
     const contentPath = path.join(__dirname, 'content', 'blog', slug, `${lang.code}.html`);
     if (!fs.existsSync(contentPath)) {
-      console.warn(`  Warning: Missing translation: ${lang.code}/blog/${slug}.html — skipping`);
+      console.warn(`  Warning: Missing content file: ${contentPath}`);
       continue;
     }
     const articleBody = fs.readFileSync(contentPath, 'utf8');

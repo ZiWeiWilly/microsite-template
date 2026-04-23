@@ -47,8 +47,5 @@ jobs:
           git diff --cached --quiet || git commit -m "Auto-generate site content for $(jq -r .attractionName site-config.json)"
           git push
 
-      - name: Deploy to Vercel
-        run: npx vercel@latest --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      # No explicit Vercel CLI deploy step here.
+      # The repo is linked to Vercel, so pushing to main triggers deployment automatically.
