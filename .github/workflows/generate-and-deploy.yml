@@ -47,6 +47,12 @@ jobs:
           git diff --cached --quiet || git commit -m "Auto-generate site content for $(jq -r .attractionName site-config.json)"
           git push
 
+      - name: Verify deployment inputs
+        run: |
+          test -f package.json
+          test -f src/build.js
+          ls src
+
       - name: Deploy to Vercel
         run: npx vercel@latest --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
