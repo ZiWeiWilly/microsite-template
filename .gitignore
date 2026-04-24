@@ -14,6 +14,7 @@ npm-debug.log*
 # Build output (generated HTML — not committed to template)
 *.html
 !src/templates/**/*.njk
+!src/content/**/*.html
 
 # Logs
 *.log

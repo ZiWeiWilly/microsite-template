@@ -660,11 +660,19 @@ async function main() {
   writeBlogDataJson(topic.slug, dateStr, ogImage);
   patchBlogDataJson(topic.slug, allMeta.en || Object.values(allMeta)[0]);
 
+  let contentFilesWritten = 0;
   for (const lang of LANGUAGES) {
     const body = bodies[lang.code];
     if (!body) { warn(`No body for ${lang.code}, skipping`); continue; }
     writeFile(path.join(CONTENT_DIR, topic.slug, `${lang.code}.html`), body + '\n');
+    contentFilesWritten++;
   }
+
+  const primaryLang = LANGUAGES[0].code;
+  if (!fs.existsSync(path.join(CONTENT_DIR, topic.slug, `${primaryLang}.html`))) {
+    die(`Content generation failed — no HTML file written for primary language (${primaryLang}). Aborting to prevent partial commit.`);
+  }
+  log(`  ${contentFilesWritten}/${LANGUAGES.length} content files written.`);
 
   for (const lang of LANGUAGES) {
     const meta = allMeta[lang.code];
