@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "date": "2026-04-24",
+    "packages": {
+      "standard-admission": 0
+    },
+    "exchangeRates": {
+      "USD": 0.029,
+      "EUR": 0.026,
+      "GBP": 0.023,
+      "JPY": 4.5,
+      "CNY": 0.21,
+      "KRW": 40,
+      "TWD": 0.95,
+      "HKD": 0.23,
+      "SGD": 0.039,
+      "MYR": 0.13,
+      "PHP": 1.7,
+      "IDR": 470,
+      "VND": 740,
+      "INR": 2.5,
+      "RUB": 2.7,
+      "AUD": 0.045
+    }
+  }
+]
