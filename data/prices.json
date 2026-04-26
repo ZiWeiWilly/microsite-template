@@ -43,7 +43,7 @@
       "decimals": 0
     },
     "CNY": {
-      "rate": 0.211,
+      "rate": 0.212,
       "symbol": "¥",
       "code": "CNY",
       "decimals": 0
@@ -55,7 +55,7 @@
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.973,
+      "rate": 0.974,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -91,7 +91,7 @@
       "decimals": 0
     },
     "VND": {
-      "rate": 797,
+      "rate": 800,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
@@ -103,7 +103,7 @@
       "decimals": 0
     },
     "RUB": {
-      "rate": 2.33,
+      "rate": 2.32,
       "symbol": "₽",
       "code": "RUB",
       "decimals": 0
