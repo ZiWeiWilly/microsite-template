@@ -37,7 +37,7 @@
       "decimals": 0
     },
     "JPY": {
-      "rate": 4.93,
+      "rate": 4.92,
       "symbol": "¥",
       "code": "JPY",
       "decimals": 0
@@ -49,13 +49,13 @@
       "decimals": 0
     },
     "KRW": {
-      "rate": 45.68,
+      "rate": 45.6,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.974,
+      "rate": 0.971,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -73,7 +73,7 @@
       "decimals": 0
     },
     "MYR": {
-      "rate": 0.123,
+      "rate": 0.122,
       "symbol": "RM",
       "code": "MYR",
       "decimals": 0
@@ -85,13 +85,13 @@
       "decimals": 0
     },
     "IDR": {
-      "rate": 531,
+      "rate": 530,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
     },
     "VND": {
-      "rate": 800,
+      "rate": 806,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
