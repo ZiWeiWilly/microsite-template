@@ -1400,7 +1400,7 @@ Return a JSON array of 15 topic objects. No explanatory text.`;
   log('Missing (create manually):');
   log('  - images/logo.png (220x19px, navbar)');
   log('  - images/logo-light.png (footer, light version)');
-  log('  - images/logo-icon.svg (favicon)');
+  log('  - images/logo-icon.png (favicon)');
   log('');
   log('API Token Usage:');
   log(usageTracker.summary());
