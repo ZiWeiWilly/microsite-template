@@ -105,8 +105,8 @@ function parseMarkdownForPackages(markdown) {
         !line.startsWith('This is a') && !line.startsWith('\\[') &&
         line.length > 3 && line.length < 100) {
 
-      // Check if this line could be a package name (contains meaningful words)
-      if (/water\s*park|ticket|group|add.?on|food|go\s*kart|surf|cabana|locker|onsen|admission/i.test(line)) {
+      // Any non-UI line starting with a letter or digit is a potential package name
+      if (/^[A-Za-z0-9\[]/.test(line)) {
         currentPackageName = line;
       }
     }
@@ -184,6 +184,7 @@ async function scrapeWithFirecrawl() {
 
 function mapScrapedToPackages(scraped, existingPackages) {
   const mapped = {};
+  const unmatched = [];
 
   for (const item of scraped) {
     const id = matchPackage(item.name);
@@ -191,12 +192,25 @@ function mapScrapedToPackages(scraped, existingPackages) {
       mapped[id] = item.priceUSD;
       console.log(`  Matched: "${item.name}" -> ${id} = $${item.priceUSD}`);
     } else {
+      unmatched.push(item);
       console.log(`  Unmatched: "${item.name}" = $${item.priceUSD}`);
     }
   }
 
+  if (unmatched.length > 0) {
+    console.log('\n⚠️  PACKAGE_MATCHERS needs updating — scraped packages with no match:');
+    console.log('   Add these entries to PACKAGE_MATCHERS in scripts/scrape-klook.js,');
+    console.log('   replacing REPLACE_ME with the matching id from data/prices.json:\n');
+    for (const item of unmatched) {
+      const words = item.name.split(/\s+/).slice(0, 4)
+        .map(w => w.replace(/[()[\]{}*+?^$|.\\]/g, '\\$&').toLowerCase())
+        .join('\\s+');
+      console.log(`  { id: 'REPLACE_ME', patterns: [/${words}/i] },  // "${item.name}" $${item.priceUSD}`);
+    }
+    console.log('');
+  }
+
   // Update existing packages with new USD prices
-  // We convert USD to THB using existing exchange rate
   return existingPackages.map(pkg => {
     if (mapped[pkg.id] !== undefined) {
       return { ...pkg, priceUSD: mapped[pkg.id] };

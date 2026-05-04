@@ -93,11 +93,20 @@ Also update `src/data/home.json` with the ticket prices for the homepage pricing
 
 ### Step 6: Update Klook Scraper (`scripts/scrape-klook.js`)
 
-Update `PACKAGE_MATCHERS` to match the Klook package names for this attraction. Tips:
-1. Visit the Klook activity URL in a browser
-2. Note the exact package/ticket names shown
-3. Write regex patterns to match those names
-4. Map each to an internal ID that matches your `data/prices.json` packages
+Update `PACKAGE_MATCHERS` to match the Klook package names for this attraction. The easiest way is to run the scraper first — it will auto-suggest patterns for any unmatched packages:
+
+```bash
+FIRECRAWL_API_KEY=your_key npm run scrape
+```
+
+The output will include a block like:
+```
+⚠️  PACKAGE_MATCHERS needs updating — scraped packages with no match:
+  { id: 'REPLACE_ME', patterns: [/1-day\s+ticket\s+\(adult\)/i] },  // "1-Day Ticket (Adult)" $76.45
+  { id: 'REPLACE_ME', patterns: [/1-day\s+ticket\s+\(child/i] },    // "1-Day Ticket (Child)" $56.10
+```
+
+Copy those entries into `PACKAGE_MATCHERS`, replacing `REPLACE_ME` with the corresponding `id` from `data/prices.json`. If you don't have the API key locally, inspect `data/debug-klook.md` after any previous scrape run to see the raw package names from Klook.
 
 ### Step 7: Generate English i18n Content (`src/i18n/en.json`) — Parallelized with Sonnet
 
