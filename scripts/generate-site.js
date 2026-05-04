@@ -489,7 +489,7 @@ async function main() {
   if (!fs.existsSync(configPath)) die(`Config file not found: ${configPath}`);
 
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  const required = ['attractionName', 'klookUrl', 'domain', 'affiliateUrl'];
+  const required = ['attractionName', 'klookUrl', 'domain'];
   for (const key of required) {
     if (!config[key]) die(`Missing required config field: ${key}`);
   }
