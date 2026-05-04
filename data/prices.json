@@ -25,7 +25,7 @@
       "decimals": 0
     },
     "EUR": {
-      "rate": 0.0262,
+      "rate": 0.0263,
       "symbol": "€",
       "code": "EUR",
       "decimals": 0
@@ -37,7 +37,7 @@
       "decimals": 0
     },
     "JPY": {
-      "rate": 4.83,
+      "rate": 4.82,
       "symbol": "¥",
       "code": "JPY",
       "decimals": 0
@@ -49,7 +49,7 @@
       "decimals": 0
     },
     "KRW": {
-      "rate": 45.34,
+      "rate": 45.37,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
@@ -67,7 +67,7 @@
       "decimals": 0
     },
     "SGD": {
-      "rate": 0.0391,
+      "rate": 0.0392,
       "symbol": "$",
       "code": "SGD",
       "decimals": 0
@@ -91,7 +91,7 @@
       "decimals": 0
     },
     "VND": {
-      "rate": 806,
+      "rate": 795,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
