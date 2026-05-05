@@ -5,7 +5,7 @@
  * Takes a JSON config file and orchestrates the full pipeline:
  *   1. Research attraction via Claude API
  *   2. Fill site.json, prices.json, CNAME, robots.txt
- *   3. Generate English i18n content (5 parallel Sonnet calls)
+ *   3. Generate English i18n content (6 parallel Sonnet calls)
  *   4. Translate to 11 languages (batched Haiku calls)
  *   5. Generate data files (attractions.json, tips.json, home.json)
  *   6. Download images (hero, OG)
@@ -201,8 +201,9 @@ function findJsonEnd(str) {
   return -1;
 }
 
-/** Strip markdown code fences and parse JSON, with repair for truncated/malformed responses */
-function extractJSON(text) {
+/** Strip markdown code fences and parse JSON, with repair for truncated/malformed responses.
+ *  If `repairClient` is provided, falls back to asking the LLM to fix the JSON when jsonrepair fails. */
+async function extractJSON(text, repairClient = null) {
   const stripped = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
   const start = stripped.search(/[{[]/);
   if (start === -1) throw new Error('No JSON found in model response');
@@ -229,6 +230,20 @@ function extractJSON(text) {
       warn('JSON repair succeeded (response was likely truncated — some content may be incomplete)');
       return result;
     } catch (repairErr) {
+      // Case 4: jsonrepair couldn't fix it — last resort, ask the LLM to repair
+      if (repairClient) {
+        warn(`jsonrepair failed, asking LLM to fix the JSON...`);
+        try {
+          const repairPrompt = `The following text is supposed to be a JSON object but is malformed or truncated. Return ONLY a corrected, complete JSON object that preserves as much of the original content as possible. Do not include any explanation or code fences. If a field is incomplete, finish it sensibly so the JSON parses.\n\nBroken JSON:\n${jsonStr}`;
+          const repaired = await chat(repairClient, TEXT_MODEL, null, repairPrompt, { max_tokens: 32000, label: 'json-repair', temperature: 0 });
+          const cleaned = repaired.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
+          const result = JSON.parse(cleaned);
+          warn('LLM JSON repair succeeded.');
+          return result;
+        } catch (llmErr) {
+          throw new Error(`JSON parse failed and all repair attempts unsuccessful: ${firstErr.message}`);
+        }
+      }
       throw new Error(`JSON parse failed and repair unsuccessful: ${firstErr.message}`);
     }
   }
@@ -264,7 +279,7 @@ async function chat(client, model, systemPrompt, userPrompt, options = {}) {
 
   const choice = response.choices[0];
   if (choice.finish_reason === 'length') {
-    warn(`Response truncated (hit max_tokens). Output may be incomplete.`);
+    throw new Error(`Response truncated (hit max_tokens=${options.max_tokens ?? 16000}) — retrying`);
   }
   usageTracker.track(options.label || 'unknown', model, response.usage);
   return choice.message.content;
@@ -572,7 +587,7 @@ The Klook activity URL is: ${config.klookUrl}`;
     () => chat(client, TEXT_MODEL, null, researchPrompt, { max_tokens: 4000, label: 'research' }),
     3, 'research'
   );
-  const research = extractJSON(researchRaw);
+  const research = await extractJSON(researchRaw, client);
   log(`Research complete: ${research.officialName || config.attractionName}`);
 
   // ══════════════════════════════════════════════════════════════════════════════
@@ -718,9 +733,9 @@ The Klook activity URL is: ${config.klookUrl}`;
   log('CNAME, robots.txt, package.json updated');
 
   // ══════════════════════════════════════════════════════════════════════════════
-  // STEP 4: Generate English i18n content (5 parallel Sonnet calls)
+  // STEP 4: Generate English i18n content (6 parallel Sonnet calls)
   // ══════════════════════════════════════════════════════════════════════════════
-  log('Step 4: Generating English content (5 parallel API calls)...');
+  log('Step 4: Generating English content (6 parallel API calls)...');
 
   // Read all page templates
   const indexNjk = readTemplate('index.njk');
@@ -912,23 +927,23 @@ Return ONLY the JSON object with key "tips".`;
 
   // ── Run all 6 calls in parallel ────────────────────────────────────────────
   const [resultA, resultB, resultC1, resultC2, resultD, resultE] = await Promise.all([
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 16000, label: 'en-home' }), 2, 'en-A'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 16000, label: 'en-faq' }), 2, 'en-B'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 16000, label: 'en-attractions' }), 2, 'en-C1'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 16000, label: 'en-tickets' }), 2, 'en-C2'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 16000, label: 'en-getting-there' }), 2, 'en-D'),
-    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 16000, label: 'en-tips' }), 2, 'en-E'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptA, { max_tokens: 32000, label: 'en-home' }), 3, 'en-A'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptB, { max_tokens: 32000, label: 'en-faq' }), 3, 'en-B'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC1, { max_tokens: 32000, label: 'en-attractions' }), 3, 'en-C1'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptC2, { max_tokens: 32000, label: 'en-tickets' }), 3, 'en-C2'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptD, { max_tokens: 32000, label: 'en-getting-there' }), 3, 'en-D'),
+    withRetry(() => chat(client, TEXT_MODEL, systemPromptBase, promptE, { max_tokens: 32000, label: 'en-tips' }), 3, 'en-E'),
   ]);
 
   log('All 6 English content calls complete. Merging...');
 
-  // Parse and merge
-  const partA = extractJSON(resultA);
-  const partB = extractJSON(resultB);
-  const partC1 = extractJSON(resultC1);
-  const partC2 = extractJSON(resultC2);
-  const partD = extractJSON(resultD);
-  const partE = extractJSON(resultE);
+  // Parse and merge — pass client so extractJSON can fall back to LLM repair if jsonrepair fails
+  const partA = await extractJSON(resultA, client);
+  const partB = await extractJSON(resultB, client);
+  const partC1 = await extractJSON(resultC1, client);
+  const partC2 = await extractJSON(resultC2, client);
+  const partD = await extractJSON(resultD, client);
+  const partE = await extractJSON(resultE, client);
 
   const enJson = {};
   deepMerge(enJson, partA);   // skipLink, nav, announcement, stickyBar, footer, home
@@ -1072,8 +1087,8 @@ Return ONLY the translated JSON. No explanatory text.`;
             withRetry(
               () => chat(client, TRANSLATE_MODEL, null, translatePrompt, { max_tokens: 16000, label: `translate-${lang.code}-${sectionId}` }),
               2, `translate-${lang.code}-${sectionId}`
-            ).then(result => {
-              const parsed = extractJSON(result);
+            ).then(async result => {
+              const parsed = await extractJSON(result, client);
               fs.writeFileSync(fragPath, JSON.stringify(parsed, null, 2));
               log(`  ✓ ${lang.code}_${sectionId}`);
             }).catch(e => {
@@ -1345,7 +1360,7 @@ Return a JSON array of 15 topic objects. No explanatory text.`;
     () => chat(client, TEXT_MODEL, null, topicsPrompt, { max_tokens: 4000, label: 'blog-topics' }),
     2, 'topics'
   );
-  const topics = extractJSON(topicsRaw);
+  const topics = await extractJSON(topicsRaw, client);
   fs.writeFileSync(path.join(__dirname, 'topics.json'), JSON.stringify(topics, null, 2) + '\n');
   log(`Generated ${topics.length} blog topics`);
 
