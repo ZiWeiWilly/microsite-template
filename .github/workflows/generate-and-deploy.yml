@@ -57,9 +57,24 @@ jobs:
           test -f src/build.js
           ls src
 
+      # Detect deploy target by checking which secret is present
+      - name: Detect deploy target
+        id: detect
+        run: |
+          if [ -n "$VERCEL_TOKEN" ]; then
+            echo "target=vercel" >> $GITHUB_OUTPUT
+          elif [ -n "$CF_API_TOKEN" ]; then
+            echo "target=cloudflare" >> $GITHUB_OUTPUT
+          else
+            echo "target=none" >> $GITHUB_OUTPUT
+          fi
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
       # ── Test environment: deploy to Vercel ──────────────────────────────────
       - name: Deploy to Vercel (test)
-        if: ${{ secrets.VERCEL_TOKEN != '' }}
+        if: steps.detect.outputs.target == 'vercel'
         run: npx vercel@latest --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -70,7 +85,7 @@ jobs:
       # Cloudflare Pages watches this repo and deploys automatically after
       # the git push above — no additional CLI step is needed.
       - name: Confirm Cloudflare Pages deployment (production)
-        if: ${{ secrets.CF_API_TOKEN != '' }}
+        if: steps.detect.outputs.target == 'cloudflare'
         run: |
           echo "Production site — Cloudflare Pages will auto-deploy from the git push."
           echo "Domain: $(jq -r .domain site-config.json)"
