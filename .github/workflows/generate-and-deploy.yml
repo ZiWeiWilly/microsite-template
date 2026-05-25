@@ -80,12 +80,42 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      # ── Production environment: Cloudflare Pages auto-deploys on git push ──
-      # CF_API_TOKEN being set indicates this is a production site.
-      # Cloudflare Pages watches this repo and deploys automatically after
-      # the git push above — no additional CLI step is needed.
-      - name: Confirm Cloudflare Pages deployment (production)
+      # ── Production environment: deploy to Cloudflare Pages via wrangler ──
+      # Built HTML files are gitignored, so we can't rely on git-based CF Pages
+      # integration. Instead we stage deployable assets and upload directly.
+      - name: Deploy to Cloudflare Pages (production)
         if: steps.detect.outputs.target == 'cloudflare'
         run: |
-          echo "Production site — Cloudflare Pages will auto-deploy from the git push."
-          echo "Domain: $(jq -r .domain site-config.json)"
+          DOMAIN=$(jq -r .domain site-config.json)
+          PROJECT_NAME=$(echo "$DOMAIN" | tr '.' '-')
+
+          # Stage deployable files (exclude source/build tooling)
+          mkdir -p _deploy
+          cp -r css js images data _deploy/ 2>/dev/null || true
+          [ -f sitemap.xml ] && cp sitemap.xml _deploy/
+          [ -f robots.txt ]  && cp robots.txt  _deploy/
+          find . -maxdepth 1 -name '*.html' -exec cp {} _deploy/ \;
+          for lang in zh-CN zh-TW ja ko de fr hi ru vi ms lo; do
+            [ -d "$lang" ] && cp -r "$lang" _deploy/
+          done
+
+          # Deploy (creates project on first run, updates on subsequent runs)
+          npx wrangler@latest pages deploy _deploy/ \
+            --project-name="$PROJECT_NAME" \
+            --branch=main \
+            --commit-dirty=true
+
+          # Attach custom domain (idempotent — safe to re-run)
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects/$PROJECT_NAME/domains" \
+            -H "Authorization: Bearer $CF_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"name\":\"$DOMAIN\"}")
+          echo "Custom domain API response: $RESPONSE"
+          # 200 = added, 409 = already exists — both are fine
+          [[ "$RESPONSE" == "200" || "$RESPONSE" == "409" ]] || echo "⚠️  Custom domain may need manual setup in CF dashboard"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
