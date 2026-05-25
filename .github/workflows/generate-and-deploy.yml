@@ -103,7 +103,8 @@ jobs:
           npx wrangler@latest pages deploy _deploy/ \
             --project-name="$PROJECT_NAME" \
             --branch=main \
-            --commit-dirty=true
+            --commit-dirty=true \
+            --account-id="$CF_ACCOUNT_ID"
 
           # Attach custom domain (idempotent — safe to re-run)
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
