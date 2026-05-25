@@ -57,8 +57,20 @@ jobs:
           test -f src/build.js
           ls src
 
-      - name: Deploy to Vercel
+      # ── Test environment: deploy to Vercel ──────────────────────────────────
+      - name: Deploy to Vercel (test)
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
         run: npx vercel@latest --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # ── Production environment: Cloudflare Pages auto-deploys on git push ──
+      # CF_API_TOKEN being set indicates this is a production site.
+      # Cloudflare Pages watches this repo and deploys automatically after
+      # the git push above — no additional CLI step is needed.
+      - name: Confirm Cloudflare Pages deployment (production)
+        if: ${{ secrets.CF_API_TOKEN != '' }}
+        run: |
+          echo "Production site — Cloudflare Pages will auto-deploy from the git push."
+          echo "Domain: $(jq -r .domain site-config.json)"
