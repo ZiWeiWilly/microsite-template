@@ -99,7 +99,11 @@ jobs:
             [ -d "$lang" ] && cp -r "$lang" _deploy/
           done
 
-          # Deploy (creates project on first run, updates on subsequent runs)
+          # Ensure project exists (idempotent — safe to re-run)
+          npx wrangler@latest pages project create "$PROJECT_NAME" \
+            --production-branch=main 2>&1 | grep -v "already exists" || true
+
+          # Deploy
           npx wrangler@latest pages deploy _deploy/ \
             --project-name="$PROJECT_NAME" \
             --branch=main \
