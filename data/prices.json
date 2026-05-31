@@ -19,7 +19,7 @@
       "decimals": 0
     },
     "USD": {
-      "rate": 0.0307,
+      "rate": 0.0308,
       "symbol": "$",
       "code": "USD",
       "decimals": 0
@@ -67,7 +67,7 @@
       "decimals": 0
     },
     "SGD": {
-      "rate": 0.0393,
+      "rate": 0.0392,
       "symbol": "$",
       "code": "SGD",
       "decimals": 0
@@ -85,13 +85,13 @@
       "decimals": 0
     },
     "IDR": {
-      "rate": 550,
+      "rate": 549,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
     },
     "VND": {
-      "rate": 793,
+      "rate": 797,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
