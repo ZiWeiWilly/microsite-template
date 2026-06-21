@@ -43,19 +43,19 @@
       "decimals": 0
     },
     "CNY": {
-      "rate": 0.207,
+      "rate": 0.206,
       "symbol": "¥",
       "code": "CNY",
       "decimals": 0
     },
     "KRW": {
-      "rate": 46.54,
+      "rate": 46.57,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.961,
+      "rate": 0.962,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -85,7 +85,7 @@
       "decimals": 0
     },
     "IDR": {
-      "rate": 540,
+      "rate": 541,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
