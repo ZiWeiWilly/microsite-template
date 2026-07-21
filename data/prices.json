@@ -49,13 +49,13 @@
       "decimals": 0
     },
     "KRW": {
-      "rate": 44.19,
+      "rate": 44.01,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.961,
+      "rate": 0.96,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -85,7 +85,7 @@
       "decimals": 0
     },
     "IDR": {
-      "rate": 532,
+      "rate": 534,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
@@ -97,7 +97,7 @@
       "decimals": 0
     },
     "INR": {
-      "rate": 2.86,
+      "rate": 2.87,
       "symbol": "₹",
       "code": "INR",
       "decimals": 0
@@ -109,7 +109,7 @@
       "decimals": 0
     },
     "AUD": {
-      "rate": 0.0426,
+      "rate": 0.0425,
       "symbol": "$",
       "code": "AUD",
       "decimals": 0
