@@ -55,7 +55,7 @@
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.959,
+      "rate": 0.958,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -85,13 +85,13 @@
       "decimals": 0
     },
     "IDR": {
-      "rate": 531,
+      "rate": 532,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
     },
     "VND": {
-      "rate": 765,
+      "rate": 768,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
