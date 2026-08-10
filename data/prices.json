@@ -49,13 +49,13 @@
       "decimals": 0
     },
     "KRW": {
-      "rate": 42.83,
+      "rate": 42.74,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.977,
+      "rate": 0.976,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -67,7 +67,7 @@
       "decimals": 0
     },
     "SGD": {
-      "rate": 0.0388,
+      "rate": 0.0387,
       "symbol": "$",
       "code": "SGD",
       "decimals": 0
@@ -91,7 +91,7 @@
       "decimals": 0
     },
     "VND": {
-      "rate": 783,
+      "rate": 782,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
