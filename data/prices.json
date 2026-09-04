@@ -19,97 +19,97 @@
       "decimals": 0
     },
     "USD": {
-      "rate": 0.0301,
+      "rate": 0.0304,
       "symbol": "$",
       "code": "USD",
       "decimals": 0
     },
     "EUR": {
-      "rate": 0.026,
+      "rate": 0.0261,
       "symbol": "€",
       "code": "EUR",
       "decimals": 0
     },
     "GBP": {
-      "rate": 0.0223,
+      "rate": 0.0225,
       "symbol": "£",
       "code": "GBP",
       "decimals": 0
     },
     "JPY": {
-      "rate": 4.79,
+      "rate": 4.73,
       "symbol": "¥",
       "code": "JPY",
       "decimals": 0
     },
     "CNY": {
-      "rate": 0.203,
+      "rate": 0.204,
       "symbol": "¥",
       "code": "CNY",
       "decimals": 0
     },
     "KRW": {
-      "rate": 40.99,
+      "rate": 41.16,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.956,
+      "rate": 0.963,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
     },
     "HKD": {
-      "rate": 0.236,
+      "rate": 0.238,
       "symbol": "$",
       "code": "HKD",
       "decimals": 0
     },
     "SGD": {
-      "rate": 0.0383,
+      "rate": 0.0385,
       "symbol": "$",
       "code": "SGD",
       "decimals": 0
     },
     "MYR": {
-      "rate": 0.122,
+      "rate": 0.123,
       "symbol": "RM",
       "code": "MYR",
       "decimals": 0
     },
     "PHP": {
-      "rate": 1.88,
+      "rate": 1.9,
       "symbol": "₱",
       "code": "PHP",
       "decimals": 0
     },
     "IDR": {
-      "rate": 534,
+      "rate": 536,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
     },
     "VND": {
-      "rate": 780,
+      "rate": 789,
       "symbol": "₫",
       "code": "VND",
       "decimals": 0
     },
     "INR": {
-      "rate": 2.86,
+      "rate": 2.87,
       "symbol": "₹",
       "code": "INR",
       "decimals": 0
     },
     "RUB": {
-      "rate": 2.62,
+      "rate": 2.63,
       "symbol": "₽",
       "code": "RUB",
       "decimals": 0
     },
     "AUD": {
-      "rate": 0.0421,
+      "rate": 0.0422,
       "symbol": "$",
       "code": "AUD",
       "decimals": 0
