@@ -49,7 +49,7 @@
       "decimals": 0
     },
     "KRW": {
-      "rate": 39.25,
+      "rate": 39.22,
       "symbol": "₩",
       "code": "KRW",
       "decimals": 0
@@ -85,7 +85,7 @@
       "decimals": 0
     },
     "IDR": {
-      "rate": 534,
+      "rate": 535,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
@@ -103,13 +103,13 @@
       "decimals": 0
     },
     "RUB": {
-      "rate": 2.41,
+      "rate": 2.39,
       "symbol": "₽",
       "code": "RUB",
       "decimals": 0
     },
     "AUD": {
-      "rate": 0.0422,
+      "rate": 0.0421,
       "symbol": "$",
       "code": "AUD",
       "decimals": 0
