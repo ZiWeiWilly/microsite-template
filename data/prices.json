@@ -25,19 +25,19 @@
       "decimals": 0
     },
     "EUR": {
-      "rate": 0.0264,
+      "rate": 0.0265,
       "symbol": "€",
       "code": "EUR",
       "decimals": 0
     },
     "GBP": {
-      "rate": 0.0221,
+      "rate": 0.0222,
       "symbol": "£",
       "code": "GBP",
       "decimals": 0
     },
     "JPY": {
-      "rate": 4.65,
+      "rate": 4.66,
       "symbol": "¥",
       "code": "JPY",
       "decimals": 0
@@ -55,7 +55,7 @@
       "decimals": 0
     },
     "TWD": {
-      "rate": 0.965,
+      "rate": 0.964,
       "symbol": "$",
       "code": "TWD",
       "decimals": 0
@@ -79,13 +79,13 @@
       "decimals": 0
     },
     "PHP": {
-      "rate": 1.88,
+      "rate": 1.89,
       "symbol": "₱",
       "code": "PHP",
       "decimals": 0
     },
     "IDR": {
-      "rate": 535,
+      "rate": 537,
       "symbol": "Rp",
       "code": "IDR",
       "decimals": 0
@@ -97,7 +97,7 @@
       "decimals": 0
     },
     "INR": {
-      "rate": 2.81,
+      "rate": 2.82,
       "symbol": "₹",
       "code": "INR",
       "decimals": 0
@@ -109,7 +109,7 @@
       "decimals": 0
     },
     "AUD": {
-      "rate": 0.0421,
+      "rate": 0.0422,
       "symbol": "$",
       "code": "AUD",
       "decimals": 0
